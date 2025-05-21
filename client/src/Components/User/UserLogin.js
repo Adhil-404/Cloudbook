@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import '../../Assets/Styles/Userstyles/UserLogin.css'
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function UserLogin() {
 
@@ -12,6 +13,14 @@ function UserLogin() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    axios.post("http://localhost:5000/userlogin",email,password)
+    .then((res)=>{
+      console.log(res);
+      
+    })
+    .catch((err)=>{
+      console.log(err)
+    })
  navigate('/user/dashboard')
   }
 

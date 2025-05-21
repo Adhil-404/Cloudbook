@@ -1,7 +1,7 @@
 const UserController = require('../Schema/UserSchema')
 
 const bcrypt = require("bcrypt")
-const jwt = require("jsonwebtoken")
+
 
 
 const UserRegistration = ((req, res) => {

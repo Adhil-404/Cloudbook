@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import "../../Assets/Styles/Userstyles/UserRegistration.css";
 import axios from 'axios'
+import { Link } from 'react-router-dom';
 
 function UserRegistration() {
   const [formData, setFormData] = useState({
@@ -35,7 +36,7 @@ function UserRegistration() {
         console.log(err)
       })
 
-   
+
   };
 
   return (
@@ -130,7 +131,7 @@ function UserRegistration() {
           <button type="submit" className="UserReg_btn">Sign Up</button>
 
           <p className="UserReg_login-link">
-            Already have an account? <a href="#">Login here</a>
+            Already have an account?  <Link to="/"><a href="#">Login here</a></Link>
           </p>
         </form>
       </div>
