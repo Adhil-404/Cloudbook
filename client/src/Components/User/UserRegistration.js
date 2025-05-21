@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import "../../Assets/Styles/Userstyles/UserRegistration.css";
+import axios from 'axios'
 
 function UserRegistration() {
   const [formData, setFormData] = useState({
@@ -11,6 +12,7 @@ function UserRegistration() {
     password: '',
     confirmPassword: '',
   });
+
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -24,7 +26,16 @@ function UserRegistration() {
       return;
     }
 
-    console.log('Form submitted:', formData);
+
+    axios.post("http://localhost:5000/userreg", formData)
+      .then((res) => {
+        console.log(res)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+
+   
   };
 
   return (

@@ -5,10 +5,13 @@ const app = express()
 const bodyparser = require("body-parser")
 app.use(bodyparser.json())
 const db = require("./Dbconnection")
+const cors=require("cors")
+
 const router = require("./router")
+app.use(cors())
+
 app.use("/", router)
 // app.use(express.static(`${__dirname}/upload`));
-
 
 
 app.listen(5000, function () {
