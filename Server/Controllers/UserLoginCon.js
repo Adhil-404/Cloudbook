@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken')
 
 const login = ((req, res) => {
     let email = req.body.email;
-    UserLoginCon.finOne({ userEmail: email })
+    UserLoginCon.findOne({ userEmail: email })
         .then((result) => {
             console.log(result);
             if (!result) {

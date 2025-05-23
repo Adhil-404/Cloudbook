@@ -2,9 +2,14 @@
 
 import React from "react";
 import '../../Assets/Styles/Adminstyles/AdminDashboard.css';
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 function AdminDashboard() {
+
+  const location = useLocation();
+  const { pathname } = useLocation();
+
+
   return (
     <div className="admindashboard-container">
       <h2 className="admindash-logo">CloudBook</h2>
@@ -12,19 +17,30 @@ function AdminDashboard() {
 
       <aside className="admindash-sidebar">
         <ul className="admindash-nav-links">
-          <li><Link to="/admin/dashboard">Dashboard</Link></li>
-          <li><Link to="/admin/books">Books</Link></li>
-          <li><Link to="/admin/orders">Orders</Link></li>
-          <li><Link to="/admin/users">Users</Link></li>
-          <li><Link to="/admin/reviews">Reviews</Link></li>
-          <li><Link to="/admin/settings">Settings</Link></li>
+          <li className={location.pathname === "/admin/dashboard" ? "admindash-active" : ""}>
+            <Link className="link" to="/admin/dashboard">Dashboard</Link>
+          </li>
+          <li className={location.pathname === "/admin/books" ? "admindash-active" : ""}>
+            <Link className="link" to="/admin/books">Books</Link>
+          </li>
+          <li className={location.pathname === "/admin/orders" ? "admindash-active" : ""}>
+            <Link className="link" to="/admin/orders">Orders</Link>
+          </li>
+          <li className={location.pathname === "/admin/users" ? "admindash-active" : ""}>
+            <Link className="link" to="/admin/users">Users</Link>
+          </li>
+          <li className={location.pathname === "/admin/reviews" ? "admindash-active" : ""}>
+            <Link className="link" to="/admin/reviews">Reviews</Link>
+          </li>
+          <li className={location.pathname === "/admin/settings" ? "admindash-active" : ""}>
+            <Link className="link" to="/admin/settings">Settings</Link>
+          </li>
         </ul>
       </aside>
 
+
       <div className="admindash-main-content">
         <h1>Admin Dashboard</h1>
-
-
         <div className="admindash-stats">
           <div className="admindash-card">
             <h3>Total Books</h3>
