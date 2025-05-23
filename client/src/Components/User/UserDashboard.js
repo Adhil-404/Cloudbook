@@ -48,19 +48,19 @@ function UserDashboard() {
               </thead>
               <tbody>
                 <tr>
-                  <td>"📘 The Alchemist"</td>
+                  <td>" The Alchemist"</td>
                   <td>#98765</td>
-                  <td>🚚 Shipped</td>
+                  <td> Shipped</td>
                 </tr>
                 <tr>
-                  <td>"📙 React Basics"</td>
+                  <td>" React Basics"</td>
                   <td>#12345</td>
-                  <td>⏳ Processing</td>
+                  <td> Processing</td>
                 </tr>
                 <tr>
-                  <td>"📗 JavaScript Mastery"</td>
+                  <td>" JavaScript Mastery"</td>
                   <td>#67890</td>
-                  <td>✅ Delivered</td>
+                  <td> Delivered</td>
                 </tr>
               </tbody>
             </table>

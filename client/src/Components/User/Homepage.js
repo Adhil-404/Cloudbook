@@ -1,9 +1,10 @@
 import React from 'react'
 import "../../Assets/Styles/Userstyles/Homepage.css"
+import Usernav from './Usernav';
 
 function Homepage() {
 
-   const categories = [
+  const categories = [
     "Fiction",
     "Non-fiction",
     "Children",
@@ -18,20 +19,10 @@ function Homepage() {
     { title: "Becoming", price: "$22.99" },
   ];
   return (
-  
-        <div className="homepage-container">
-      {/* Header */}
-      <header className="homepage-header">
-        <div className="logo">📖 BookNest</div>
-        <nav className="nav-links">
-          <a href="#">Home</a>
-          <a href="#">Categories</a>
-          <a href="#">Bestsellers</a>
-          <a href="#">New Arrivals</a>
-          <a href="#">Contact</a>
-        </nav>
-      </header>
 
+    <div className="homepage-container">
+
+      <Usernav />
       {/* Hero Section */}
       <section className="hero-section">
         <div className="hero-content">
@@ -43,7 +34,7 @@ function Homepage() {
 
       {/* Categories */}
       <section className="section categories">
-        <h2>📚 Categories</h2>
+        <h2> Categories</h2>
         <div className="category-grid">
           {categories.map((cat) => (
             <div key={cat} className="category-card">
@@ -55,7 +46,7 @@ function Homepage() {
 
       {/* Bestsellers */}
       <section className="section bestsellers">
-        <h2>🔥 Bestsellers</h2>
+        <h2> Bestsellers</h2>
         <div className="bestseller-grid">
           {bestsellers.map((book) => (
             <div key={book.title} className="bestseller-card">
@@ -72,7 +63,7 @@ function Homepage() {
         &copy; 2025 BookNest. All rights reserved.
       </footer>
     </div>
-  
+
   )
 }
 
