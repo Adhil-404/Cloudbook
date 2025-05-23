@@ -1,7 +1,8 @@
 const express = require("express")
-// const dotenv = require("dotenv")
-// dotenv.config()
+const dotenv = require("dotenv")
+dotenv.config()
 const app = express()
+app.use(express.json());
 const bodyparser = require("body-parser")
 app.use(bodyparser.json())
 const db = require("./Dbconnection")

@@ -5,20 +5,20 @@ const jwt = require('jsonwebtoken')
 
 const login = ((req, res) => {
     let email = req.body.email;
-    UserLoginCon.finOne({ userEmail: email })
+    UserLoginCon.findOne({ userEmail: email })
         .then((result) => {
             console.log(result);
             if (!result) {
                 res.json({ err: "email is wrong" })
 
             }
-            let ismatching = bcrypt.compareSync(req.body.password, result.passsword)
+            let ismatching = bcrypt.compareSync(req.body.password, result.password)
             if (ismatching === true) {
                 console.log(true);
 
                 let token = jwt.sign({
                     _id: result._id,
-                    userEmail: result.email
+                    userEmail: result.userEmail
                 }, process.env.JWT_KEY)
                 res.json({ token, status: 200 })
 
@@ -32,6 +32,8 @@ const login = ((req, res) => {
             res.json({
                 err: err
             })
+            console.log(err);
+
         })
 })
 
