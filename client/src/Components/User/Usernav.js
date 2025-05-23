@@ -1,8 +1,9 @@
 import React from 'react';
 import "../../Assets/Styles/Userstyles/userNav.css"
 
-function Usernav() {
+function UserNav() {
   return (
+    
     <div>
       <header className="homepage-header">
         <div className="logo">CloudBooks</div>
@@ -20,4 +21,4 @@ function Usernav() {
   );
 }
 
-export default Usernav;
+export default UserNav;

@@ -1,6 +1,6 @@
 import React from 'react'
 import "../../Assets/Styles/Userstyles/Homepage.css"
-import Usernav from './Usernav';
+import UserNav from './UserNav';
 
 function Homepage() {
 
@@ -22,8 +22,8 @@ function Homepage() {
 
     <div className="homepage-container">
 
-      <Usernav />
-      {/* Hero Section */}
+      <UserNav />
+  
       <section className="hero-section">
         <div className="hero-content">
           <h1>Discover Your Next Favorite Book</h1>
@@ -32,7 +32,6 @@ function Homepage() {
         </div>
       </section>
 
-      {/* Categories */}
       <section className="section categories">
         <h2> Categories</h2>
         <div className="category-grid">
@@ -44,7 +43,7 @@ function Homepage() {
         </div>
       </section>
 
-      {/* Bestsellers */}
+
       <section className="section bestsellers">
         <h2> Bestsellers</h2>
         <div className="bestseller-grid">
@@ -58,7 +57,7 @@ function Homepage() {
         </div>
       </section>
 
-      {/* Footer */}
+
       <footer className="homepage-footer">
         &copy; 2025 BookNest. All rights reserved.
       </footer>
