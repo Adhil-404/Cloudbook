@@ -69,22 +69,22 @@ function AdminDashboard() {
             </thead>
             <tbody>
               <tr>
-                <td>📚 Book Added</td>
+                <td> Book Added</td>
                 <td>"React for Beginners"</td>
                 <td>10 mins ago</td>
               </tr>
               <tr>
-                <td>🛒 Order Placed</td>
+                <td> Order Placed</td>
                 <td>Order #12345</td>
                 <td>30 mins ago</td>
               </tr>
               <tr>
-                <td>👤 New User</td>
+                <td> New User</td>
                 <td>Sarah Johnson</td>
                 <td>1 hour ago</td>
               </tr>
               <tr>
-                <td>✍️ Review Submitted</td>
+                <td> Review Submitted</td>
                 <td>"Great Book!" - by Alex</td>
                 <td>2 hours ago</td>
               </tr>
