@@ -12,7 +12,7 @@ function AdminNav() {
 
 
         <div>
-            <h2 className="admindash-logo">CloudBook</h2>
+            <h2 className="admindash-logo">CloudBooks</h2>
             <div className="admindash-top-bar"></div>
 
             <aside className="admindash-sidebar">

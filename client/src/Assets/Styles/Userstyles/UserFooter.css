@@ -1,0 +1,136 @@
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+
+.order-detail {
+  background-color: #ffffff;
+  color: #000000;
+  padding: 2rem;
+  border-bottom: 1px solid #ddd;
+  border-top: 1px solid #ddd;
+}
+
+.order-detail ul {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 0;
+  margin: 0;
+}
+
+.order-detail li {
+  flex: 1;
+  min-width: 200px;
+  font-weight: 600;
+  line-height: 1.5;
+  font-size: 1.2rem;
+
+}
+
+.order-detail small {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: normal;
+}
+
+.app-detail{
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  background-color: #0b0d0e;
+  color: white;
+  padding: 2.5rem;
+  gap: 2rem;
+
+}
+
+.explore li{
+list-style: none;
+color: rgba(255, 255, 255, 0.486);
+margin-left: -40px;
+line-height: 33px;
+
+    
+}
+
+h3{
+    color: white;
+    font-size: 1.8rem;
+}
+h4{
+  color: rgba(255, 255, 255, 0.808);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+p{
+    color: rgba(255, 255, 255, 0.486);
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.app-detail > div {
+  flex: 1;
+  min-width: 200px;
+  border-top: none;
+  padding-top: 0;    
+}
+
+
+.app-detail > div * {
+  border: none;
+  
+}
+
+
+.subscribe-box {
+  margin-top: 34px;
+  display: flex;
+  align-items: center;
+  background-color: #f1f1f1;
+  border-radius: 999px;
+  padding: 0.4rem;
+  width: 320px;
+  box-sizing: border-box;
+  overflow: hidden; 
+  height:44px;
+}
+
+.subscribe-box input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 0.6rem 1rem 0.6rem 2.2rem;
+  font-size: 1rem;
+  border-radius: 999px;
+  outline: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23666' stroke-width='1.5'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25H4.5a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0L12 13.5 2.25 6.75m19.5 0H2.25' /%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: 18px;
+  background-position: 10px center;
+}
+
+.subscribe-box button {
+  background-color: #0b7a6f;
+  color: white;
+  border: none;
+  padding: .1rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.3s ease;
+  width: 103px;
+  height: 33px;
+  margin-bottom: 23px;
+  margin-left: -102px;
+
+}
+
+.subscribe-box button:hover {
+  background-color: #096158;
+}

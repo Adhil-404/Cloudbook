@@ -10,13 +10,16 @@ import UserForgetpassword from './Components/User/UserForgetpassword';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import AdminDashboard from './Components/Admin/AdminDashboard';
 
-import Homepage from './Components/User/Homepage';
-
 import AdminBooks from './Components/Admin/AdminBooks';
 import AdminOrders from './Components/Admin/AdminOrders';
 import AdminReviews from './Components/Admin/AdminReviews';
 import AdminUsers from './Components/Admin/AdminUsers';
 import AdminSettings from './Components/Admin/AdminSettings';
+import UserBooks from './Components/User/UserBooks';
+import UserOrders from './Components/User/UserOrders';
+import UserProfile from './Components/User/UserProfile';
+import UserSettings from './Components/User/UserSettings';
+import UserWishlist from './Components/User/UserWishlist';
 
 
 
@@ -31,7 +34,14 @@ function App() {
           <Route path='/user/dashboard' element={<UserDashboard />} />
           <Route path='/user/restpassword' element={<UserResetpassword />} />
           <Route path='/user/forgetpassword' element={<UserForgetpassword />} />
-          <Route path='/user/homepage' element={<Homepage />} />
+          <Route path='/user/books' element={<UserBooks />} />
+          <Route path='/user/orders' element={<UserOrders/>} />
+          <Route path='/user/profile' element={<UserProfile/>} />
+          <Route path='/user/settings' element={<UserSettings/>} />
+          <Route path='/user/wishlist' element={<UserWishlist/>} />
+          
+        
+          
         </Routes>
         <Routes>
           <Route path='admin' element={<AdminLogin />} />
