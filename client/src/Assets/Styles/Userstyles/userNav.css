@@ -1,24 +1,71 @@
+* {
+  box-sizing: border-box;
+}
+
 .homepage-header {
-  background-color: #222;
+  background-color: black;
+  height: 8vh;
+}
+
+p, .email > span, .left-phone {
   color: white;
-  padding: 1rem 2rem;
+}
+
+.homepage-top {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+}
+
+.left-logo {
+  display: flex;
+  justify-content: flex-start;
+  margin-left: 50px;
+  margin-top: 3px;
+}
+
+.email {
+  margin-left: 3px;
+}
+
+.social-logo {
+  padding-top: 4px;
+  margin-right: 80px;
 }
 
 .logo {
-  font-size: 1.5rem;
-  font-weight: bold;
+  margin: 5px;
 }
 
-.nav-links a {
-  margin-left: 1rem;
+.nav_mid {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.nav_mid_logo {
+  margin-left: 20px;
+}
+
+#nav_search {
+  width: 50vw;
+  border-radius: 20px;
+}
+
+#nav_button {
+  width: 75px;
+  border-radius: 16px;
   color: white;
-  font-weight: 500;
-  transition: color 0.3s ease;
+  background-color: #0b7a6c;
 }
 
-.nav-links a:hover {
-  color: #f0a500;
+.nav_mid_search {
+  margin-right: 350px;
+}
+
+.nav_mid_cart {
+  display: flex;
+  gap: 25px;
+}
+.nav_mid_search{
+  margin-right: 100px;
 }
