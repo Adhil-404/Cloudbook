@@ -1,5 +1,6 @@
 import React from "react";
 import "../../Assets/Styles/Userstyles/UserDashboard.css";
+import UserFooter from "./UserFooter";
 
 function UserDashboard() {
     return (
@@ -65,8 +66,10 @@ function UserDashboard() {
               </tbody>
             </table>
           </div>
-        </div>
+        </div> 
+        <UserFooter/>
       </div>
+     
     );
   }
   

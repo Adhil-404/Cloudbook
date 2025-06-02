@@ -1,24 +1,12 @@
-.homepage-header {
-  background-color: #222;
-  color: white;
-  padding: 1rem 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
 
-.logo {
-  font-size: 1.5rem;
-  font-weight: bold;
-}
 
-.nav-links a {
+.usernav-links a {
   margin-left: 1rem;
   color: white;
   font-weight: 500;
   transition: color 0.3s ease;
 }
 
-.nav-links a:hover {
+.usernav-links a:hover {
   color: #f0a500;
 }

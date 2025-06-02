@@ -1,11 +1,12 @@
 import React from 'react'
+import AdminNav from './AdminNav'
 
-function AminSettings() {
+function AdminSettings() {
   return (
-    <div>
-      
+      <div>
+      <AdminNav/>
     </div>
   )
 }
 
-export default AminSettings
+export default AdminSettings
