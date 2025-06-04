@@ -5,7 +5,13 @@ import UserNav from './UserNav';
 
 function Homepage() {
   return (
-    <div>Homepage</div>
+    <div className="homepage-container">
+
+      <Usernav />
+   
+    </div>
+
+
   )
 }
 
