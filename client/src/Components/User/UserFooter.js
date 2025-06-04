@@ -1,6 +1,6 @@
 
 import React from "react";
-import "../../src/Components/footer.css";
+import "../../Assets/Styles/Userstyles/UserFooter.css"
 
 function UserFooter() {
     return (

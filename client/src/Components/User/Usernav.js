@@ -4,10 +4,6 @@ import "../../Assets/Styles/Userstyles/userNav.css"
 function UserNav() {
   return (
     
-
-
-
-    
     <div>
       <header className="homepage-header">
         <div className="logo">CloudBooks</div>
