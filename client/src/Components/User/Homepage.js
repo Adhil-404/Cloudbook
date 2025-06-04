@@ -1,7 +1,6 @@
 import React from 'react'
 import "../../Assets/Styles/Userstyles/Homepage.css"
 import Usernav from './Usernav';
-import Header from './Header';
 
 function Homepage() {
 
@@ -11,7 +10,7 @@ function Homepage() {
     <div className="homepage-container">
 
       <Usernav />
-      <Header/>
+   
      
     </div>
 
