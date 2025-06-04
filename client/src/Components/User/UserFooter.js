@@ -1,6 +1,8 @@
 
 import React from "react";
 import "../../Assets/Styles/Userstyles/UserFooter.css"
+import visaImg from "../../Assets/Images/visa-png.png";
+import mastercardImg from "../../Assets/Images/mastercard.jpg"
 
 function UserFooter() {
     return (
@@ -56,15 +58,26 @@ function UserFooter() {
                     <h4>Subscribe</h4>
                     <p>Be the first to know about new collections & launches.</p>
                     <div className="subscribe-box">
+                        <i className="bi bi-envelope"></i> 
                         <input type="email" placeholder="Email address" />
-                        <button>Subscribe</button>
+                        <button>Subscribe </button>
                     </div>
 
                 </div>
             </div>
 
             <div className="footer-bottom">
-               
+                <p className="bottom-text">© 2025 CloudBooks. All rights reserved.</p>
+                <div className="payment-icons">
+                  <img src={visaImg} className="visa"></img>
+                  <img src={mastercardImg} className="mastercard"></img>
+                </div>
+                <div className="social-icons">
+                    <i className="bi bi-snapchat"></i>
+                    <i className="bi bi-pinterest"></i>
+                    <i className="bi bi-facebook"></i>
+                    <i className="bi bi-instagram"></i>
+                </div>
             </div>
         </div>
     );

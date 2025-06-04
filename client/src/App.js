@@ -1,6 +1,6 @@
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import Axios from './Components/User/UserRegistration'
+import 'bootstrap-icons/font/bootstrap-icons.css';
 import AdminLogin from './Components/Admin/AdminLogin';
 import UserLogin from './Components/User/UserLogin';
 import UserRegistration from './Components/User/UserRegistration';
@@ -20,6 +20,7 @@ import UserOrders from './Components/User/UserOrders';
 import UserProfile from './Components/User/UserProfile';
 import UserSettings from './Components/User/UserSettings';
 import UserWishlist from './Components/User/UserWishlist';
+import Homepage from './Components/User/Homepage';
 
 
 
@@ -39,6 +40,8 @@ function App() {
           <Route path='/user/profile' element={<UserProfile/>} />
           <Route path='/user/settings' element={<UserSettings/>} />
           <Route path='/user/wishlist' element={<UserWishlist/>} />
+          <Route path='/user/homepage' element={<Homepage/>} />
+
           
         
           
