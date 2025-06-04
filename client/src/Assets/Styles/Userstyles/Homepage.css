@@ -1,4 +1,4 @@
-/* Reset and Base Styles */
+
 body {
   margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -9,7 +9,7 @@ a {
   color: inherit;
 }
 
-/* Container Layout */
+
 .homepage-container {
   display: flex;
   flex-direction: column;
@@ -17,8 +17,7 @@ a {
 }
 
 
-/* Hero Section */
-.hero-section {
+/* Hero Section */.hero-section {
   background: url("https://via.placeholder.com/1200x400") center/cover no-repeat;
   color: white;
   text-align: center;

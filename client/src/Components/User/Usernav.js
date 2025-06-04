@@ -3,7 +3,7 @@ import "../../Assets/Styles/Userstyles/userNav.css";
 
 
 
-function Usernav() {
+function UserNav() {
   return (
 
     <header className="homepage-header">
@@ -44,6 +44,12 @@ function Usernav() {
       <div className="header-bottom">
         <button className="categories-btn">☰ Categories</button>
         <nav>
+
+        
+    <div>
+      <header className="homepage-header">
+        <div className="logo">CloudBooks</div>
+        <nav className="nav-links">
           <a href="#">Home</a>
           <a href="#">Products</a>
           <a href="#">Blog</a>
@@ -59,4 +65,4 @@ function Usernav() {
   );
 }
 
-export default Usernav;
+export default UserNav;

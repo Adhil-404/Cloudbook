@@ -1,3 +1,4 @@
+
 body {
   margin: 0;
   font-family: Arial, sans-serif;
@@ -84,6 +85,9 @@ body {
 
 .categories-btn {
   background-color: #0b7a6c;
+
+.usernav-links a {
+  margin-left: 1rem;
   color: white;
   padding: 10px;
   border: none;
@@ -107,4 +111,8 @@ nav a {
   margin: 0;
   font-size: 12px;
   color: gray;
+}
+
+.usernav-links a:hover {
+  color: #f0a500;
 }
