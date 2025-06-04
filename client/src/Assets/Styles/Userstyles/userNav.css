@@ -17,6 +17,10 @@ body {
   margin: 0 10px;
 }
 
+.top-icons{
+  display: flex;
+  column-gap: 16px;
+}
 .header-top .top-icons svg {
   margin-left: 15px;
   cursor: pointer;

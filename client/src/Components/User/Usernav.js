@@ -1,8 +1,6 @@
 import React from 'react';
 import "../../Assets/Styles/Userstyles/userNav.css";
-import { FaSearch, FaPhoneAlt, FaUser, FaHeart, FaShoppingCart } from 'react-icons/fa';
-import { BsEnvelope } from 'react-icons/bs';
-import { AiOutlineInstagram, AiOutlineTwitter } from 'react-icons/ai';
+
 
 
 function Usernav() {
@@ -11,13 +9,13 @@ function Usernav() {
     <header className="homepage-header">
       <div className="header-top">
         <div className="contact-info">
-          <FaPhoneAlt /> <span>+(84) - 1800 - 4635</span>
-          <BsEnvelope /> <span>Info@BookStore.com</span>
+          <i class="bi bi-telephone"></i> <span>+(84) - 1800 - 4635</span>
+          <i class="bi bi-envelope"></i> <span>Info@BookStore.com</span>
         </div>
         <div className="top-icons">
-          <FaUser />
-          <AiOutlineInstagram />
-          <AiOutlineTwitter />
+          <i class="bi bi-person"></i>
+          <i class="bi bi-instagram" ></i>
+          <i class="bi bi-twitter"></i>
         </div>
       </div>
 
@@ -32,13 +30,13 @@ function Usernav() {
             <option>Romance</option>
             <option>Horror</option>
           </select>
-          <button><FaSearch /></button>
+          <button><i class="bi bi-search"></i></button>
         </div>
         <div className="middle-icons">
           <span>Find a book store</span>
-          <FaUser />
-          <FaHeart />
-          <FaShoppingCart />
+          <i class="bi bi-person-fill"></i>
+          <i class="bi bi-heart-fill"></i>
+          <i class="bi bi-cart-fill"></i>
         </div>
       </div>
 
@@ -53,7 +51,7 @@ function Usernav() {
           <a href="#">About Us</a>
         </nav>
         <div className="support-info">
-          <FaPhoneAlt /> <span>+1 840 - 841 25 69</span>
+         <i class="bi bi-telephone"></i>  <span>+1 840 - 841 25 69</span>
           <p>24/7 Support Center</p>
         </div>
       </div>
