@@ -6,7 +6,16 @@ import UserFooter from './UserFooter';
 
 function Homepage() {
   return (
+
     <div><UserFooter/></div>
+
+    <div className="homepage-container">
+
+      <Usernav />
+   
+    </div>
+
+
   )
 }
 

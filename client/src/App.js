@@ -1,6 +1,9 @@
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import 'bootstrap-icons/font/bootstrap-icons.css';
+
+import "bootstrap-icons/font/bootstrap-icons.css";
+import Axios from './Components/User/UserRegistration'
+
 import AdminLogin from './Components/Admin/AdminLogin';
 import UserLogin from './Components/User/UserLogin';
 import UserRegistration from './Components/User/UserRegistration';
