@@ -1,10 +1,13 @@
 import React from 'react'
+import UserNav from './Usernav'
 
 function UserOrders() {
   return (
     <div>
-         <UserNav/>
-    </div>
+    <div>
+         <UserNav/>   </div>
+    
+ </div>
   )
 }
 

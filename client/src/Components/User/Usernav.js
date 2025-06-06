@@ -44,12 +44,12 @@ function UserNav() {
 
       <div className="header-bottom">
         <button className="categories-btn">☰ Categories</button>
-        <nav>
+       </div>
 
         
 
     <div>
-      <header className="homepage-header">
+    
         <div className="logo">CloudBooks</div>
         <nav className="nav-links">
           <a href="#">Home</a>

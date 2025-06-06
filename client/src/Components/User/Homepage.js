@@ -1,21 +1,22 @@
 import React from 'react'
 import "../../Assets/Styles/Userstyles/Homepage.css"
-import UserNav from './UserNav';
 import UserFooter from './UserFooter';
+import UserNav from './Usernav';
 
 
 function Homepage() {
   return (
 
-    <div><UserFooter/></div>
+    <div>
+      <UserFooter/>
 
-    <div className="homepage-container">
+    <div>
 
-      <Usernav />
+      {/* <UserNav /> */}
    
     </div>
 
-
+</div>
   )
 }
 
