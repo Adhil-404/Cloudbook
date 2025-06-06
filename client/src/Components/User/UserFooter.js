@@ -3,6 +3,8 @@ import React from "react";
 import "../../Assets/Styles/Userstyles/UserFooter.css"
 import visaImg from "../../Assets/Images/visa-png.png";
 import mastercardImg from "../../Assets/Images/mastercard.jpg"
+import paytmImg from "../../Assets/Images/Paytm.jpg"
+import gpayImg from "../../Assets/Images/gpay.png"
 
 function UserFooter() {
     return (
@@ -58,7 +60,7 @@ function UserFooter() {
                     <h4>Subscribe</h4>
                     <p>Be the first to know about new collections & launches.</p>
                     <div className="subscribe-box">
-                        <i className="bi bi-envelope"></i> 
+                      <i className="bi bi-envelope"></i>
                         <input type="email" placeholder="Email address" />
                         <button>Subscribe </button>
                     </div>
@@ -71,6 +73,8 @@ function UserFooter() {
                 <div className="payment-icons">
                   <img src={visaImg} className="visa"></img>
                   <img src={mastercardImg} className="mastercard"></img>
+                  <img src={paytmImg} className="paytm"></img>
+                  <img src={gpayImg} className="gpay"></img>
                 </div>
                 <div className="social-icons">
                     <i className="bi bi-snapchat"></i>
