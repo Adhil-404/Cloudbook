@@ -1,6 +1,6 @@
 import React from "react";
 import "../../Assets/Styles/Userstyles/UserDashboard.css";
-import UserFooter from "./UserFooter";
+
 
 function UserDashboard() {
     return (
@@ -67,7 +67,7 @@ function UserDashboard() {
             </table>
           </div>
         </div> 
-        <UserFooter/>
+  
       </div>
      
     );

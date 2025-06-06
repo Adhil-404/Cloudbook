@@ -95,6 +95,10 @@ body {
 
 
 .categories-btn {
+  background-color: #0b7a6c;
+
+
+.categories-btn {
   color: black;
   font-weight:400;
   background-color: #179584;
@@ -102,6 +106,7 @@ body {
   border-radius: 14px;
   border-color: #05be62;
   width:160px;
+
 }
 .usernav-links a {
   margin-left: 1rem;
