@@ -4,7 +4,7 @@ import UserNav from './Usernav'
 function UserSettings() {
   return (
     <div>
-         <UserNav/>
+       
     </div>
   )
 }
