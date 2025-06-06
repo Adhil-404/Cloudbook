@@ -6,7 +6,7 @@ function UserOrders() {
     <div>
 
     <div>
-         <UserNav/>   </div>
+  
     
  </div>
 
