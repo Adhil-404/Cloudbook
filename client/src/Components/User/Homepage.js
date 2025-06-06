@@ -12,19 +12,10 @@ function Homepage() {
 
     <div>
 
-      <UserFooter/>
+      <UserNav />
 
-    <div>
-
-      {/* <UserNav /> */}
-  {/* <UserFooter/> */}
-<UserNav/>
-
-
-   
     </div>
 
-</div>
   )
 }
 
