@@ -8,11 +8,9 @@ function Homepage() {
   return (
 
     <div>
-  {/* <UserFooter/> */}
-<UserNav/>
 
- 
-   
+      <UserNav />
+
     </div>
 
 
