@@ -39,32 +39,9 @@ function UserNav() {
         </div>
       </div>
 
-
-
-      <div className="header-bottom">
-        <button className="categories-btn">☰ Categories</button>
-       </div>
-
-        
-
-    <div>
-    
-        <div className="logo">CloudBooks</div>
-        <nav className="nav-links">
-          <a href="#">Home</a>
-          <a href="#">Products</a>
-          <a href="#">Blog</a>
-          <a href="#">Contact</a>
-          <a href="#">About Us</a>
-        </nav>
-        <div className="support-info">
-         <i class="bi bi-telephone"></i>  <span>+1 840 - 841 25 69</span>
-          <p>24/7 Support Center</p>
-
       <header className="homepage-header">
         <div className="header-bottom">
           <button className="categories-btn">☰ Categories</button>
-
         </div>
         <div>
           <nav className="nav-links">
@@ -76,9 +53,9 @@ function UserNav() {
           </nav>
         </div>
         <div className="support-info">
-            <i class="bi bi-telephone"></i>  <span>+1 840 - 841 25 69</span>
-            <p>24/7 Support Center</p>
-          </div>
+          <i class="bi bi-telephone"></i>  <span>+1 840 - 841 25 69</span>
+          <p>24/7 Support Center</p>
+        </div>
       </header>
     </div>
 
