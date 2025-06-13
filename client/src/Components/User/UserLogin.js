@@ -13,18 +13,20 @@ function UserLogin() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.post("http://localhost:5000/userlogin",email,password)
-    .then((res)=>{
-      console.log(res);
-      
-    })
-    .catch((err)=>{
-      console.log(err)
-    })
- navigate('/user/dashboard')
+    axios.post("http://localhost:5000/userlogin", { email, password })
+      .then((res) => {
+        console.log(res.data);
+        navigate('/user/dashboard')
+
+      })
+      .catch((err) => {
+        console.error(err.response?.data?.err || "Login failed");
+        alert(err.response?.data?.err || "Login failed");
+      })
+
   }
 
- 
+
 
   return (
     <div className="container">
@@ -71,7 +73,7 @@ function UserLogin() {
             </div>
             <button type="submit" className="btn">Sign In</button>
             <div className="signup">
-             <p>Don't have an account? <Link to='/user_reg' className='sign-link'> sign up</Link></p>
+              <p>Don't have an account? <Link to='/user_reg' className='sign-link'> sign up</Link></p>
             </div>
 
           </form>
