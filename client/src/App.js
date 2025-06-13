@@ -35,7 +35,7 @@ function App() {
       <BrowserRouter>
 
         <Routes>
-          <Route path='/' element={<Homepage/>} />
+          <Route path='/' element={<UserLogin/>} />
           <Route path='/user_reg' element={<UserRegistration />} />
           <Route path='/user/dashboard' element={<UserDashboard />} />
           <Route path='/user/restpassword' element={<UserResetpassword />} />
