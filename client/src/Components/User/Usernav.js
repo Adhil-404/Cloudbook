@@ -1,5 +1,6 @@
 import React from 'react';
 import "../../Assets/Styles/Userstyles/userNav.css";
+import { Link } from 'react-router-dom';
 
 
 
@@ -32,8 +33,8 @@ function UserNav() {
           <button><i class="bi bi-search"></i></button>
         </div>
         <div className="middle-icons">
-          <span>Find a book store</span>
-          <i class="bi bi-person-fill"></i>
+          <span>login</span><i class="bi bi-person-fill"></i>
+          
           <i class="bi bi-heart-fill"></i>
           <i class="bi bi-cart-fill"></i>
         </div>
@@ -47,7 +48,6 @@ function UserNav() {
           <nav className="nav-links">
             <a href="#">Home</a>
             <a href="#">Products</a>
-            <a href="#">Blog</a>
             <a href="#">Contact</a>
             <a href="#">About Us</a>
           </nav>
