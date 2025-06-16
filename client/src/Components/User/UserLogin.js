@@ -35,7 +35,7 @@ function UserLogin() {
 
           <h2>Welcome to</h2>
           <h1>CloudBooks</h1>
-          <p>
+          <p className='intro-detail'>
             Manage your bookstore efficiently with CloudBooks. Add books,
             process orders, and keep track of your inventory seamlessly.
           </p>
@@ -66,14 +66,14 @@ function UserLogin() {
               />
             </div>
             <div className="options">
-              <label>
+              <label className='remember'>
                 <input type="checkbox" /> Remember me
               </label>
               <Link to='/user/forgetpassword'>Forgot password?</Link>
             </div>
-            <button type="submit" className="btn">Sign In</button>
+            <button type="submit" className="btn-signin">Sign In</button>
             <div className="signup">
-              <p>Don't have an account? <Link to='/user_reg' className='sign-link'> sign up</Link></p>
+              <p className='pass-detail'>Don't have an account? <Link to='/user_reg' className='sign-link'> sign up</Link></p>
             </div>
 
           </form>
