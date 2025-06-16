@@ -47,7 +47,6 @@ const UserRegistration = async (req, res) => {
   }
 };
 
-module.exports = UserRegistration;
 
 
 
