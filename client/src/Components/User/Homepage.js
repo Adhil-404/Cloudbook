@@ -1,9 +1,8 @@
 import React from 'react'
 import "../../Assets/Styles/Userstyles/Homepage.css"
-
-
 import HomepageProduct from './HomepageProduct';
 import UserNav from './Usernav';
+import UserFooter from './UserFooter'
 
 
 
@@ -18,8 +17,8 @@ function Homepage() {
     <div>
    
    <UserNav/>
-
 <HomepageProduct/>
+<UserFooter/>
 
 
 
