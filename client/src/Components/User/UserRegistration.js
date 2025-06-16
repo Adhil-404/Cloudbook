@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import "../../Assets/Styles/Userstyles/UserRegistration.css";
-import axios from 'axios'
+import axios from 'axios';
 import { Link } from 'react-router-dom';
 
 function UserRegistration() {
@@ -14,6 +14,9 @@ function UserRegistration() {
     confirmPassword: '',
   });
 
+  const [msg, setMsg] = useState('');
+  const [isError, setIsError] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState({});
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -21,28 +24,68 @@ function UserRegistration() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const newErrors = {};
 
+
+    if (!formData.fullName.trim()) newErrors.fullName = "Full Name is required!";
+    if (!formData.email.trim()) newErrors.email = "Email is required!";
+    if (!formData.phone.trim()) newErrors.phone = "Phone number is required!";
+    if (!formData.dob) newErrors.dob = "Date of birth is required!";
+    if (!formData.gender) newErrors.gender = "Gender is required!";
+    if (!formData.password.trim()) newErrors.password = "Password is required!";
+    if (!formData.confirmPassword.trim()) newErrors.confirmPassword = "Please confirm your password.";
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match!');
+      newErrors.confirmPassword = "Passwords do not match!";
+    }
+
+
+    if (Object.keys(newErrors).length > 0) {
+      setFieldErrors(newErrors);
+      setMsg('');
+      setIsError(true);
       return;
+    } else {
+      setFieldErrors({});
     }
 
 
     axios.post("http://localhost:5000/userreg", formData)
       .then((res) => {
-        console.log(res)
+        console.log("Response from server:", res.data);
+
+        if (res.data.status === 200) {
+          setMsg(res.data.msg || "Registered successfully!");
+          setIsError(false);
+          setFieldErrors({});
+        } else {
+          if (res.data.msg === "Email already exists") {
+            setFieldErrors({ email: "Email already exists" });
+            setMsg('');
+          } else {
+            setMsg(res.data.msg || "Registration failed.");
+            setFieldErrors({});
+          }
+          setIsError(true);
+        }
       })
       .catch((err) => {
-        console.log(err)
-      })
-
-
+        console.error("Axios registration error:", err);
+        if (err.response && err.response.data) {
+          const serverMsg = err.response.data.msg || "Server responded with an error";
+          setMsg(serverMsg);
+        } else {
+          setMsg("Network error or server not reachable");
+        }
+        setIsError(true);
+        setFieldErrors({});
+      });
   };
 
   return (
     <div className="signup-container">
       <div className="signup-card">
         <h2>Create Your CloudBooks Account</h2>
+
         <form onSubmit={handleSubmit}>
           <div className="input-group">
             <label>Full Name</label>
@@ -52,8 +95,8 @@ function UserRegistration() {
               placeholder="Enter your full name"
               value={formData.fullName}
               onChange={handleChange}
-              required
             />
+            {fieldErrors.fullName && <p className="error-message">{fieldErrors.fullName}</p>}
           </div>
 
           <div className="input-group">
@@ -64,8 +107,8 @@ function UserRegistration() {
               placeholder="you@example.com"
               value={formData.email}
               onChange={handleChange}
-              required
             />
+            {fieldErrors.email && <p className="error-message">{fieldErrors.email}</p>}
           </div>
 
           <div className="input-group">
@@ -77,6 +120,7 @@ function UserRegistration() {
               value={formData.phone}
               onChange={handleChange}
             />
+            {fieldErrors.phone && <p className="error-message">{fieldErrors.phone}</p>}
           </div>
 
           <div className="input-group">
@@ -87,6 +131,7 @@ function UserRegistration() {
               value={formData.dob}
               onChange={handleChange}
             />
+            {fieldErrors.dob && <p className="error-message">{fieldErrors.dob}</p>}
           </div>
 
           <div className="input-group">
@@ -102,6 +147,7 @@ function UserRegistration() {
               <option value="other">Other</option>
               <option value="preferNotToSay">Prefer not to say</option>
             </select>
+            {fieldErrors.gender && <p className="error-message">{fieldErrors.gender}</p>}
           </div>
 
           <div className="input-group">
@@ -109,11 +155,10 @@ function UserRegistration() {
             <input
               type="password"
               name="password"
-              placeholder=""
               value={formData.password}
               onChange={handleChange}
-              required
             />
+            {fieldErrors.password && <p className="error-message">{fieldErrors.password}</p>}
           </div>
 
           <div className="input-group">
@@ -121,17 +166,20 @@ function UserRegistration() {
             <input
               type="password"
               name="confirmPassword"
-              placeholder=""
               value={formData.confirmPassword}
               onChange={handleChange}
-              required
             />
+            {fieldErrors.confirmPassword && <p className="error-message">{fieldErrors.confirmPassword}</p>}
           </div>
 
           <button type="submit" className="UserReg_btn">Sign Up</button>
 
+          {msg && (
+            <p className={isError ? "error-message" : "success-message"}>{msg}</p>
+          )}
+
           <p className="UserReg_login-link">
-            Already have an account?  <Link to="/"><a href="#">Login here</a></Link>
+            Already have an account? <Link to="/">Login here</Link>
           </p>
         </form>
       </div>

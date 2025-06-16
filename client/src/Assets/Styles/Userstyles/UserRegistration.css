@@ -89,3 +89,17 @@
 .UserReg_login-link a:hover {
   text-decoration: underline;
 }
+
+.error-message {
+  color: rgb(175, 10, 10);
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.success-message {
+  color: green;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 10px;
+}

@@ -1,8 +1,33 @@
 {
   "dependencies": {
     "axios": "^1.9.0",
+    "bcrypt": "^6.0.0",
+    "body-parser": "^2.2.0",
     "bootstrap": "^5.3.6",
     "bootstrap-icons": "^1.13.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.15.2",
     "react-icons": "^5.5.0"
-  }
+  },
+  "name": "cloudbook",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Adhil-404/Cloudbook.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Adhil-404/Cloudbook/issues"
+  },
+  "homepage": "https://github.com/Adhil-404/Cloudbook#readme"
 }
