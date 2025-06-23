@@ -1,6 +1,9 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import '../../Assets/Styles/Userstyles/HomepageProduct.css';
+import { Link } from 'react-router-dom';
+import UserNav from './Usernav';
+import UserFooter from './UserFooter';
 
 function HomepageProduct() {
   const [products, setProducts] = useState([]);
@@ -22,6 +25,7 @@ function HomepageProduct() {
 
   return (
     <div>
+      <UserNav/>
       <div className="sort_product" >
         <select
           id="sort"
@@ -47,14 +51,15 @@ function HomepageProduct() {
                 <h5 className="card-title">{product.title}</h5>
                 <h6 className="card-subtitle mb-2 text-body-secondary">${product.price}</h6>
                 <p className="card-text">{product.description}</p>
-                <button className="btn btn-primary">View More</button>
+               <Link to={`/product/${product.id}`} > <button className="btn btn-primary" >View More</button></Link>
               </div>
             </div>
           </div>
         ))}
       </div>
+      <UserFooter/>
     </div>
   );
 }
 
-export default HomepageProduct;
+export default HomepageProduct; 
