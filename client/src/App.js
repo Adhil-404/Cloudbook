@@ -1,6 +1,7 @@
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
+
 import "bootstrap-icons/font/bootstrap-icons.css";
 // import Axios from './Components/User/UserRegistration'
 
@@ -26,6 +27,7 @@ import UserSettings from './Components/User/UserSettings';
 import UserWishlist from './Components/User/UserWishlist';
 import Homepage from './Components/User/Homepage';
 import HomepageProduct from './Components/User/HomepageProduct';
+import ProductDetail from './Components/User/ProductDetail';
 
 
 
@@ -35,7 +37,8 @@ function App() {
       <BrowserRouter>
 
         <Routes>
-          <Route path='/' element={<UserLogin/>} />
+          {/* user */}
+          <Route path='/' element={<UserLogin />} />
           <Route path='/user_reg' element={<UserRegistration />} />
           <Route path='/user/dashboard' element={<UserDashboard />} />
           <Route path='/user/restpassword' element={<UserResetpassword />} />
@@ -47,10 +50,9 @@ function App() {
           <Route path='/user/wishlist' element={<UserWishlist />} />
           <Route path='/user/homepage' element={<Homepage />} />
           <Route path='/user/hompepage/product' element={<HomepageProduct />} />
+          <Route path="/product/:id" element={<ProductDetail />} />
 
-
-        </Routes>
-        <Routes>
+        {/* admin */}
           <Route path='admin' element={<AdminLogin />} />
           <Route path='admin/dashboard' element={<AdminDashboard />} />
           <Route path='admin/orders' element={<AdminOrders />} />

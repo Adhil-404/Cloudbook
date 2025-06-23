@@ -17,7 +17,7 @@ a {
 }
 
 
-/* Hero Section */.hero-section {
+.hero-section {
   background: url("https://via.placeholder.com/1200x400") center/cover no-repeat;
   color: white;
   text-align: center;
@@ -49,7 +49,6 @@ a {
   background-color: #c62828;
 }
 
-/* Section Styles */
 .section {
   padding: 3rem 2rem;
 }
@@ -59,7 +58,6 @@ a {
   text-align: center;
   font-size: 2rem;
 }
-
 
 .categories {
   background-color: #f8f9fa;
@@ -85,7 +83,7 @@ a {
   transform: translateY(-4px);
 }
 
-/* Bestsellers */
+
 .bestsellers {
   background-color: #f1f1f1;
 }
@@ -128,7 +126,6 @@ a {
   background-color: #0056b3;
 }
 
-/* Footer */
 .homepage-footer {
   background-color: #444;
   color: white;
