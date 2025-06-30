@@ -34,7 +34,7 @@ function UserFooter() {
                 <div className="location">
                     <h3>CloudBooks</h3>
                     <p>Find a location nearest you.</p>
-                    <p>See Our Stores</p><br/>
+                    <p>See Our Stores</p><br />
                     <p>+(84) - 1800 - 4635</p>
                     <p>@CloudBooks.com</p>
                 </div>
@@ -60,7 +60,7 @@ function UserFooter() {
                     <h4>Subscribe</h4>
                     <p>Be the first to know about new collections & launches.</p>
                     <div className="subscribe-box">
-                      <i className="bi bi-envelope"></i>
+                        <i className="bi bi-envelope"></i>
                         <input type="email" placeholder="Email address" />
                         <button>Subscribe </button>
                     </div>
@@ -71,10 +71,10 @@ function UserFooter() {
             <div className="footer-bottom">
                 <p className="bottom-text">© 2025 CloudBooks. All rights reserved.</p>
                 <div className="payment-icons">
-                  <img src={visaImg} className="visa"></img>
-                  <img src={mastercardImg} className="mastercard"></img>
-                  <img src={paytmImg} className="paytm"></img>
-                  <img src={gpayImg} className="gpay"></img>
+                    <img src={visaImg} className="visa"></img>
+                    <img src={mastercardImg} className="mastercard"></img>
+                    <img src={paytmImg} className="paytm"></img>
+                    <img src={gpayImg} className="gpay"></img>
                 </div>
                 <div className="social-icons">
                     <i className="bi bi-snapchat"></i>

@@ -3,12 +3,18 @@ import "../../Assets/Styles/Userstyles/Homepage.css";
 import UserNav from './Usernav';
 import book2Img from "../../Assets/Images/book2.png"
 import axios from 'axios';
+import UserFooter from './UserFooter'
+import ProductDetail from './ProductDetail';
+
+
+
 
 function Homepage() {
   
 
   return (
     <div>
+
       <div><UserNav /></div>
       <div className='intro-'>
         <div className='intro-text'>
@@ -20,6 +26,10 @@ function Homepage() {
         </div>
         <img src={book2Img} className='books2-image' alt="Books" />
       </div>
+
+   <UserNav/>
+ 
+ <UserFooter/>
 
 
     </div>

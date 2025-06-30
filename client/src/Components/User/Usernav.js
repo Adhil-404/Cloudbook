@@ -47,7 +47,7 @@ function UserNav() {
         <div>
           <nav className="nav-links">
             <a href="#">Home</a>
-            <a href="#">Products</a>
+           <Link to="/user/hompepage/product"> <a href="#">Products</a></Link>
             <a href="#">Contact</a>
             <a href="#">About Us</a>
           </nav>

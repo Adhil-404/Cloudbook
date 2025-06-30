@@ -6,9 +6,19 @@
   height: 382px;
   background-color: #0b7a6c;
   display: flex;
+
   justify-content: space-between;
   align-items: center;
   padding: 0 30px;
+
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+
+.hero-section {
+  background: url("https://via.placeholder.com/1200x400") center/cover no-repeat;
+
   color: white;
 
 }
@@ -18,8 +28,13 @@
 }
 
 
+
 .middle-text{
   font-weight:bold;
+=======
+.section {
+  padding: 3rem 2rem;
+
 }
 
 .low-text{
@@ -31,6 +46,9 @@ margin-top: 20px;
   margin-top: 130px;
   width: 577px;
 
+
+.categories {
+  background-color: #f8f9fa;
 }
 
 .explore-btn {
@@ -49,9 +67,15 @@ margin-top: 20px;
   padding: 20px;
 }
 
+
 .homepage-container h2 {
   text-align: center;
   margin-bottom: 30px;
+
+
+.bestsellers {
+  background-color: #f1f1f1;
+
 }
 
 .book-grid {
@@ -75,4 +99,26 @@ margin-top: 20px;
   border-radius: 10px;
 }
 
+
+.bestseller-card button {
+  background-color: #007bff;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.bestseller-card button:hover {
+  background-color: #0056b3;
+}
+
+.homepage-footer {
+  background-color: #444;
+  color: white;
+  text-align: center;
+  padding: 1rem 0;
+  margin-top: auto;
+}
 
