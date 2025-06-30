@@ -31,6 +31,8 @@ import HomepageProduct from './Components/User/HomepageProduct';
 import AdminAddbook from './Components/Admin/AdminAddbook';
 
 import ProductDetail from './Components/User/ProductDetail';
+import ContactForm from './Components/User/ContactForm';
+import Cart from './Components/User/Cart';
 
 
 
@@ -55,8 +57,11 @@ function App() {
           <Route path='/user/homepage' element={<Homepage />} />
           <Route path='/user/hompepage/product' element={<HomepageProduct />} />
           <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path='/user/hompepage/contact' element={<ContactForm />} />
+          <Route path='user/homepage/cart' element={<Cart />}></Route>
 
-        {/* admin */}
+{/* // {admin} */}
+
           <Route path='admin' element={<AdminLogin />} />
           <Route path='admin/dashboard' element={<AdminDashboard />} />
           <Route path='admin/orders' element={<AdminOrders />} />

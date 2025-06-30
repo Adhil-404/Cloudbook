@@ -36,7 +36,7 @@ function UserNav() {
           <span>login</span><i class="bi bi-person-fill"></i>
           
           <i class="bi bi-heart-fill"></i>
-          <i class="bi bi-cart-fill"></i>
+           <Link to="/user/homepage/cart"><i class="bi bi-cart-fill"></i></Link>
         </div>
       </div>
 
@@ -48,7 +48,7 @@ function UserNav() {
           <nav className="nav-links">
             <a href="#">Home</a>
            <Link to="/user/hompepage/product"> <a href="#">Products</a></Link>
-            <a href="#">Contact</a>
+           <Link to="/user/hompepage/contact"><a href="#">Contact</a></Link> 
             <a href="#">About Us</a>
           </nav>
         </div>

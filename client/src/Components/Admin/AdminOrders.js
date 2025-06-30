@@ -1,12 +1,13 @@
 import React from 'react'
 import AdminNav from './AdminNav'
+import AdminProductAdd from './AdminProductAdd'
 
 
 function AdminOrders() {
   return (
     <div>
-      <AdminNav/>
-
+      {/* <AdminNav/> */}
+<AdminProductAdd/>
     </div>
   )
 
