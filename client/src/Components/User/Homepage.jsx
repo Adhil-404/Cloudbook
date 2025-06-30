@@ -17,7 +17,7 @@ function Homepage() {
   
 
 
-<Cart/>
+
  
 
     </div>
