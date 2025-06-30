@@ -9,7 +9,8 @@
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.15.2",
+    "mongoose": "^8.16.1",
+    "multer": "^2.0.1",
     "react-icons": "^5.5.0"
   },
   "name": "cloudbook",
@@ -29,5 +30,8 @@
   "bugs": {
     "url": "https://github.com/Adhil-404/Cloudbook/issues"
   },
-  "homepage": "https://github.com/Adhil-404/Cloudbook#readme"
+  "homepage": "https://github.com/Adhil-404/Cloudbook#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
 }
