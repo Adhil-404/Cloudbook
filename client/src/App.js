@@ -27,7 +27,11 @@ import UserSettings from './Components/User/UserSettings';
 import UserWishlist from './Components/User/UserWishlist';
 import Homepage from './Components/User/Homepage';
 import HomepageProduct from './Components/User/HomepageProduct';
+
+import AdminAddbook from './Components/Admin/AdminAddbook';
+
 import ProductDetail from './Components/User/ProductDetail';
+
 
 
 
@@ -60,6 +64,7 @@ function App() {
           <Route path='admin/users' element={<AdminUsers />} />
           <Route path='admin/reviews' element={<AdminReviews />} />
           <Route path='admin/settings' element={<AdminSettings />} />
+          <Route path='admin/addbook' element={<AdminAddbook />} />
 
         </Routes>
 
