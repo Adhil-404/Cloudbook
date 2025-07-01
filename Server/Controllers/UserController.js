@@ -47,7 +47,6 @@ const UserRegistration = async (req, res) => {
   }
 };
 
-module.exports = UserRegistration;
 
 
 
@@ -59,7 +58,7 @@ const login = async (req, res) => {
     }
 
     try {
-        const result = await UserLoginCon.findOne({ userEmail: email });
+        const result = await UserController.findOne({ userEmail: email });
         if (!result) {
             return res.status(401).json({ err: "Email is wrong" });
         }
