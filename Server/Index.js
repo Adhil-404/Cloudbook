@@ -1,21 +1,23 @@
-const express = require("express")
-const dotenv = require("dotenv")
-dotenv.config()
-const app = express()
+const express = require("express");
+const dotenv = require("dotenv");
+const cors = require("cors");
+const path = require("path");
+const bodyparser = require("body-parser");
+
+dotenv.config();
+
+const app = express();
 app.use(express.json());
-const bodyparser = require("body-parser")
-app.use(bodyparser.json())
-const db = require("./Dbconnection")
-const cors=require("cors")
+app.use(bodyparser.json());
+app.use(cors());
 
-const router = require("./router")
-app.use(cors())
+const db = require("./Dbconnection");
 
-app.use("/", router)
-// app.use(express.static(`${__dirname}/upload`));
+app.use("/uploads", express.static(path.join(__dirname, "Uploads"))); 
 
+const bookroutes = require("./Routes/BookRoutes");
+app.use("/api", bookroutes);
 
 app.listen(5000, function () {
-    console.log("Server successfully working at port 5000");
-
-})  
+  console.log("Server successfully working at port 5000");
+});

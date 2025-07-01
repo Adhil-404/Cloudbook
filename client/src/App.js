@@ -1,11 +1,6 @@
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import 'bootstrap/dist/css/bootstrap.min.css'
-
-
 import "bootstrap-icons/font/bootstrap-icons.css";
-// import Axios from './Components/User/UserRegistration'
-
-
 import AdminLogin from './Components/Admin/AdminLogin';
 import UserLogin from './Components/User/UserLogin';
 import UserRegistration from './Components/User/UserRegistration';
@@ -14,7 +9,6 @@ import UserResetpassword from './Components/User/UserResetpassword';
 import UserForgetpassword from './Components/User/UserForgetpassword';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import AdminDashboard from './Components/Admin/AdminDashboard';
-
 import AdminBooks from './Components/Admin/AdminBooks';
 import AdminOrders from './Components/Admin/AdminOrders';
 import AdminReviews from './Components/Admin/AdminReviews';
@@ -27,12 +21,11 @@ import UserSettings from './Components/User/UserSettings';
 import UserWishlist from './Components/User/UserWishlist';
 import Homepage from './Components/User/Homepage';
 import HomepageProduct from './Components/User/HomepageProduct';
-
 import AdminAddbook from './Components/Admin/AdminAddbook';
-
 import ProductDetail from './Components/User/ProductDetail';
 import ContactForm from './Components/User/ContactForm';
 import Cart from './Components/User/Cart';
+import AdminEditBook from './Components/Admin/AdminEditBook';
 
 
 
@@ -60,7 +53,7 @@ function App() {
           <Route path='/user/hompepage/contact' element={<ContactForm />} />
           <Route path='user/homepage/cart' element={<Cart />}></Route>
 
-{/* // {admin} */}
+          {/* // {admin} */}
 
           <Route path='admin' element={<AdminLogin />} />
           <Route path='admin/dashboard' element={<AdminDashboard />} />
@@ -70,6 +63,7 @@ function App() {
           <Route path='admin/reviews' element={<AdminReviews />} />
           <Route path='admin/settings' element={<AdminSettings />} />
           <Route path='admin/addbook' element={<AdminAddbook />} />
+          <Route path="/admin/editbook/:id" element={<AdminEditBook />} />
 
         </Routes>
 

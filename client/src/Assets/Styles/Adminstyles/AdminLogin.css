@@ -1,10 +1,3 @@
-* {
-  margin: 0;
-  padding: 0;
-}
-
-
-
 
 .container {
   display: flex;
@@ -30,7 +23,7 @@
 }
 
 .left_container {
-  background: linear-gradient(135deg,  #3a8dde, #6fb1fc, #a3cfff);
+  background: linear-gradient(135deg,  #0b7a6c, #12887a, #148f7e);
   color: white;
   display: flex;
   flex-direction: column;
@@ -48,10 +41,6 @@
   color: white;
 }
 
-.left h1 {
-  font-size: 2rem;
-  margin: 5px 0;
-}
 
 .left p {
   font-size: 0.9rem;
@@ -100,14 +89,14 @@
 
 .options a {
   text-decoration: none;
-  color: #3a8dde;
+  color:  #0b7a6c;
   font-weight: bold;
 }
 
-.btn {
+.btnsignin {
   width: 100%;
   padding: 10px;
-  background: #3a8dde;
+  background:  #0b7a6c;
   border: none;
   color: white;
   font-size: 1rem;
@@ -116,7 +105,7 @@
   transition: 0.3s;
 }
 
-.btn:hover {
-  background: #518cc7;
+.btnsignin:hover {
+  background:  #0b7a6c;
   color: #ccc;
 }

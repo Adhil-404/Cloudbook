@@ -31,7 +31,7 @@
 
 .middle-text{
   font-weight:bold;
-=======
+}
 .section {
   padding: 3rem 2rem;
 
@@ -46,7 +46,7 @@ margin-top: 20px;
   margin-top: 130px;
   width: 577px;
 
-
+}
 .categories {
   background-color: #f8f9fa;
 }
@@ -71,7 +71,7 @@ margin-top: 20px;
 .homepage-container h2 {
   text-align: center;
   margin-bottom: 30px;
-
+}
 
 .bestsellers {
   background-color: #f1f1f1;
@@ -121,4 +121,3 @@ margin-top: 20px;
   padding: 1rem 0;
   margin-top: auto;
 }
-

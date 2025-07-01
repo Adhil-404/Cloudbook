@@ -12,23 +12,20 @@ function AdminLogin() {
 
    
     
-    if (email === 'admin@cloudbook.com' && password === 'admin123') {
-      navigate('/admin/dashboard');
-    } else {
-      alert('Invalid credentials');
-    }
+  if (email === 'admin@cloudbook.com' && password === 'admin123') {
+  localStorage.setItem('adminLoggedIn', 'true'); 
+  navigate('/admin/dashboard');
+} else {
+  alert('Invalid credentials');
+}
+
   };
 
   return (
     <div className="container">
       <div className="login-card">
         <div className="left_container">
-          <h2>Welcome to</h2>
-          <h1>CloudBooks</h1>
-          <p>
-            Manage your bookstore efficiently with CloudBooks. Add books,
-            process orders, and keep track of your inventory seamlessly.
-          </p>
+          <h2>Admin Login</h2>
         </div>
         <div className="right_container">
           <h2>Admin Login</h2>
@@ -53,7 +50,7 @@ function AdminLogin() {
                 required
               />
             </div>
-            <button type="submit" className="btn">Sign In</button>
+            <button type="submit" className="btn-signin">Sign In</button>
           </form>
         </div>
       </div>

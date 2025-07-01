@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import '../../Assets/Styles/Adminstyles/AdminAddbook.css'
+import { useNavigate } from 'react-router-dom';
 
 function AdminAddbook() {
   const [book, setBook] = useState({
@@ -11,7 +12,7 @@ function AdminAddbook() {
     price: '',
     
   });
-
+ const navigate = useNavigate()
   const [coverImage, setCoverImage] = useState(null); 
 
   const handleChange = (e) => {
@@ -34,7 +35,7 @@ function AdminAddbook() {
     formData.append('coverImage', coverImage); 
 
     try {
-      await axios.post('http://localhost:5000/api/addbook', formData, {
+     await axios.post('http://localhost:5000/api/addbook', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -56,6 +57,11 @@ function AdminAddbook() {
 
   return (
     <div className="add-book-form">
+       <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '10px 20px' }}>
+        <span className="logout-link" onClick={() => navigate('/admin/dashboard')}>
+          <i className="bi bi-arrow-left-circle"></i> Back to Dashboard
+        </span>
+      </div>
       <h2>Add a New Book</h2>
       <form onSubmit={handleSubmit} encType="multipart/form-data">
         <input type="text" name="title" placeholder="Title" value={book.title} onChange={handleChange} required />
