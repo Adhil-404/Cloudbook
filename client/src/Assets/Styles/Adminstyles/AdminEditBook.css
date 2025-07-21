@@ -1,0 +1,60 @@
+.add-book-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.add-book-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #0b7a6c;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.add-book-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.add-book-container input[type="text"],
+.add-book-container input[type="number"],
+.add-book-container input[type="file"],
+.add-book-container textarea {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  resize: none;
+}
+
+.add-book-container textarea {
+  height: 120px;
+}
+
+.add-book-container button {
+  background-color: #179584;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.add-book-container button:hover {
+  background-color: #0b7a6c;
+}
+
+@media (max-width: 600px) {
+  .add-book-container {
+    margin: 20px;
+    padding: 20px;
+  }
+}

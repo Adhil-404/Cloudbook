@@ -1,0 +1,210 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+
+.order-detail {
+  background-color: #ffffff;
+  color: #000000;
+  padding: 2rem;
+  border-bottom: 1px solid #ddd;
+  border-top: 1px solid #111;
+  border-left: 1px solid #111;
+  border-right: 1px solid #111;
+}
+
+.order-detail ul {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 0;
+  margin: 0;
+}
+
+.order-detail li {
+  flex: 1;
+  min-width: 200px;
+  font-weight: 600;
+  line-height: 1.5;
+  font-size: 1.2rem;
+
+}
+
+.order-detail small {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: normal;
+}
+
+.app-detail {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  background-color: #111;
+  color: white;
+  padding: 2.5rem;
+  gap: 2rem;
+  height: 22.5rem;
+
+}
+
+.explore li {
+  list-style: none;
+  color: rgba(255, 255, 255, 0.486);
+  margin-left: -28px;
+  line-height: 33px;
+
+
+}
+
+h3 {
+  color: white;
+  font-size: 1.8rem;
+}
+
+h4 {
+  color: rgba(255, 255, 255, 0.808);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+p {
+  color: rgba(255, 255, 255, 0.486);
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.app-detail>div {
+  flex: 1;
+  min-width: 200px;
+  border-top: none;
+  padding-top: 0;
+}
+
+
+.app-detail>div * {
+  border: none;
+
+}
+
+.location,
+.footer-column,
+.explore,
+.footer-sub {
+  margin-top: 20px;
+}
+
+.explore li,
+p {
+  margin-top: 18px;
+}
+
+.subscribe-box {
+  margin-top: 34px;
+  display: flex;
+  align-items: center;
+  background-color: #f1f1f1;
+  border-radius: 999px;
+  padding: 0.4rem;
+  width: 320px;
+  box-sizing: border-box;
+  overflow: hidden;
+  height: 44px;
+}
+
+.bottom-text {
+  margin-left: 530px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.subscribe-box input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 0.6rem 1rem 0.6rem 2.2rem;
+  font-size: 1rem;
+  border-radius: 999px;
+  outline: none;
+  background-repeat: no-repeat;
+  background-size: 18px;
+  background-position: 10px center;
+}
+
+.subscribe-box button {
+  background-color: #0b7a6f;
+  color: white;
+  border: none;
+  padding: .1rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.3s ease;
+  width: 103px;
+  height: 33px;
+  margin-left: -102px;
+
+}
+
+.subscribe-box button:hover {
+  background-color: #096158;
+}
+
+.bi {
+  color: #554f4f;
+  margin-left: 10px;
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: #111;
+  color: #fff;
+  border-top: 1px solid #dddddd1c;
+}
+
+.social-icons i {
+  font-size: 1.4rem;
+  justify-content: space-around;
+  margin-right: 22px;
+  color: #f5efefbd;
+}
+
+.payment-icons {
+  display: flex;
+  margin-left: -888px;
+  margin-right: 666px;
+}
+
+.visa {
+  width: 54px;
+  height: 30px;
+  margin-left: 20px;
+ 
+
+
+}
+
+.mastercard {
+  width: 55px;
+  height: 30px;
+  margin-left: 20px;
+
+}
+
+.paytm {
+  width: 60px;
+  height: 30px;
+  margin-left: 20px;
+}
+
+.gpay {
+  width: 60px;
+  height: 30px;
+  margin-left: 20px;
+}

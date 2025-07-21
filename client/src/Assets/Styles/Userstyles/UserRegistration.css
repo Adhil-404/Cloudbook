@@ -1,0 +1,104 @@
+
+.signup-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.signup-card {
+  background-color: white;
+  padding: 40px 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+}
+
+.signup-card h2 {
+  margin-bottom: 25px;
+  text-align: center;
+  color: #121213;
+}
+
+
+.input-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group label {
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #333;
+}
+
+.input-group input,
+.input-group select,
+.input-group textarea {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.input-group input:focus,
+.input-group select:focus,
+.input-group textarea:focus {
+  border-color: #0b7a6c;
+}
+
+
+.UserReg_btn {
+  width: 100%;
+  background-color:#0b7a6c;
+  color: white;
+  padding: 12px 0;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.UserReg_btn:hover {
+  background-color: #0f8f7e;
+
+}
+
+.UserReg_login-link {
+  margin-top: 15px;
+  text-align: center;
+  font-size: 14px;
+  color: #0f0f0f;
+}
+
+.UserReg_login-link a {
+  color: #0b7a6c;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.UserReg_login-link a:hover {
+  text-decoration: underline;
+}
+
+.user-error-message {
+  color: rgb(175, 10, 10);
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  text-align: center;
+  margin: 0;
+}
+
+.success-message {
+  color: green;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 10px;
+}
