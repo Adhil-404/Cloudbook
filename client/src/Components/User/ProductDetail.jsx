@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+
 import "../../Assets/Styles/Userstyles/ProductDetail.css";
+
 import { useParams } from 'react-router-dom';
+
 import UserNav from './Usernav';
 import UserFooter from './UserFooter';
-import { addToCart } from './Utils/cartUtils';
-import { ToastContainer, toast } from 'react-toastify';
 
 function ProductDetail() {
+
   const { id } = useParams();
   const [book, setBook] = useState(null);
 
@@ -36,6 +36,7 @@ function ProductDetail() {
     );
   }
 
+
   return (
     <div>
       <UserNav />
@@ -63,6 +64,7 @@ function ProductDetail() {
       </div>
       <UserFooter />
       <ToastContainer stacked />
+
     </div>
   );
 }
