@@ -26,6 +26,7 @@ import ProductDetail from './Components/User/ProductDetail';
 import ContactForm from './Components/User/ContactForm';
 import Cart from './Components/User/Cart';
 import AdminEditBook from './Components/Admin/AdminEditBook';
+import AboutUs from './Components/User/AboutUs';
 
 
 
@@ -51,8 +52,8 @@ function App() {
           <Route path='/user/hompepage/product' element={<HomepageProduct />} />
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path='/user/hompepage/contact' element={<ContactForm />} />
-          <Route path='user/homepage/cart' element={<Cart />}></Route>
-
+          <Route path='/user/homepage/cart' element={<Cart />} />
+          <Route path='/user/homepage/aboutus' element={<AboutUs />} />
           {/* // {admin} */}
 
           <Route path='admin' element={<AdminLogin />} />

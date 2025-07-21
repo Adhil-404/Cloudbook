@@ -37,6 +37,10 @@ function UserNav() {
           <i className="bi bi-person-fill"></i>
           <i className="bi bi-heart-fill"></i>
           <Link to="/user/homepage/cart"><i className="bi bi-cart-fill"></i></Link>
+          <span>login</span><i class="bi bi-person-fill"></i>
+
+          <i class="bi bi-heart-fill"></i>
+          <Link to="/user/homepage/cart"><i class="bi bi-cart-fill"></i></Link>
         </div>
       </div>
 
@@ -45,12 +49,23 @@ function UserNav() {
         <div className="header-bottom">
           <button className="categories-btn">☰ Categories</button>
         </div>
+
         <nav className="nav-links">
           <Link to="/user/homepage">Home</Link>
           <Link to="/user/homepage/product">Products</Link>
           <Link to="/user/homepage/contact">Contact</Link>
           <Link to="/user/homepage/aboutus">About Us</Link>
         </nav>
+
+        <div>
+          <nav className="nav-links">
+            <a href="#">Home</a>
+            <Link to="/user/hompepage/product"> <a href="#">Products</a></Link>
+            <Link to="/user/hompepage/contact"><a href="#">Contact</a></Link>
+            <Link to="/user/homepage/aboutus"> <a href="#">About Us</a></Link>
+          </nav>
+        </div>
+
         <div className="support-info">
           <i className="bi bi-telephone"></i> <span>+1 840 - 841 25 69</span>
           <p>24/7 Support Center</p>

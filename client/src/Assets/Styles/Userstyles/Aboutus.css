@@ -1,0 +1,616 @@
+/* Aboutus.css - Bookstore About Us Page Styles */
+
+/* Base styles and resets */
+.about-us-page {
+  font-family: 'Georgia', serif;
+  line-height: 1.6;
+  color: #2c3e50;
+  overflow-x: hidden;
+}
+
+.about-us-page * {
+  box-sizing: border-box;
+}
+
+/* Hero Section */
+.hero-section {
+  background: white;
+  color: #2c3e50;
+  padding: 100px 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  min-height: 500px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="books" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><rect width="2" height="15" x="2" y="2" fill="rgba(44,62,80,0.1)"/><rect width="2" height="12" x="6" y="4" fill="rgba(44,62,80,0.1)"/><rect width="2" height="14" x="10" y="3" fill="rgba(44,62,80,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23books)"/></svg>');
+  opacity: 0.3;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+}
+
+.hero-title {
+  font-size: 4rem;
+  font-weight: 300;
+  margin-bottom: 1rem;
+  letter-spacing: 3px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+  animation: fadeInUp 1s ease-out;
+  color: #2c3e50;
+}
+
+.hero-subtitle {
+  font-size: 1.5rem;
+  opacity: 0.7;
+  font-style: italic;
+  margin-bottom: 2rem;
+  animation: fadeInUp 1s ease-out 0.3s both;
+  color: #6c757d;
+}
+
+/* Section Title */
+.section-title {
+  font-size: 2.5rem;
+  margin-bottom: 3rem;
+  color: #2c3e50;
+  position: relative;
+  text-align: center;
+  font-weight: 300;
+  letter-spacing: 1px;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  border-radius: 2px;
+}
+
+.section-title.text-white::after {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+/* Story Section */
+.story-section {
+  padding: 80px 0;
+  background: #5f7285;
+}
+
+.story-card {
+  background: white;
+  border-radius: 20px;
+  padding: 50px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  margin-bottom: 30px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid #e9ecef;
+}
+
+.story-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+.story-text {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #555;
+  margin-bottom: 25px;
+  text-align: justify;
+}
+
+.story-text:last-child {
+  margin-bottom: 0;
+}
+
+/* Values Section */
+.values-section {
+  padding: 80px 0;
+  background: white;
+}
+
+.value-card {
+  background: #fff;
+  border-radius: 15px;
+  padding: 35px 25px;
+  text-align: center;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  border: 1px solid #e9ecef;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.value-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.value-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+}
+
+.value-card:hover::before {
+  transform: scaleX(1);
+}
+
+.value-icon {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.value-card:hover .value-icon {
+  transform: scale(1.1);
+}
+
+.value-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #2c3e50;
+}
+
+.value-description {
+  color: #6c757d;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+/* Stats Section */
+.stats-section {
+  background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+  color: white;
+  padding: 80px 0;
+  text-align: center;
+  position: relative;
+}
+
+.stats-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="60" cy="40" r="1.5" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="70" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="20" r="1" fill="rgba(255,255,255,0.1)"/></svg>');
+  opacity: 0.3;
+}
+
+.stat-item {
+  text-align: center;
+  margin-bottom: 30px;
+  position: relative;
+  z-index: 2;
+}
+
+.stat-number {
+  font-size: 3rem;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 10px;
+  transition: all 0.5s ease;
+  color:rgb(88, 83, 83);
+}
+
+.stat-label {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 500;
+  color: #3498db;
+}
+
+.animate-counter {
+  animation: countUp 2s ease-out;
+}
+
+@keyframes countUp {
+  from { 
+    opacity: 0; 
+    transform: translateY(20px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+/* Team Section */
+.team-section {
+  padding: 80px 0;
+  background: #f8f9fa;
+}
+
+.team-card {
+  background: white;
+  border-radius: 15px;
+  padding: 35px 25px;
+  text-align: center;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  height: 100%;
+  border: 1px solid #e9ecef;
+}
+
+.team-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+}
+
+.team-image {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  margin: 0 auto 20px;
+  object-fit: cover;
+  border: 4px solid #667eea;
+  transition: all 0.3s ease;
+}
+
+.team-card:hover .team-image {
+  border-color: #764ba2;
+  transform: scale(1.05);
+}
+
+.team-name {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #2c3e50;
+}
+
+.team-role {
+  color: #667eea;
+  margin-bottom: 15px;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.team-description {
+  color: #6c757d;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+/* Quote Section */
+.quote-section {
+  background: #2c3e50;
+  color: rgb(40, 37, 37);
+  padding: 80px 0;
+  text-align: center;
+  position: relative;
+}
+
+.quote-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.02) 50%, transparent 60%);
+}
+
+.quote-text {
+  font-size: 1.8rem;
+  font-style: italic;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 2;
+  line-height: 1.4;
+  color: rgb(51, 51, 51);
+}
+
+.quote-text::before,
+.quote-text::after {
+  content: '"';
+  font-size: 3rem;
+  opacity: 0.3;
+  position: relative;
+  top: 10px;
+}
+
+.quote-author {
+  font-size: 1.1rem;
+  opacity: 0.8;
+  position: relative;
+  z-index: 2;
+  font-weight: 500;
+}
+
+/* CTA Section */
+.cta-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 80px 0;
+  text-align: center;
+  position: relative;
+}
+
+.cta-title {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  font-weight: 300;
+  letter-spacing: 1px;
+  color: #4c4c4c;
+}
+
+.cta-text {
+  font-size: 1.2rem;
+  margin-bottom: 40px;
+  opacity: 0.9;
+  line-height: 1.6;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  color: #353535;
+}
+
+.cta-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+/* Custom Button Styles */
+.btn-custom {
+  padding: 15px 40px;
+  border-radius: 30px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-primary-custom {
+  background: #e74c3c;
+  border: 2px solid #e74c3c;
+  color: white;
+}
+
+.btn-primary-custom:hover {
+  background: #c0392b;
+  border-color: #c0392b;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(231, 76, 60, 0.3);
+  color: white;
+}
+
+.btn-outline-custom {
+  background: transparent;
+  border: 2px solid #667eea;
+  color: #667eea;
+}
+
+.btn-outline-custom:hover {
+  background: #667eea;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fadeInUp {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .hero-title {
+    font-size: 3.5rem;
+  }
+  
+  .section-title {
+    font-size: 2.2rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .hero-title {
+    font-size: 3rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.3rem;
+  }
+  
+  .section-title {
+    font-size: 2rem;
+  }
+  
+  .story-card {
+    padding: 40px 30px;
+  }
+  
+  .value-card {
+    margin-bottom: 30px;
+  }
+  
+  .team-card {
+    margin-bottom: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 60px 0;
+  }
+  
+  .hero-title {
+    font-size: 2.5rem;
+    letter-spacing: 2px;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.2rem;
+  }
+  
+  .section-title {
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+  }
+  
+  .story-section,
+  .values-section,
+  .stats-section,
+  .team-section,
+  .cta-section {
+    padding: 60px 0;
+  }
+  
+  .story-card {
+    padding: 30px 20px;
+  }
+  
+  .story-text {
+    font-size: 1rem;
+    text-align: left;
+  }
+  
+  .value-card {
+    padding: 25px 20px;
+  }
+  
+  .stat-number {
+    font-size: 2.5rem;
+  }
+  
+  .quote-text {
+    font-size: 1.4rem;
+  }
+  
+  .cta-title {
+    font-size: 2rem;
+  }
+  
+  .cta-text {
+    font-size: 1.1rem;
+  }
+  
+  .cta-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .btn-custom {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+@media (max-width: 576px) {
+  .hero-title {
+    font-size: 2rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.1rem;
+  }
+  
+  .section-title {
+    font-size: 1.6rem;
+  }
+  
+  .story-card {
+    padding: 25px 15px;
+  }
+  
+  .value-card,
+  .team-card {
+    padding: 20px 15px;
+  }
+  
+  .stat-number {
+    font-size: 2rem;
+  }
+  
+  .quote-text {
+    font-size: 1.2rem;
+  }
+  
+  .cta-title {
+    font-size: 1.8rem;
+  }
+  
+  .btn-custom {
+    padding: 12px 30px;
+    font-size: 1rem;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  .hero-section,
+  .stats-section,
+  .quote-section,
+  .cta-section {
+    background: white !important;
+    color: black !important;
+  }
+  
+  .btn-custom {
+    display: none;
+  }
+  
+  .team-image {
+    border: 2px solid #000;
+  }
+}

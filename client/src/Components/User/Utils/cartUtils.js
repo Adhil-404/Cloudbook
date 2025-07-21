@@ -37,10 +37,9 @@ export const updateCartQuantity = (id, newQuantity) => {
     
     if (itemIndex !== -1) {
       if (newQuantity <= 0) {
-        // Remove item if quantity is 0 or less
         cart.splice(itemIndex, 1);
       } else {
-        // Update quantity
+       
         cart[itemIndex].quantity = newQuantity;
       }
       
