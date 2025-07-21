@@ -5,7 +5,8 @@ import UserNav from '../User/Usernav';
 import UserFooter from './UserFooter';
 import '../../Assets/Styles/Userstyles/Homepage.css';
 
-function UserHomepage() {
+
+function UserHomepage() 
   const [books, setBooks] = useState([]);
   const [featuredBooks, setFeaturedBooks] = useState([]);
   const [topSellingBooks, setTopSellingBooks] = useState([]);
@@ -66,9 +67,35 @@ function UserHomepage() {
 
       
       <div className="homepage-inner">
-        {/* Hero Section */}
-       
-        
+
+
+        <div className="search-filters">
+          <div className="search-container">
+            <div className="search-bar-container">
+              <div className="search-input-wrapper">
+                <div className="search-icon">🔍</div>
+                <input
+                  type="text"
+                  placeholder="Search books or authors..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="search-input"
+                />
+              </div>
+              
+              <div className="filter-controls">
+                <div className="category-select-wrapper">
+                  <select
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                    className="category-select"
+                  >
+                    {categories.map(category => (
+                      <option key={category} value={category}>
+                        {category === 'all' ? 'All Categories' : category}
+                      </option>
+                    ))}
+                  </select>
 
 
       {/* Hero Section */}
@@ -96,6 +123,7 @@ function UserHomepage() {
                 {/* Decorative placeholder books */}
                 <div className="decorative-book book-7">
                   <div className="book-spine">CLASSICS</div>
+
                 </div>
                 <div className="decorative-book book-8">
                   <div className="book-spine">FANTASY</div>

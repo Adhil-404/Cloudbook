@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import '../../Assets/Styles/Userstyles/HomepageProduct.css';
+import "../../Assets/Styles/Userstyles/HomepageProduct.css"
 import UserNav from './Usernav';
 import UserFooter from './UserFooter';
 import { Link } from 'react-router-dom';
