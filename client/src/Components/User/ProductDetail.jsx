@@ -8,16 +8,16 @@ import { addToCart } from './Utils/cartUtils';
 
 function ProductDetail() {
   const { id } = useParams();
-  const [ singleProduct, setSingleProduct] = useState(null);
+  const [singleBook, setSingleBook] = useState(null);
   const [cartMessage, setCartMessage] = useState("");
 
   useEffect(() => {
-    axios.get(`https://dummyjson.com/products/${id}`)
-      .then((res) => setSingleProduct(res.data))
+    axios.get(`http://localhost:5000/api/book/${id}`)
+      .then((res) => setSingleBook(res.data))
       .catch((err) => console.log(err));
   }, [id]);
 
-  if (!singleProduct) {
+  if (!singleBook) {
     return (
       <div className="spinner-container">
         <div className="spinner-border" role="status">
@@ -28,8 +28,8 @@ function ProductDetail() {
   }
 
   const handleAddToCart = () => {
-    addToCart(singleProduct); 
-    setCartMessage(" Added to cart!");
+    addToCart(singleBook); 
+    setCartMessage("Added to cart!");
     setTimeout(() => setCartMessage(""), 2000);
   };
 
@@ -38,15 +38,19 @@ function ProductDetail() {
       <UserNav />
       <div className="single_main">
         <div className="single_image">
-          <img src={singleProduct.images?.[0]} alt={singleProduct.title || "Product"} />
+          <img
+            src={`http://localhost:5000/uploads/${singleBook.coverImage}`}
+            alt={singleBook.title}
+          />
         </div>
         <div className="single_details">
           <div className="single_title">
-            <h3 className="title">{singleProduct.title}</h3>
-            <span className='author'> author: {singleProduct.brand}</span>
-            <h6 className="single_price">${singleProduct.price}</h6>
+            <h3 className="title">{singleBook.title}</h3>
+            <span className='author'>Author: {singleBook.author}</span>
+            
+            <h6 className="single_price">₹{singleBook.price}</h6>
             <p className="single_description">
-              <span>Description: </span>{singleProduct.description}
+              <span>Description: </span>{singleBook.description}
             </p>
             <div className="button_container">
               <button className="single_cart" onClick={handleAddToCart}>Add to Cart</button>

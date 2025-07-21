@@ -3,8 +3,11 @@ const Book = require('../Schema/BookSchema');
 const addBook = async (req, res) => {
   try {
     const { title, author, category, description, price } = req.body;
+   
+  if (!title || !author || !category || !description || !price || !req.file) {
+    return res.status(400).json({ message: "All fields are required." });
+  }
     const coverImage = req.file.filename; 
-
     const newBook = new Book({
       title,
       author,
@@ -60,9 +63,23 @@ const updateBook = async (req, res) => {
   }
 };
 
+
+const getSingleBook = async (req, res) => {
+  try {
+    const book = await Book.findById(req.params.id);
+    if (!book) {
+      return res.status(404).json({ message: 'Book not found' });
+    }
+    res.json(book);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
+
 module.exports = {
   addBook,
   deleteBook,
   getBookById,
   updateBook,
+  getSingleBook,
 };

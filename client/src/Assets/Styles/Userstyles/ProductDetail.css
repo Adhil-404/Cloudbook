@@ -326,3 +326,8 @@
     font-size: 15px;
   }
 }
+.card-category {
+  font-size: 14px;
+  color: #666;
+  margin: 4px 0;
+}

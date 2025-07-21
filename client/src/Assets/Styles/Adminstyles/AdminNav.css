@@ -65,14 +65,14 @@
   gap: 20px;
 }
 
-.admin-nav-links a {
+.admin-nav-links  {
   text-decoration: none;
   color: #0b7a6c;
   font-weight: 600;
   transition: all 0.3s;
 }
 
-.admin-nav-links a:hover {
+.admin-nav-links:hover {
   letter-spacing: 2px;
 }
 

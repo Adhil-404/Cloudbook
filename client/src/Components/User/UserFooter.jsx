@@ -9,6 +9,7 @@ import gpayImg from "../../Assets/Images/gpay.png"
 function UserFooter() {
     return (
         <div>
+
             <div className="order-detail">
                 <ul>
                     <li>
