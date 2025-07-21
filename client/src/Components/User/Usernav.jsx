@@ -35,10 +35,16 @@ function UserNav() {
           </button>
         </div>
         <div className="middle-icons">
-          <span>Login</span>
+          <span>Login
+  </span>
           <i className="bi bi-person-fill" aria-label="User"></i>
           <i className="bi bi-heart-fill" aria-label="Favorites"></i>
           <Link to="/user/homepage/cart" aria-label="Cart">
+
+          <i className="bi bi-person-fill"></i>
+          <i className="bi bi-heart-fill"></i>
+          <Link to="/user/homepage/cart">
+
             <i className="bi bi-cart-fill"></i>
           </Link>
         </div>

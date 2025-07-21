@@ -64,6 +64,13 @@ function UserHomepage() {
     <div className="homepage">
       <UserNav />
 
+      
+      <div className="homepage-inner">
+        {/* Hero Section */}
+       
+        
+
+
       {/* Hero Section */}
       <section className="hero-section">
         <div className="hero-content">
