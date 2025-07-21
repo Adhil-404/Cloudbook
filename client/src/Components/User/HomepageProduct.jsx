@@ -5,6 +5,7 @@ import UserNav from './Usernav';
 import UserFooter from './UserFooter';
 import { Link } from 'react-router-dom';
 
+
 function HomepageProduct() {
   const [products, setProducts] = useState([]);
   const [sortOption, setSortOption] = useState('');
@@ -26,6 +27,7 @@ function HomepageProduct() {
     return 0;
   });
 
+
   return (
     <div>
       <UserNav />
@@ -39,6 +41,7 @@ function HomepageProduct() {
           <option value="titleZA">Title: Z-A</option>
         </select>
       </div>
+
 
       <div className="product-grid">
         {sortedProducts.map((product) => (
@@ -61,6 +64,7 @@ function HomepageProduct() {
           </div>
         ))}
       </div>
+
 
       <UserFooter />
     </div>
