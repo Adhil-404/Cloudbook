@@ -4,6 +4,7 @@ import UserFooter from './UserFooter';
 import axios from 'axios';
 import '../../Assets/Styles/Userstyles/Homepage.css'; 
 
+
 function Homepage() {
   const [books, setBooks] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -94,11 +95,7 @@ function Homepage() {
       <UserNav />
       
       <div className="homepage-inner">
-        {/* Hero Section */}
-       
-        
 
-        {/* Search and Filters */}
         <div className="search-filters">
           <div className="search-container">
             <div className="search-bar-container">
