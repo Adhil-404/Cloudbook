@@ -34,9 +34,9 @@ function UserNav() {
         </div>
         <div className="middle-icons">
           <span>login</span><i class="bi bi-person-fill"></i>
-          
+
           <i class="bi bi-heart-fill"></i>
-           <Link to="/user/homepage/cart"><i class="bi bi-cart-fill"></i></Link>
+          <Link to="/user/homepage/cart"><i class="bi bi-cart-fill"></i></Link>
         </div>
       </div>
 
@@ -47,9 +47,9 @@ function UserNav() {
         <div>
           <nav className="nav-links">
             <a href="#">Home</a>
-           <Link to="/user/hompepage/product"> <a href="#">Products</a></Link>
-           <Link to="/user/hompepage/contact"><a href="#">Contact</a></Link> 
-            <a href="#">About Us</a>
+            <Link to="/user/hompepage/product"> <a href="#">Products</a></Link>
+            <Link to="/user/hompepage/contact"><a href="#">Contact</a></Link>
+            <Link to="/user/homepage/aboutus"> <a href="#">About Us</a></Link>
           </nav>
         </div>
         <div className="support-info">
