@@ -8,12 +8,16 @@ import UserFooter from './UserFooter';
 function HomepageProduct() {
   const [products, setProducts] = useState([]);
   const [sortOption, setSortOption] = useState('');
+products.forEach(p => console.log('Product ID:', p.id));
 
   useEffect(() => {
-    axios.get("https://dummyjson.com/products")
-      .then((res) => setProducts(res.data.products))
-      .catch((err) => console.log(err));
+    axios.get("http://localhost:5000/api/allbooks")
+      .then(res => setProducts(res.data))
+      .catch(err => console.error('Error fetching books:', err));
   }, []);
+console.table(products);
+
+
 
   const sortedProducts = [...products].sort((a, b) => {
     if (sortOption === 'priceLowHigh') return a.price - b.price;
@@ -44,14 +48,19 @@ function HomepageProduct() {
 
       <div className="product-grid">
         {sortedProducts.map((product) => (
-          <div key={product.id} className="product-card">
+          <div key={product._id} className="product-card">
             <div className="card" >
-              <img src={product.images[0]} className="card-img-top" alt={product.title} />
+              <img src={product.coverImage} className="card-img-top" alt={product.title} />
               <div className="card-body">
                 <h5 className="card-title">{product.title}</h5>
-                <h6 className="card-subtitle mb-2 text-body-secondary">${product.price}</h6>
-                <p className="card-text">{product.description}</p>
-                <Link to={`/product/${product.id}`} > <button className="btn btn-primary" >View More</button></Link>
+                <h6 className="card-subtitle mb-2 text-body-secondary">{product.price}</h6>
+                <p className="card-text">
+                  {product.description.length > 100
+                    ? product.description.substring(0, 100) + '...'
+                    : product.description}
+                </p>
+
+                <Link to={`/product/${product._id}`} > <button className="btn btn-primary" >View More</button></Link>
               </div>
             </div>
           </div>

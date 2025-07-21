@@ -49,7 +49,7 @@ function UserRegistration() {
     }
 
 
-    axios.post("http://localhost:5000/userreg", formData)
+    axios.post("http://localhost:5000/user_reg", formData)
       .then((res) => {
         console.log("Response from server:", res.data);
 
@@ -96,7 +96,7 @@ function UserRegistration() {
               value={formData.fullName}
               onChange={handleChange}
             />
-            {fieldErrors.fullName && <p className="error-message">{fieldErrors.fullName}</p>}
+            {fieldErrors.fullName && <p className="user-error-message">{fieldErrors.fullName}</p>}
           </div>
 
           <div className="input-group">
@@ -108,7 +108,7 @@ function UserRegistration() {
               value={formData.email}
               onChange={handleChange}
             />
-            {fieldErrors.email && <p className="error-message">{fieldErrors.email}</p>}
+            {fieldErrors.email && <p className="user-error-message">{fieldErrors.email}</p>}
           </div>
 
           <div className="input-group">
@@ -120,7 +120,7 @@ function UserRegistration() {
               value={formData.phone}
               onChange={handleChange}
             />
-            {fieldErrors.phone && <p className="error-message">{fieldErrors.phone}</p>}
+            {fieldErrors.phone && <p className="user-error-message">{fieldErrors.phone}</p>}
           </div>
 
           <div className="input-group">
@@ -131,7 +131,7 @@ function UserRegistration() {
               value={formData.dob}
               onChange={handleChange}
             />
-            {fieldErrors.dob && <p className="error-message">{fieldErrors.dob}</p>}
+            {fieldErrors.dob && <p className="user-error-message">{fieldErrors.dob}</p>}
           </div>
 
           <div className="input-group">
@@ -147,7 +147,7 @@ function UserRegistration() {
               <option value="other">Other</option>
               <option value="preferNotToSay">Prefer not to say</option>
             </select>
-            {fieldErrors.gender && <p className="error-message">{fieldErrors.gender}</p>}
+            {fieldErrors.gender && <p className=" user-error-message">{fieldErrors.gender}</p>}
           </div>
 
           <div className="input-group">
@@ -158,7 +158,7 @@ function UserRegistration() {
               value={formData.password}
               onChange={handleChange}
             />
-            {fieldErrors.password && <p className="error-message">{fieldErrors.password}</p>}
+            {fieldErrors.password && <p className="user-error-message">{fieldErrors.password}</p>}
           </div>
 
           <div className="input-group">
@@ -169,13 +169,13 @@ function UserRegistration() {
               value={formData.confirmPassword}
               onChange={handleChange}
             />
-            {fieldErrors.confirmPassword && <p className="error-message">{fieldErrors.confirmPassword}</p>}
+            {fieldErrors.confirmPassword && <p className="user-error-message">{fieldErrors.confirmPassword}</p>}
           </div>
 
           <button type="submit" className="UserReg_btn">Sign Up</button>
 
           {msg && (
-            <p className={isError ? "error-message" : "success-message"}>{msg}</p>
+            <p className={isError ? "user-error-message" : "success-message"}>{msg}</p>
           )}
 
           <p className="UserReg_login-link">
