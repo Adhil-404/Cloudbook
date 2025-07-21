@@ -1,9 +1,9 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+
 import '../../Assets/Styles/Userstyles/HomepageProduct.css';
-import { Link } from 'react-router-dom';
 import UserNav from './Usernav';
 import UserFooter from './UserFooter';
+
+function HomepageBooks() {
 
 function HomepageProduct() {
   const [products, setProducts] = useState([]);
@@ -27,24 +27,12 @@ console.table(products);
     return 0;
   });
 
+
   return (
     <div>
       <UserNav />
-      <div className="sort_product" >
-        <select
-          id="sort"
-          className="formselect"
-          value={sortOption}
-          onChange={(e) => setSortOption(e.target.value)}
 
-        >
-          <option value="">Default</option>
-          <option value="priceLowHigh">Price: Low to High</option>
-          <option value="priceHighLow">Price: High to Low</option>
-          <option value="titleAZ">Title: A to Z</option>
-          <option value="titleZA">Title: Z to A</option>
-        </select>
-      </div>
+     
 
       <div className="product-grid">
         {sortedProducts.map((product) => (
@@ -66,9 +54,10 @@ console.table(products);
           </div>
         ))}
       </div>
+
       <UserFooter />
     </div>
   );
 }
 
-export default HomepageProduct; 
+export default HomepageBooks;

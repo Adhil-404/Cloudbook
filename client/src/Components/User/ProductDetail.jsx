@@ -9,6 +9,12 @@ import { ToastContainer, toast } from 'react-toastify';
 
 function ProductDetail() {
   const { id } = useParams();
+  const [singleBook, setSingleBook] = useState(null);
+  const [cartMessage, setCartMessage] = useState("");
+
+  useEffect(() => {
+    axios.get(`http://localhost:5000/api/book/${id}`)
+      .then((res) => setSingleBook(res.data))
   console.log('ID from URL:', id);
   const [ singleProduct, setSingleProduct] = useState(null);
   
@@ -16,10 +22,11 @@ function ProductDetail() {
   useEffect(() => {
     axios.get(`http://localhost:5000/api/allbooks/${id}`)
       .then((res) => setSingleProduct(res.data))
+
       .catch((err) => console.log(err));
   }, [id]);
 
-  if (!singleProduct) {
+  if (!singleBook) {
     return (
       <div className="spinner-container">
         <div className="spinner-border" role="status">
@@ -29,6 +36,12 @@ function ProductDetail() {
     );
   }
 
+  const handleAddToCart = () => {
+    addToCart(singleBook); 
+    setCartMessage("Added to cart!");
+    setTimeout(() => setCartMessage(""), 2000);
+  };
+
 const handleAddToCart = () => {
   addToCart(singleProduct);
   toast.success(" Successfully added to cart!", {
@@ -37,11 +50,25 @@ const handleAddToCart = () => {
   });
 };
 
+
   return (
     <div>
       <UserNav />
       <div className="single_main">
         <div className="single_image">
+
+          <img
+            src={`http://localhost:5000/uploads/${singleBook.coverImage}`}
+            alt={singleBook.title}
+          />
+        </div>
+        <div className="single_details">
+          <div className="single_title">
+            <h3 className="title">{singleBook.title}</h3>
+            <span className='author'>Author: {singleBook.author}</span>
+            
+            <h6 className="single_price">₹{singleBook.price}</h6>
+
           <img src={singleProduct.coverImage} alt={singleProduct.title || "Product"} />
         </div>
         <div className="single_details">
@@ -49,8 +76,9 @@ const handleAddToCart = () => {
             <h3 className="title">{singleProduct.title}</h3>
             <span className='author'> author: {singleProduct.brand}</span>
             <h6 className="single_price">{singleProduct.price}</h6>
+
             <p className="single_description">
-              <span>Description: </span>{singleProduct.description}
+              <span>Description: </span>{singleBook.description}
             </p>
             <div className="button_container">
               <button className="single_cart" onClick={handleAddToCart}>Add to Cart</button>
