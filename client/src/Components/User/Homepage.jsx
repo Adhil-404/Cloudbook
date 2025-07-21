@@ -95,16 +95,8 @@ function Homepage() {
       
       <div className="homepage-inner">
         {/* Hero Section */}
-        <div className="hero-section">
-          <div className="hero-content">
-            <h1 className="hero-title">
-              Discover Your Next Great Read
-            </h1>
-            <p className="hero-subtitle">
-              Explore thousands of books across all genres and find your perfect literary companion
-            </p>
-          </div>
-        </div>
+       
+        
 
         {/* Search and Filters */}
         <div className="search-filters">
