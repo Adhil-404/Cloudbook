@@ -4,15 +4,32 @@ import { Link, useNavigate } from 'react-router-dom';
 import UserNav from '../User/Usernav';
 import UserFooter from './UserFooter';
 import '../../Assets/Styles/Userstyles/Homepage.css';
+import '../../Assets/Styles/Userstyles/Homepage.css';
 
-
-function UserHomepage() 
+function UserHomepage() {
   const [books, setBooks] = useState([]);
-  const [featuredBooks, setFeaturedBooks] = useState([]);
-  const [topSellingBooks, setTopSellingBooks] = useState([]);
-  const [trendingBooks, setTrendingBooks] = useState([]);
-  const [bestsellingBooks, setBestsellingBooks] = useState([]);
-  const [popularBooks, setPopularBooks] = useState([]);
+  // const [featuredBooks, setFeaturedBooks] = useState([]);
+  // const [topSellingBooks, setTopSellingBooks] = useState([]);
+  // const [trendingBooks, setTrendingBooks] = useState([]);
+  // const [bestsellingBooks, setBestsellingBooks] = useState([]);
+  // const [popularBooks, setPopularBooks] = useState([]);
+  // const navigate = useNavigate();
+  // const [featuredBooks, setFeaturedBooks] = useState([]);
+  // const [topSellingBooks, setTopSellingBooks] = useState([]);
+  // const [trendingBooks, setTrendingBooks] = useState([]);
+  // const [bestsellingBooks, setBestsellingBooks] = useState([]);
+  // const [popularBooks, setPopularBooks] = useState([]);
+
+
+
+// function UserHomepage() 
+//   const [books, setBooks] = useState([]);
+//   const [featuredBooks, setFeaturedBooks] = useState([]);
+//   const [topSellingBooks, setTopSellingBooks] = useState([]);
+//   const [trendingBooks, setTrendingBooks] = useState([]);
+//   const [bestsellingBooks, setBestsellingBooks] = useState([]);
+//   const [popularBooks, setPopularBooks] = useState([]);
+// >>>>>>> main
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,7 +38,11 @@ function UserHomepage()
         const res = await axios.get('http://localhost:5000/api/allbooks');
         const allBooks = res.data;
         
+
+
+
         // Distribute books across different sections
+>
         setBooks(allBooks.slice(0, 6));
         setFeaturedBooks(allBooks.slice(0, 8));
         setTopSellingBooks(allBooks.slice(6, 14));
@@ -63,7 +84,9 @@ function UserHomepage()
 
   return (
     <div className="homepage">
-      <UserNav />
+
+  
+      <section className="hero-section1">
 
       
       <div className="homepage-inner">
@@ -120,6 +143,15 @@ function UserHomepage()
                     className={`floating-book book-${index + 1}`}
                   />
                 ))}
+      
+                <div className="decorative-book book-7">
+                  <div className="book-spine">CLASSICS</div>
+                </div>
+                <div className="decorative-book book-8">
+                  <div className="book-spine">FANTASY</div>
+                </div>
+                <div className="decorative-book book-9">
+                  <div className="book-spine">MYSTERY</div>
                 {/* Decorative placeholder books */}
                 <div className="decorative-book book-7">
                   <div className="book-spine">CLASSICS</div>
@@ -132,6 +164,18 @@ function UserHomepage()
                   <div className="book-spine">MYSTERY</div>
                 </div>
               </div>
+          
+              <div className="book-stack-base"></div>
+            
+              <div className="floating-element leaf-1">🍃</div>
+              <div className="floating-element leaf-2">🍃</div>
+            </div>
+          </div>
+        </div>
+        </div>
+      </section>
+
+
               {/* Stack base */}
               <div className="book-stack-base"></div>
               {/* Floating leaves/papers */}
@@ -155,6 +199,7 @@ function UserHomepage()
         </div>
       </section>
 
+ 
       {/* Sale Banners */}
       <section className="sale-banners">
         <div className="banner-container">
@@ -173,9 +218,30 @@ function UserHomepage()
               <button className="banner-btn">Shop now →</button>
             </div>
             <div className="banner-image">
+            </div>
+            <div className="banner-image">
+              <img src={`http://localhost:5000/uploads/${books[0]?.coverImage}`} alt="Sale book" />
+            </div>
+          </div>
+          <div className="sale-banner banner-teal">
+            <div className="banner-content">
+              <h3>Sale 45% OFF</h3>
+              <button className="banner-btn">Shop now →</button>
+            </div>
+            <div className="banner-image">
               <img src={`http://localhost:5000/uploads/${books[1]?.coverImage}`} alt="Sale book" />
             </div>
           </div>
+        </div>
+      </section>
+
+
+      <section className="top-selling-section">
+        <SectionHeader title="Top Selling Vendor" viewAllLink="/vendors" />
+        <div className="vendor-grid">
+          {topSellingBooks.map((book) => (
+            <BookCard key={book._id} book={book} />
+          ))}
         </div>
       </section>
 
@@ -229,6 +295,7 @@ function UserHomepage()
         </div>
       </section>
 
+
       {/* Trending Now */}
       <section className="trending-section">
         <SectionHeader title="Trending Now" viewAllLink="/trending" />
@@ -245,7 +312,7 @@ function UserHomepage()
           </div>
         </div>
       </section>
-
+   
       {/* Bestselling Books */}
       <section className="bestselling-section">
         <SectionHeader title="Bestselling Books" viewAllLink="/bestselling" />
@@ -263,6 +330,7 @@ function UserHomepage()
         </div>
       </section>
 
+   
       {/* Popular Books */}
       <section className="popular-section">
         <SectionHeader title="Popular Books" viewAllLink="/popular" />
