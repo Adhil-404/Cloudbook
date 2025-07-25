@@ -39,7 +39,7 @@ function UserNav() {
   </span>
           <i className="bi bi-person-fill" aria-label="User"></i>
           <i className="bi bi-heart-fill" aria-label="Favorites"></i>
-          <Link to="/user/homepage/cart" aria-label="Cart">
+          <Link to="/user/homepage/cart" aria-label="Cart"/>
 
           <i className="bi bi-person-fill"></i>
           <i className="bi bi-heart-fill"></i>
