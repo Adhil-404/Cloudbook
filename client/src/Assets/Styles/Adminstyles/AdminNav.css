@@ -73,9 +73,9 @@
   letter-spacing :0.3s;
 }
 
-.admin-nav-links:hover {
+.admin-nav-links a:hover {
   letter-spacing: 2px;
-  color: #111312;
+  color: #141a19;
   
 }
 
