@@ -7,31 +7,17 @@ import '../../Assets/Styles/Userstyles/Homepage.css';
 
 function UserHomepage() {
   const [books, setBooks] = useState([]);
-  const [featuredBooks, setFeaturedBooks] = useState([]);
-  const [topSellingBooks, setTopSellingBooks] = useState([]);
-  const [trendingBooks, setTrendingBooks] = useState([]);
-  const [bestsellingBooks, setBestsellingBooks] = useState([]);
-  const [popularBooks, setPopularBooks] = useState([]);
-  
   const navigate = useNavigate();
-
 
   useEffect(() => {
     const fetchBooks = async () => {
       try {
         const res = await axios.get('http://localhost:5000/api/allbooks');
-        const allBooks = res.data;
-        setBooks(allBooks.slice(0, 6));
-        setFeaturedBooks(allBooks.slice(0, 8));
-        setTopSellingBooks(allBooks.slice(6, 14));
-        setTrendingBooks(allBooks.slice(14, 18));
-        setBestsellingBooks(allBooks.slice(18, 22));
-        setPopularBooks(allBooks.slice(22, 26));
+        setBooks(res.data);
       } catch (err) {
         console.error("Error fetching books:", err);
       }
     };
-
     fetchBooks();
   }, []);
 
@@ -54,11 +40,16 @@ function UserHomepage() {
   const SectionHeader = ({ title, viewAllLink }) => (
     <div className="section-header">
       <h2>{title}</h2>
-      {viewAllLink && (
-        <Link to={viewAllLink} className="view-all">View all products →</Link>
-      )}
+      {viewAllLink && <Link to={viewAllLink} className="view-all">View all products →</Link>}
     </div>
   );
+
+  // Derived sections
+  const featuredBooks = books.slice(0, 8);
+  const topSellingBooks = books.slice(8, 16);
+  const trendingBooks = books.slice(16, 20);
+  const bestsellingBooks = books.slice(20, 24);
+  const popularBooks = books.slice(24, 28);
 
   return (
     <div className="homepage">
@@ -67,7 +58,7 @@ function UserHomepage() {
       <div className="homepage-inner">
 
         {/* Hero Section */}
-        < section className="hero-section" >
+        <section className="hero-section">
           <div className="hero-content">
             <div className="hero-text">
               <div className="special-offer">SPECIAL OFFER</div>
@@ -98,10 +89,10 @@ function UserHomepage() {
               </div>
             </div>
           </div>
-        </section >
+        </section>
 
         {/* Carousel */}
-        < section className="book-carousel" >
+        <section className="book-carousel">
           <div className="carousel-container">
             <div className="carousel-track">
               {featuredBooks.map(book => (
@@ -111,10 +102,10 @@ function UserHomepage() {
               ))}
             </div>
           </div>
-        </section >
+        </section>
 
         {/* Sale Banners */}
-        < section className="sale-banners" >
+        <section className="sale-banners">
           <div className="banner-container">
             <div className="sale-banner banner-purple">
               <div className="banner-content">
@@ -135,16 +126,17 @@ function UserHomepage() {
               </div>
             </div>
           </div>
-        </section >
+        </section>
 
-        {/* Book Sections */}
-        < section className="top-selling-section" >
+        {/* Top Selling Section */}
+        <section className="top-selling-section">
           <SectionHeader title="Top Selling Vendor" viewAllLink="/vendors" />
           <div className="vendor-grid">
             {topSellingBooks.map(book => <BookCard key={book._id} book={book} />)}
           </div>
-        </section >
+        </section>
 
+        {/* Subscription */}
         <section className="subscription-banner">
           <div className="subscription-content">
             <div className="subscription-text">
@@ -159,6 +151,7 @@ function UserHomepage() {
           </div>
         </section>
 
+        {/* Favourite Reads */}
         <section className="favourite-reads">
           <SectionHeader title="Our Favourite Reads" viewAllLink="/favourites" />
           <div className="favourite-grid">
@@ -179,6 +172,7 @@ function UserHomepage() {
           </div>
         </section>
 
+        {/* Trending */}
         <section className="trending-section">
           <SectionHeader title="Trending Now" viewAllLink="/trending" />
           <div className="trending-container">
@@ -193,6 +187,7 @@ function UserHomepage() {
           </div>
         </section>
 
+        {/* Bestselling */}
         <section className="bestselling-section">
           <SectionHeader title="Bestselling Books" viewAllLink="/bestselling" />
           <div className="bestselling-container">
@@ -207,6 +202,7 @@ function UserHomepage() {
           </div>
         </section>
 
+        {/* Popular */}
         <section className="popular-section">
           <SectionHeader title="Popular Books" viewAllLink="/popular" />
           <div className="popular-container">
@@ -225,6 +221,7 @@ function UserHomepage() {
           </div>
         </section>
 
+        {/* Blog Section */}
         <section className="blog-section">
           <SectionHeader title="Latest Blog Post" viewAllLink="/blog" />
           <div className="blog-grid">
@@ -244,8 +241,8 @@ function UserHomepage() {
         </section>
 
         <UserFooter />
-      </div >
-    </div >
+      </div>
+    </div>
   );
 }
 
