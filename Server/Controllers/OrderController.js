@@ -1,8 +1,8 @@
-const Order = require("../Schema/OrderSchema");
+const Order = require("../Schema/OrderSchema.js");
 
 
 
-export const placeOrder = async (req, res) => {
+ const placeOrder = async (req, res) => {
     try {
         const { items, totalAmount, itemCount, orderDate } = req.body;
 

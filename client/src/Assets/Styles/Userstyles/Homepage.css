@@ -1,7 +1,6 @@
 
 .homepage {
   font-family: 'Arial', sans-serif;
- {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -170,7 +169,7 @@ body {
   opacity: 0.3;
   animation: float 20s ease-in-out infinite;
 }
-
+}
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-20px); }
@@ -418,7 +417,7 @@ body {
   justify-content: space-between;
   align-items: center;
   color: white;
-
+}
 
 .book-card {
   background: white;
@@ -841,7 +840,7 @@ body {
   color: #666;
   font-size: 14px;
   line-height: 1.5;
-
+}
 .book-image-container-list {
   width: 120px;
   flex-shrink: 0;
@@ -1210,6 +1209,7 @@ body {
     text-align: center;
     gap: 20px;
   }
+}
 
   .vendor-grid,
   .favourite-grid {
