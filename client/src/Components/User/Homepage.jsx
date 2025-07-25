@@ -4,14 +4,21 @@ import { Link, useNavigate } from 'react-router-dom';
 import UserNav from '../User/Usernav';
 import UserFooter from './UserFooter';
 import '../../Assets/Styles/Userstyles/Homepage.css';
+import '../../Assets/Styles/Userstyles/Homepage.css';
 
 function UserHomepage() {
   const [books, setBooks] = useState([]);
-  const [featuredBooks, setFeaturedBooks] = useState([]);
-  const [topSellingBooks, setTopSellingBooks] = useState([]);
-  const [trendingBooks, setTrendingBooks] = useState([]);
-  const [bestsellingBooks, setBestsellingBooks] = useState([]);
-  const [popularBooks, setPopularBooks] = useState([]);
+  // const [featuredBooks, setFeaturedBooks] = useState([]);
+  // const [topSellingBooks, setTopSellingBooks] = useState([]);
+  // const [trendingBooks, setTrendingBooks] = useState([]);
+  // const [bestsellingBooks, setBestsellingBooks] = useState([]);
+  // const [popularBooks, setPopularBooks] = useState([]);
+  // const navigate = useNavigate();
+  // const [featuredBooks, setFeaturedBooks] = useState([]);
+  // const [topSellingBooks, setTopSellingBooks] = useState([]);
+  // const [trendingBooks, setTrendingBooks] = useState([]);
+  // const [bestsellingBooks, setBestsellingBooks] = useState([]);
+  // const [popularBooks, setPopularBooks] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -95,6 +102,8 @@ function UserHomepage() {
                 </div>
                 <div className="decorative-book book-9">
                   <div className="book-spine">MYSTERY</div>
+                <div className="decorative-book book-9">
+                  <div className="book-spine">MYSTERY</div>
                 </div>
               </div>
           
@@ -104,6 +113,7 @@ function UserHomepage() {
               <div className="floating-element leaf-2">🍃</div>
             </div>
           </div>
+        </div>
         </div>
       </section>
 

@@ -122,7 +122,7 @@ return (
               <li key={item.id} className="cart-item">
                 <div className="item-image">
                   <img
-                    src={item.images?.[0] || '/default-book-cover.jpg'}
+                    src={item.coverImage?.[0] || '/default-book-cover.jpg'}
                     alt={item.title}
                     onError={(e) => {
                       e.target.src = '/default-book-cover.jpg';
@@ -138,10 +138,10 @@ return (
                   )}
 
                   <p className="item-price">
-                    ${item.price.toFixed(2)}
+                    ₹{item.price.toFixed(2)}
                     {item.originalPrice && item.originalPrice > item.price && (
                       <span className="original-price">
-                        ${item.originalPrice.toFixed(2)}
+                        ₹{item.originalPrice.toFixed(2)}
                       </span>
                     )}
                   </p>
@@ -169,7 +169,7 @@ return (
                   </div>
 
                   <p className="item-total">
-                    Subtotal: ${(item.price * item.quantity).toFixed(2)}
+                    Subtotal: ₹{(item.price * item.quantity).toFixed(2)}
                   </p>
 
                   <button
@@ -191,7 +191,7 @@ return (
 
             <div className="summary-row">
               <span>Items ({totalItems}):</span>
-              <span>${totalPrice.toFixed(2)}</span>
+              <span>₹{totalPrice.toFixed(2)}</span>
             </div>
 
             <div className="summary-row">
@@ -203,12 +203,12 @@ return (
 
             <div className="summary-row total-row">
               <span>Total:</span>
-              <span>${(totalPrice + (totalPrice >= 25 ? 0 : 4.99)).toFixed(2)}</span>
+              <span>₹{(totalPrice + (totalPrice >= 25 ? 0 : 4.99)).toFixed(2)}</span>
             </div>
 
             {totalPrice < 25 && (
               <div className="shipping-notice">
-                <p>Add ${(25 - totalPrice).toFixed(2)} more for free shipping!</p>
+                <p>Add ₹{(25 - totalPrice).toFixed(2)} more for free shipping!</p>
               </div>
             )}
 

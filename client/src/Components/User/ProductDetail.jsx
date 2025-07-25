@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+
 import "../../Assets/Styles/Userstyles/ProductDetail.css";
+
 import { useParams } from 'react-router-dom';
+
 import UserNav from './Usernav';
 import UserFooter from './UserFooter';
-import { addToCart } from './Utils/cartUtils';
-import { ToastContainer, toast } from 'react-toastify';
 
 function ProductDetail() {
+
   const { id } = useParams();
   const [book, setBook] = useState(null);
 
@@ -16,6 +16,7 @@ function ProductDetail() {
       .then((res) => setBook(res.data))
       .catch((err) => console.error("Error fetching book:", err));
   }, [id]);
+  console.table(book)
 
   const handleAddToCart = () => {
     addToCart(book);
@@ -35,6 +36,7 @@ function ProductDetail() {
     );
   }
 
+
   return (
     <div>
       <UserNav />
@@ -51,7 +53,7 @@ function ProductDetail() {
             <span className="author">Author: {book.author}</span>
             <h6 className="single_price">₹{book.price}</h6>
             <p className="single_description">
-              <span>Description: </span>{book.description}
+            <span>Description: </span>{book.description}
             </p>
             <div className="button_container">
               <button className="single_cart" onClick={handleAddToCart}>Add to Cart</button>
@@ -62,6 +64,7 @@ function ProductDetail() {
       </div>
       <UserFooter />
       <ToastContainer stacked />
+
     </div>
   );
 }
