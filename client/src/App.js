@@ -36,7 +36,7 @@ function App() {
       <BrowserRouter>
 
         <Routes>
-          {/* user */}
+          {/* user hai*/}
           <Route path='/' element={<UserLogin />} />
           <Route path='/user_reg' element={<UserRegistration />} />
           <Route path='/user/restpassword' element={<UserResetpassword />} />

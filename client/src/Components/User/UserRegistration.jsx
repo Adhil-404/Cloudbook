@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import "../../Assets/Styles/Userstyles/UserRegistration.css";
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function UserRegistration() {
   const [formData, setFormData] = useState({
@@ -17,6 +17,7 @@ function UserRegistration() {
   const [msg, setMsg] = useState('');
   const [isError, setIsError] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({});
+  const navigate=useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -49,7 +50,7 @@ function UserRegistration() {
     }
 
 
-    axios.post("http://localhost:5000/user_reg", formData)
+    axios.post("http://localhost:5000/user/user_reg", formData)
       .then((res) => {
         console.log("Response from server:", res.data);
 
@@ -57,6 +58,10 @@ function UserRegistration() {
           setMsg(res.data.msg || "Registered successfully!");
           setIsError(false);
           setFieldErrors({});
+          setTimeout(() => {
+            navigate('/');
+        
+          },1500);
         } else {
           if (res.data.msg === "Email already exists") {
             setFieldErrors({ email: "Email already exists" });
@@ -81,6 +86,7 @@ function UserRegistration() {
       });
   };
 
+  
   return (
     <div className="signup-container">
       <div className="signup-card">
