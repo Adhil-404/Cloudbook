@@ -19,6 +19,17 @@ function UserHomepage() {
   // const [trendingBooks, setTrendingBooks] = useState([]);
   // const [bestsellingBooks, setBestsellingBooks] = useState([]);
   // const [popularBooks, setPopularBooks] = useState([]);
+
+
+
+// function UserHomepage() 
+//   const [books, setBooks] = useState([]);
+//   const [featuredBooks, setFeaturedBooks] = useState([]);
+//   const [topSellingBooks, setTopSellingBooks] = useState([]);
+//   const [trendingBooks, setTrendingBooks] = useState([]);
+//   const [bestsellingBooks, setBestsellingBooks] = useState([]);
+//   const [popularBooks, setPopularBooks] = useState([]);
+// >>>>>>> main
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,6 +39,10 @@ function UserHomepage() {
         const allBooks = res.data;
         
 
+
+
+        // Distribute books across different sections
+>
         setBooks(allBooks.slice(0, 6));
         setFeaturedBooks(allBooks.slice(0, 8));
         setTopSellingBooks(allBooks.slice(6, 14));
@@ -69,10 +84,45 @@ function UserHomepage() {
 
   return (
     <div className="homepage">
-      <UserNav />
 
   
       <section className="hero-section1">
+
+      
+      <div className="homepage-inner">
+
+
+        <div className="search-filters">
+          <div className="search-container">
+            <div className="search-bar-container">
+              <div className="search-input-wrapper">
+                <div className="search-icon">🔍</div>
+                <input
+                  type="text"
+                  placeholder="Search books or authors..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="search-input"
+                />
+              </div>
+              
+              <div className="filter-controls">
+                <div className="category-select-wrapper">
+                  <select
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                    className="category-select"
+                  >
+                    {categories.map(category => (
+                      <option key={category} value={category}>
+                        {category === 'all' ? 'All Categories' : category}
+                      </option>
+                    ))}
+                  </select>
+
+
+      {/* Hero Section */}
+      <section className="hero-section">
         <div className="hero-content">
           <div className="hero-text">
             <div className="special-offer">SPECIAL OFFER</div>
@@ -102,6 +152,14 @@ function UserHomepage() {
                 </div>
                 <div className="decorative-book book-9">
                   <div className="book-spine">MYSTERY</div>
+                {/* Decorative placeholder books */}
+                <div className="decorative-book book-7">
+                  <div className="book-spine">CLASSICS</div>
+
+                </div>
+                <div className="decorative-book book-8">
+                  <div className="book-spine">FANTASY</div>
+                </div>
                 <div className="decorative-book book-9">
                   <div className="book-spine">MYSTERY</div>
                 </div>
@@ -118,6 +176,17 @@ function UserHomepage() {
       </section>
 
 
+              {/* Stack base */}
+              <div className="book-stack-base"></div>
+              {/* Floating leaves/papers */}
+              <div className="floating-element leaf-1">🍃</div>
+              <div className="floating-element leaf-2">📄</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Book Carousel */}
       <section className="book-carousel">
         <div className="carousel-container">
           <div className="carousel-track">
@@ -131,12 +200,24 @@ function UserHomepage() {
       </section>
 
  
+      {/* Sale Banners */}
       <section className="sale-banners">
         <div className="banner-container">
           <div className="sale-banner banner-purple">
             <div className="banner-content">
               <h3>Sale 25% OFF</h3>
               <button className="banner-btn">Shop now →</button>
+            </div>
+            <div className="banner-image">
+              <img src={`http://localhost:5000/uploads/${books[0]?.coverImage}`} alt="Sale book" />
+            </div>
+          </div>
+          <div className="sale-banner banner-teal">
+            <div className="banner-content">
+              <h3>Sale 45% OFF</h3>
+              <button className="banner-btn">Shop now →</button>
+            </div>
+            <div className="banner-image">
             </div>
             <div className="banner-image">
               <img src={`http://localhost:5000/uploads/${books[0]?.coverImage}`} alt="Sale book" />
@@ -164,6 +245,17 @@ function UserHomepage() {
         </div>
       </section>
 
+      {/* Top Selling Vendor */}
+      <section className="top-selling-section">
+        <SectionHeader title="Top Selling Vendor" viewAllLink="/vendors" />
+        <div className="vendor-grid">
+          {topSellingBooks.map((book) => (
+            <BookCard key={book._id} book={book} />
+          ))}
+        </div>
+      </section>
+
+      {/* Monthly Subscription Banner */}
       <section className="subscription-banner">
         <div className="subscription-content">
           <div className="subscription-text">
@@ -182,6 +274,7 @@ function UserHomepage() {
         </div>
       </section>
 
+      {/* Our Favourite Reads */}
       <section className="favourite-reads">
         <SectionHeader title="Our Favourite Reads" viewAllLink="/favourites" />
         <div className="favourite-grid">
@@ -203,6 +296,7 @@ function UserHomepage() {
       </section>
 
 
+      {/* Trending Now */}
       <section className="trending-section">
         <SectionHeader title="Trending Now" viewAllLink="/trending" />
         <div className="trending-container">
@@ -218,8 +312,8 @@ function UserHomepage() {
           </div>
         </div>
       </section>
-
    
+      {/* Bestselling Books */}
       <section className="bestselling-section">
         <SectionHeader title="Bestselling Books" viewAllLink="/bestselling" />
         <div className="bestselling-container">
@@ -237,6 +331,7 @@ function UserHomepage() {
       </section>
 
    
+      {/* Popular Books */}
       <section className="popular-section">
         <SectionHeader title="Popular Books" viewAllLink="/popular" />
         <div className="popular-container">
@@ -262,6 +357,7 @@ function UserHomepage() {
         </div>
       </section>
 
+      {/* Blog Section */}
       <section className="blog-section">
         <SectionHeader title="Latest Blog Post" viewAllLink="/blog" />
         <div className="blog-grid">
