@@ -325,6 +325,14 @@ body {
   color: #179584;
 }
 
+.book_title{
+   color: #1f2937;
+}
+.book_author{
+  color: #34495E;
+}
+
+
 .books-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -396,7 +404,7 @@ body {
 }
 
 .author {
-  color: #666;
+  color: #8b8888;
   font-size: 14px;
   margin: 0 0 10px 0;
 }
@@ -499,6 +507,8 @@ body {
   transform: rotate(5deg);
 }
 
+
+
 .trending-section,
 .bestselling-section,
 .popular-section {
@@ -522,16 +532,18 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 20px;
+  
 }
 
 .trending-banner,
 .bestselling-banner,
 .monthly-picks-banner {
-  background: #f8f9fa;
   padding: 40px;
   border-radius: 20px;
   text-align: center;
   position: relative;
+  color: black;
+
 }
 
 .discount-badge {

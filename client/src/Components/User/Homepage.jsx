@@ -73,7 +73,7 @@ function UserHomepage() {
       <div className="book-image">
         <img src={`http://localhost:5000/uploads/${book.coverImage}`} alt={book.title} />
         <div className="book-overlay">
-          <Link to={`/book/${book._id}`} className="view-btn">View Details</Link>
+          <Link to={`/product/${book._id}`} className="view-btn">View Details</Link>
         </div>
       </div>
       <div className="book-info">
@@ -88,7 +88,7 @@ function UserHomepage() {
     <div className="section-header">
       <h2>{title}</h2>
       {viewAllLink && (
-        <Link to={viewAllLink} className="view-all">View all products →</Link>
+        <Link to={'/user/homepage/product'} className="view-all">View all products →</Link>
       )}
     </div>
   );
@@ -111,9 +111,9 @@ function UserHomepage() {
             <div className="book-stack">
               <div className="floating-books">
                 {books.slice(0, 6).map((book, index) => (
-                  <img 
-                    key={book._id} 
-                    src={`http://localhost:5000/uploads/${book.coverImage}`} 
+                  <img
+                    key={book._id}
+                    src={`http://localhost:5000/uploads/${book.coverImage}`}
                     alt={book.title}
                     className={`floating-book book-${index + 1}`}
                   />
@@ -158,7 +158,12 @@ function UserHomepage() {
           <div className="sale-banner banner-purple">
             <div className="banner-content">
               <h3>Sale 25% OFF</h3>
-              <button className="banner-btn">Shop now →</button>
+              {books[0] && (
+                <Link to={`/product/${books[0]._id}`}>
+                  <button className="banner-btn">Shop now →</button>
+                </Link>
+              )}
+
             </div>
             <div className="banner-image">
               {books[0] && <img src={`http://localhost:5000/uploads/${books[0].coverImage}`} alt="Sale book" />}
@@ -167,7 +172,12 @@ function UserHomepage() {
           <div className="sale-banner banner-teal">
             <div className="banner-content">
               <h3>Sale 45% OFF</h3>
-              <button className="banner-btn">Shop now →</button>
+              {books[1] && (
+                <Link to={`/product/${books[1]._id}`}>
+                  <button className="banner-btn">Shop now →</button>
+                </Link>
+              )}
+
             </div>
             <div className="banner-image">
               {books[1] && <img src={`http://localhost:5000/uploads/${books[1].coverImage}`} alt="Sale book" />}
@@ -189,13 +199,15 @@ function UserHomepage() {
         <div className="subscription-content">
           <div className="subscription-text">
             <h3>Only $5.99 a month</h3>
-            <button className="subscription-btn">Start now →</button>
+            <button className="subscription-btn" onClick={() => navigate('/user/homepage/product')}>
+              Start now
+            </button>
           </div>
           <div className="subscription-books">
             {books.slice(2, 5).map((book) => (
-              <img 
-                key={book._id} 
-                src={`http://localhost:5000/uploads/${book.coverImage}`} 
+              <img
+                key={book._id}
+                src={`http://localhost:5000/uploads/${book.coverImage}`}
                 alt={book.title}
               />
             ))}

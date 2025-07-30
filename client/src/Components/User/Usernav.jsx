@@ -58,8 +58,8 @@ function UserNav() {
 
         <nav className="nav-links">
           <Link to="/user/homepage">Home</Link>
-          <Link to="/user/hompepage/product">Products</Link>
-          <Link to="/user/hompepage/contact">Contact</Link>
+          <Link to="/user/homepage/product">Products</Link>
+          <Link to="/user/homepage/contact">Contact</Link>
           <Link to="/user/homepage/aboutus">About Us</Link>
         </nav>
 
