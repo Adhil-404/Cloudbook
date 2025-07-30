@@ -56,7 +56,7 @@ function HomepageProduct() {
                     ? product.description.substring(0, 100) + '...'
                     : product.description}
                 </p>
-                <Link to={`/product/${product._id}`}>
+                <Link to={`/book/${product._id}`}>
                   <button className="btn btn-primary">View More</button>
                 </Link>
               </div>
