@@ -30,7 +30,8 @@ const ContactForm = () => {
   };
 
   return (
-    <div className="container">
+    <div className="container-contact">
+      
       {!isSubmitted ? (
         <form className="form-card" onSubmit={handleSubmit}>
           <div className="form-content">

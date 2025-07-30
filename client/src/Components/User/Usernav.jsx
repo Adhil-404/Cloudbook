@@ -37,18 +37,15 @@ function UserNav() {
         <div className="middle-icons">
           <span>Login
   </span>
-          <i className="bi bi-person-fill" aria-label="User"></i>
-          <i className="bi bi-heart-fill" aria-label="Favorites"></i>
-<<<<<<< HEAD
+         
           <Link to="/user/homepage/cart" aria-label="Cart"> </Link>
-=======
+
           <Link to="/user/homepage/cart" aria-label="Cart"/>
->>>>>>> 8ffc1d427c4bfaacb7b0c38ede8ce52b5a47f703
+
 
           <i className="bi bi-person-fill"></i>
           <i className="bi bi-heart-fill"></i>
           <Link to="/user/homepage/cart">
-
             <i className="bi bi-cart-fill"></i>
           </Link>
         </div>
@@ -56,9 +53,7 @@ function UserNav() {
 
       <header className="homepage-header">
         <div className="header-bottom">
-          <button className="categories-btn" aria-label="Browse categories">
-            ☰ Categories
-          </button>
+      
         </div>
 
         <nav className="nav-links">
