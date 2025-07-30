@@ -6,7 +6,7 @@ import UserNav from './Usernav';
 import UserFooter from './UserFooter';
 import { addToCart } from './Utils/cartUtils';
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'; // Optional: required for toast styling
+import 'react-toastify/dist/ReactToastify.css'; 
 
 function ProductDetail() {
   const { id } = useParams();
