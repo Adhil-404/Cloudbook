@@ -234,3 +234,49 @@ nav {
     display: none;
   }
 }
+
+
+.nav-links a.active {
+  color: #179584 !important;
+  font-weight: bold;
+  position: relative;
+  transform: scale(1.05);
+}
+
+
+.nav-links a.active::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #0b7a6c, #179584);
+  border-radius: 2px;
+  animation: slideIn 0.3s ease-in-out;
+}
+
+@keyframes slideIn {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+
+.nav-links a:not(.active):hover {
+  letter-spacing: 2px;
+  color: rgb(20, 19, 19);
+  transform: translateY(-2px);
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #0b7a6c;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  position: relative;
+  padding-bottom: 8px;
+}
