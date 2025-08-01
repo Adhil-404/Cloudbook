@@ -590,7 +590,6 @@
   text-decoration: none;
 }
 
-/* No Results Styling */
 .no-results {
   grid-column: 1 / -1;
   display: flex;

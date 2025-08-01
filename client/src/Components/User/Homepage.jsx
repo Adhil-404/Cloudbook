@@ -77,9 +77,12 @@ function UserHomepage() {
         </div>
       </div>
       <div className="book-info">
-        <h4>{book.title}</h4>
-        <p className="author">{book.author}</p>
-        {showPrice && <p className="price">₹{book.price}</p>}
+        <h4 className='title-book'>{book.title}</h4>
+        <p className="book-author">Author : {book.author}</p>
+        {book.category && (
+          <p className="card-category2">Category : {book.category}</p>
+        )}
+        {showPrice && <p className="pricehere">₹{book.price}</p>}
       </div>
     </div>
   );
