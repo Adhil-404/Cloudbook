@@ -10,21 +10,28 @@ function UserLogin() {
   const [password, setPassword] = useState('');
 
 
+const handleSubmit = (e) => {
+  e.preventDefault();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    axios.post("http://localhost:5000/userlogin", { email, password })
-      .then((res) => {
-        console.log(res.data);
-        navigate('/user/dashboard')
+  axios.post("http://localhost:5000/userlogin", { email, password })
+    .then((res) => {
+      const token = res.data.token;
+      if (token) {
+        localStorage.setItem("userToken", token); 
+        navigate('/user/dashboard');
+      } else {
+        alert("Login failed: No token received");
+      }
+    })
+    .catch((err) => {
+  console.error("Full error object:", err);
+  console.error("Error response:", err.response);
+  console.error("Error data:", err.response?.data);
+  alert(err.response?.data?.err || "Login failed");
+});
 
-      })
-      .catch((err) => {
-        console.error(err.response?.data?.err || "Login failed");
-        alert(err.response?.data?.err || "Login failed");
-      })
+};
 
-  }
 
 
 
@@ -83,4 +90,4 @@ function UserLogin() {
   )
 }
 
-export default UserLogin
+export default UserLogin;

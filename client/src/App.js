@@ -17,7 +17,6 @@ import UserBooks from './Components/User/UserBooks';
 import UserOrders from './Components/User/UserOrders';
 import UserProfile from './Components/User/UserProfile';
 import UserSettings from './Components/User/UserSettings';
-import UserWishlist from './Components/User/UserWishlist';
 import Homepage from './Components/User/Homepage';
 import HomepageProduct from './Components/User/HomepageProduct';
 import AdminAddbook from './Components/Admin/AdminAddbook';
@@ -44,9 +43,7 @@ function App() {
           <Route path='/user/forgetpassword' element={<UserForgetpassword />} />
           <Route path='/user/books' element={<UserBooks />} />
           <Route path='/user/orders' element={<UserOrders />} />
-          <Route path='/user/profile' element={<UserProfile />} />
           <Route path='/user/settings' element={<UserSettings />} />
-          <Route path='/user/wishlist' element={<UserWishlist />} />
           <Route path='/user/homepage' element={<Homepage />} />
           <Route path='/user/homepage/product' element={<HomepageProduct />} />
           <Route path="/product/:id" element={<ProductDetail />} />
@@ -54,6 +51,7 @@ function App() {
           <Route path='/user/homepage/cart' element={<Cart />} />
           <Route path='/user/homepage/wishlist' element={<Wishlist />} />
           <Route path='/user/homepage/aboutus' element={<AboutUs />} />
+          <Route path='/user/homepage/profile' element={<UserProfile/>}/>
 
           {/* // {admin} */}
           <Route path='admin' element={<AdminLogin />} />
