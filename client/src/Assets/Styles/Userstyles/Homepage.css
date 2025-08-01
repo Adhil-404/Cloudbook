@@ -325,6 +325,17 @@ body {
   color: #179584;
 }
 
+.book_title{
+   color: #1f2937;
+}
+.book_author{
+  font-size: medium;
+  font-family: 'Times New Roman', Times, serif;
+  color: #28333d;
+  margin-bottom: -14px;
+}
+
+
 .books-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -396,7 +407,7 @@ body {
 }
 
 .author {
-  color: #666;
+  color: #8b8888;
   font-size: 14px;
   margin: 0 0 10px 0;
 }
@@ -499,6 +510,8 @@ body {
   transform: rotate(5deg);
 }
 
+
+
 .trending-section,
 .bestselling-section,
 .popular-section {
@@ -522,21 +535,23 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 20px;
+  
 }
 
 .trending-banner,
 .bestselling-banner,
 .monthly-picks-banner {
-  background: #f8f9fa;
   padding: 40px;
   border-radius: 20px;
   text-align: center;
   position: relative;
+  color: black;
+
 }
 
 .discount-badge {
-  background: #0b7a6c;
-  color: white;
+  background: #f4f5f5;
+  color: rgb(20, 20, 20);
   padding: 8px 16px;
   border-radius: 15px;
   font-weight: bold;
@@ -549,4 +564,21 @@ body {
   justify-content: center;
   gap: 10px;
   margin-top: 20px;
+}
+
+.trending-banner,
+.bestselling-banner {
+  padding: 40px;
+  border-radius: 20px;
+  text-align: center;
+  position: relative;
+  background: linear-gradient(135deg, #160b80, #6e0766);
+  color: white;
+}
+
+.card-category {
+  font-size: 15px;
+  color: #da1616;
+  margin-bottom: 6px;
+
 }

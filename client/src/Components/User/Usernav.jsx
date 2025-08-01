@@ -20,46 +20,48 @@ function UserNav() {
       </div>
 
       <div className="header-middle">
-        <div className="logo">cloudbook</div>
+        <div className="logo">Cloudbook</div>
         <div className="search-bar">
           <input type="text" placeholder="Search products..." aria-label="Search products" />
           <select aria-label="Select category">
             <option>All category</option>
             <option>Fantasy</option>
-            <option>Crime</option>
+            <option>Crime Fiction</option>
             <option>Romance</option>
-            <option>Horror</option>
+            <option>Mystery</option>
+            <option>Thriller</option>
+            <option>Children's Literature</option>
+            <option>Historical Fiction</option>
+            <option>Dystopian fiction</option>
           </select>
           <button aria-label="Search">
             <i className="bi bi-search"></i>
           </button>
         </div>
         <div className="middle-icons">
-          <span>Login
-  </span>
-         
-          <Link to="/user/homepage/cart" aria-label="Cart"> </Link>
-
-          <Link to="/user/homepage/cart" aria-label="Cart"/>
-
 
           <i className="bi bi-person-fill"></i>
-          <i className="bi bi-heart-fill"></i>
+
+          <Link to="/user/homepage/wishlist">
+            <i className="bi bi-heart-fill"></i>
+          </Link>
+
           <Link to="/user/homepage/cart">
             <i className="bi bi-cart-fill"></i>
           </Link>
+
         </div>
       </div>
 
       <header className="homepage-header">
         <div className="header-bottom">
-      
+
         </div>
 
         <nav className="nav-links">
           <Link to="/user/homepage">Home</Link>
-          <Link to="/user/hompepage/product">Products</Link>
-          <Link to="/user/hompepage/contact">Contact</Link>
+          <Link to="/user/homepage/product">Products</Link>
+          <Link to="/user/homepage/contact">Contact</Link>
           <Link to="/user/homepage/aboutus">About Us</Link>
         </nav>
 
