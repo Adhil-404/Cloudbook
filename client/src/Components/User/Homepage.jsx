@@ -223,7 +223,8 @@ function UserHomepage() {
               <img src={`http://localhost:5000/uploads/${book.coverImage}`} alt={book.title} />
               <div className="favourite-info">
                 <h4 className='book_title'>{book.title}</h4>
-                <p className='book_author'>{book.author}</p>
+                <p className='book_author'>Author : {book.author}</p>
+                <p className='card-category'>Category : {book.category}</p>  
                 <div className="rating">
                   <span className="stars">★★★★★</span>
                   <span className="rating-text">(4.5)</span>

@@ -26,6 +26,7 @@ import ContactForm from './Components/User/ContactForm';
 import Cart from './Components/User/Cart';
 import AdminEditBook from './Components/Admin/AdminEditBook';
 import AboutUs from './Components/User/AboutUs';
+import Wishlist from './Components/User/Wishlist';
 
 
 
@@ -36,7 +37,7 @@ function App() {
       <BrowserRouter>
 
         <Routes>
-          {/* user hai*/}
+          {/* user*/}
           <Route path='/' element={<UserLogin />} />
           <Route path='/user_reg' element={<UserRegistration />} />
           <Route path='/user/restpassword' element={<UserResetpassword />} />
@@ -51,9 +52,10 @@ function App() {
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path='/user/homepage/contact' element={<ContactForm />} />
           <Route path='/user/homepage/cart' element={<Cart />} />
+          <Route path='/user/homepage/wishlist' element={<Wishlist />} />
           <Route path='/user/homepage/aboutus' element={<AboutUs />} />
-          {/* // {admin} */}
 
+          {/* // {admin} */}
           <Route path='admin' element={<AdminLogin />} />
           <Route path='admin/dashboard' element={<AdminDashboard />} />
           <Route path='admin/orders' element={<AdminOrders />} />

@@ -74,18 +74,22 @@ body {
   align-items: center;
   gap: 15px;
 }
+.middle-icons a i,
+.middle-icons > i {
+  transition: transform 0.4s ease;
+  position: relative;
+  display: inline-block;
+}
+
+.middle-icons a i:hover,
+.middle-icons > i:hover {
+  transform: translateY(-8px);
+}
 
 .middle-icons i {
-  text-decoration: none;
-  transition: all 0.4s;
-  position: relative;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
+  cursor: pointer;
 }
 
-.middle-icons i:hover {
-  transform: translateY(-10px);
-}
 
 .homepage-header {
   display: flex;
