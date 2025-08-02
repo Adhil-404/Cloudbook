@@ -81,10 +81,8 @@ function UserNav() {
     { icon: "bi bi-heart-fill", label: "Wishlist", path: "/user/homepage/wishlist", description: "Your saved items" },
     { icon: "bi bi-cart-fill", label: "Shopping Cart", path: "/user/homepage/cart", description: "Items in your cart" },
     { icon: "bi bi-credit-card-fill", label: "Payment Methods", path: "/user/homepage/payment-methods", description: "Manage cards & payments" },
-    { icon: "bi bi-geo-alt-fill", label: "My Addresses", path: "/user/homepage/addresses", description: "Shipping addresses" },
     { icon: "bi bi-bell-fill", label: "Notifications", path: "/user/homepage/notifications", description: "Your alerts & updates" },
     { icon: "bi bi-star-fill", label: "Reviews & Ratings", path: "/user/homepage/reviews", description: "Your product reviews" },
-    { icon: "bi bi-gear-fill", label: "Account Settings", path: "/user/homepage/settings", description: "Privacy & preferences" },
     { icon: "bi bi-question-circle-fill", label: "Help & Support", path: "/user/homepage/support", description: "Get help" },
     { icon: "bi bi-box-arrow-right", label: "Logout", path: "#", description: "Sign out of your account", action: "logout" }
   ];
@@ -143,6 +141,7 @@ function UserNav() {
             type="button" 
             aria-label="Search"
             onClick={handleSearchClick}
+            className="search-icon-btn"
           >
             <i className="bi bi-search"></i>
           </button>

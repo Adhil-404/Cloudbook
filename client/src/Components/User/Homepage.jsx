@@ -70,21 +70,28 @@ function UserHomepage() {
 
   const BookCard = ({ book, showPrice = true }) => (
     <div className="book-card">
-      <div className="book-image">
-        <img src={`http://localhost:5000/uploads/${book.coverImage}`} alt={book.title} />
-        <div className="book-overlay">
-          <Link to={`/product/${book._id}`} className="view-btn">View Details</Link>
-        </div>
-      </div>
-      <div className="book-info">
-        <h4 className='title-book'>{book.title}</h4>
-        <p className="book-author">Author : {book.author}</p>
-        {book.category && (
-          <p className="card-category2">Category : {book.category}</p>
-        )}
-        {showPrice && <p className="pricehere">₹{book.price}</p>}
-      </div>
+  <div className="book-image">
+    <img src={`http://localhost:5000/uploads/${book.coverImage}`} alt={book.title} />
+    <div className="book-overlay">
+      <Link to={`/product/${book._id}`} className="view-btn">View Details</Link>
     </div>
+  </div>
+ <div className="book-info">
+  <h4 className='title-book'>{book.title}</h4>
+  <p className="book-author">Author : <em>{book.author}</em></p>
+  
+  {book.category && (
+    <p className="card-category2">Category : {book.category}</p>
+  )}
+  
+  {showPrice && (
+    <p className="pricehere">₹{book.price}</p>
+  )}
+</div>
+
+
+</div>
+
   );
 
   const SectionHeader = ({ title, viewAllLink }) => (
