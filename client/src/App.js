@@ -26,6 +26,8 @@ import Cart from './Components/User/Cart';
 import AdminEditBook from './Components/Admin/AdminEditBook';
 import AboutUs from './Components/User/AboutUs';
 import Wishlist from './Components/User/Wishlist';
+import UserReview from './Components/User/UserReview';
+import UserHelp from './Components/User/UserHelp';
 
 
 
@@ -52,6 +54,9 @@ function App() {
           <Route path='/user/homepage/wishlist' element={<Wishlist />} />
           <Route path='/user/homepage/aboutus' element={<AboutUs />} />
           <Route path='/user/homepage/profile' element={<UserProfile/>}/>
+          <Route path='/user/homepage/reviews' element={<UserReview/>}/>
+          <Route path='/user/homepage/support' element={<UserHelp/>}/>
+          
 
           {/* // {admin} */}
           <Route path='admin' element={<AdminLogin />} />

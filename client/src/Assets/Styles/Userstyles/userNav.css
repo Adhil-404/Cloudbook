@@ -60,13 +60,32 @@ body {
   border: 1px solid #ccc;
 }
 
-.search-bar button {
+.search-bar button,
+.search-icon-btn {
   padding: 10px 15px;
   background-color: #0b7a6c;
   color: white;
   border: none;
   border-radius: 20px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.search-bar button:hover,
+.search-icon-btn:hover {
+  background-color: #179584;
+  transform: translateY(-1px);
+}
+
+.search-bar button i,
+.search-icon-btn i {
+  font-size: 16px;
+  color: white;
+  opacity: 1;
+  visibility: visible;
 }
 
 .middle-icons {
@@ -389,7 +408,6 @@ nav {
   transform: scale(1.1);
 }
 
-/* Logout item specific styling */
 .sidebar-item.logout-item {
   color: #dc3545;
   border-top: 1px solid #e9ecef;

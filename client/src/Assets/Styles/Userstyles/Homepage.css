@@ -583,50 +583,38 @@ body {
 
 }  
 
-.title-book {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #1f2937;
-  margin-bottom: 8px;
-  line-height: 1.4;
+.book-info {
+  text-align: center;
+  padding: 10px 0;
   font-family: 'Poppins', sans-serif;
-  transition: color 0.3s ease;
 }
 
-.title-book:hover {
-  color: #0b7a6c;
+.title-book {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 10px 0 5px;
 }
 
 .book-author {
   font-size: 0.95rem;
-  font-weight: 500;
-  font-style: italic;
-  color: #6b7280; 
-  margin-bottom: 4px;
-  font-family: 'Georgia', serif;
+  color: #555;
+  margin-bottom: 8px;
 }
 
 .card-category2 {
-  font-size: 0.9rem;
-  font-weight: 500;
+  display: inline-block;
+  font-size: 0.85rem;
   background-color: #e3f2fd;
   color: #0277bd;
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 12px;
-  margin-bottom: 8px;
-  font-family: 'Inter', sans-serif;
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-bottom: 6px;
 }
 
 .pricehere {
+  display: block;
+  margin-top: 8px;
   font-size: 1rem;
-  font-weight: bold;
+  font-weight: 600;
   color: #0b7a4c;
-  margin-top: 6px;
-  display: inline-block;
-  padding: 6px 10px;
-  border-radius: 10px;
-  font-family: 'Poppins', sans-serif;
-  transition: background 0.3s ease;
 }
-
