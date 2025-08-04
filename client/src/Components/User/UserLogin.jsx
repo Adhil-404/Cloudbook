@@ -13,10 +13,10 @@ function UserLogin() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.post("http://localhost:5000/userlogin", { email, password })
+    axios.post("http://localhost:5000/user/userlogin", { email, password })
       .then((res) => {
         console.log(res.data);
-        navigate('/user/dashboard')
+        navigate('/user/homepage')
 
       })
       .catch((err) => {
