@@ -144,7 +144,9 @@ function UserNav() {
             className="search-icon-btn"
           >
             <i className="bi bi-search"></i>
-          </button>
+     
+     </button>
+    
         </form>
       </div>
 
@@ -157,6 +159,7 @@ function UserNav() {
           <NavLink to="/user/homepage/product" className={({ isActive }) => isActive ? 'active' : ''}>Products</NavLink>
           <NavLink to="/user/homepage/contact" className={({ isActive }) => isActive ? 'active' : ''}>Contact</NavLink>
           <NavLink to="/user/homepage/aboutus" className={({ isActive }) => isActive ? 'active' : ''}>About Us</NavLink>
+
         </div>
         <div className="header-right">
           <div className="support-info">

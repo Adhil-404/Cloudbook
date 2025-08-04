@@ -151,6 +151,28 @@ function HomepageProduct() {
 
       {/* Products Grid */}
       <div className="product-grid">
+
+        {sortedProducts.map((product) => (
+          <div key={product._id} className="product-card">
+            <div className="card">
+              <img
+                src={`http://localhost:5000/uploads/${product.coverImage}`}
+                className="card-img-top"
+                alt={product.title}
+              />
+              <div className="card-body">
+                <h4 className="card-title">{product.title}</h4>
+                <p className="card-author"><strong>Author :</strong> {product.author}</p>
+                <h6 className="card-subtitle">₹{product.price}</h6>
+                <p className="card-text">
+                  {product.description.length > 100
+                    ? product.description.substring(0, 100) + '...'
+                    : product.description}
+                </p>
+                <Link to={`/book/${product._id}`}>
+                  <button className="btn btn-primary">View More</button>
+                </Link>
+
         {sortedProducts.length > 0 ? (
           sortedProducts.map((product) => (
             <div key={product._id} className="product-card">
@@ -195,6 +217,7 @@ function HomepageProduct() {
                     <button className="btn btn-primary">View More</button>
                   </Link>
                 </div>
+
               </div>
             </div>
           ))
