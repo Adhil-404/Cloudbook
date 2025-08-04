@@ -10,6 +10,7 @@ import UserNav from './Usernav';
 import UserFooter from './UserFooter';
 import "../../Assets/Styles/Userstyles/Cart.css";
 
+
 function Cart() {
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]);
@@ -56,6 +57,7 @@ function Cart() {
   };
 
   const handleOrder = async () => {
+
   if (cartItems.length === 0) {
     alert("Cart is empty");
     return;
@@ -127,6 +129,64 @@ function Cart() {
     );
   }
 
+    setIsOrdering(true);
+
+    const orderData = {
+      items: cartItems,
+      totalAmount: totalPrice,
+      orderDate: new Date().toISOString(),
+      itemCount: cartItems.reduce((sum, item) => sum + item.quantity, 0)
+    };
+
+    try {
+      const response = await axios.post('http://localhost:5000/orders/place', orderData);
+
+      if (response.status === 201) {
+        clearCart();
+        setCartItems([]);
+        alert('Order placed successfully!');
+      } else {
+        alert('Unexpected response from server.');
+      }
+    } catch (error) {
+      console.error('Order failed:', error);
+      alert('Failed to place order. Please try again.');
+    } finally {
+      setIsOrdering(false);
+    }
+  };
+
+  const totalPrice = cartItems.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
+
+  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
+  if (cartItems.length === 0) {
+    return (
+      <>
+        <UserNav />
+        <div className="cart-empty">
+          <div className="empty-cart-content">
+            <div className="empty-cart-icon"></div>
+            <h3>Your cart is empty</h3>
+            <p>Discover your next favorite book!</p>
+
+            <Link to='/user/homepage/product'
+              className="btn btn-primary"
+              onClick={() => window.history.back()}
+            >
+              Continue Shopping
+            </Link>
+          </div>
+        </div>
+        <UserFooter />
+      </>
+    );
+  }
+
+
   return (
     <>
       <UserNav />
@@ -160,6 +220,33 @@ function Cart() {
                       ₹{item.price.toFixed(2)}
                       {item.originalPrice && item.originalPrice > item.price && (
                         <span className="original-price">₹{item.originalPrice.toFixed(2)}</span>
+
+                  <div className="item-image-wrapper">
+                    <div className="item-image">
+                      <img
+                        src={`http://localhost:5000/uploads/${Array.isArray(item.coverImage) ? item.coverImage[0] : item.coverImage}`}
+                        alt={item.title}
+                        onError={(e) => {
+                          e.target.src = '/default-book-cover.jpg';
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="cart-details">
+                    <h4 className="item-title">{item.title}</h4>
+
+                    {item.author && (
+                      <p className="item-author">by {item.author}</p>
+                    )}
+  <p className='card-category1'>Category : {item.category}</p>  
+                    <p className="item-price">
+                      ₹{item.price.toFixed(2)}
+                      {item.originalPrice && item.originalPrice > item.price && (
+                        <span className="original-price">
+                          ₹{item.originalPrice.toFixed(2)}
+                        </span>
+
                       )}
                     </p>
 
@@ -168,14 +255,27 @@ function Cart() {
                         className="quantity-btn decrement"
                         onClick={() => handleDecrement(item.id, item.quantity)}
                         disabled={isOrdering}
+
                       >
                         −
                       </button>
                       <span className="quantity-display">Qty: {item.quantity}</span>
+
+                        aria-label="Decrease quantity"
+                      >
+                        −
+                      </button>
+                      <span className="quantity-display">
+                        Qty: {item.quantity}
+                      </span>
+
                       <button
                         className="quantity-btn increment"
                         onClick={() => handleIncrement(item.id, item.quantity)}
                         disabled={isOrdering}
+
+
+                        aria-label="Increase quantity"
                       >
                         +
                       </button>
@@ -201,16 +301,28 @@ function Cart() {
           <div className="cart-summary">
             <div className="summary-card">
               <h3>Order Summary</h3>
+
               <div className="summary-row">
                 <span>Items ({totalItems}):</span>
                 <span>₹{totalPrice.toFixed(2)}</span>
               </div>
+
               <div className="summary-row">
                 <span>Shipping:</span>
                 <span className="free-shipping">
                   {totalPrice >= 25 ? 'Free' : '₹4.99'}
                 </span>
               </div>
+
+
+              <div className="summary-row">
+                <span>Shipping:</span>
+                <span className="free-shipping">
+                  {totalPrice >= 25 ? 'Free' : '$4.99'}
+                </span>
+              </div>
+
+
               <div className="summary-row total-row">
                 <span>Total:</span>
                 <span>₹{(totalPrice + (totalPrice >= 25 ? 0 : 4.99)).toFixed(2)}</span>
@@ -228,7 +340,10 @@ function Cart() {
                   onClick={handleOrder}
                   disabled={isOrdering || cartItems.length === 0}
                 >
+
                   {isOrdering ? 'Processing...' : 'Proceed to Order'}
+
+                  {isOrdering ? 'Processing...' : 'Place Order'}
                 </button>
 
                 <button

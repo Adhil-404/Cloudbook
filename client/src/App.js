@@ -17,7 +17,6 @@ import UserBooks from './Components/User/UserBooks';
 import UserOrders from './Components/User/UserOrders';
 import UserProfile from './Components/User/UserProfile';
 import UserSettings from './Components/User/UserSettings';
-import UserWishlist from './Components/User/UserWishlist';
 import Homepage from './Components/User/Homepage';
 import HomepageProduct from './Components/User/HomepageProduct';
 import AdminAddbook from './Components/Admin/AdminAddbook';
@@ -26,6 +25,9 @@ import ContactForm from './Components/User/ContactForm';
 import Cart from './Components/User/Cart';
 import AdminEditBook from './Components/Admin/AdminEditBook';
 import AboutUs from './Components/User/AboutUs';
+import Wishlist from './Components/User/Wishlist';
+import UserReview from './Components/User/UserReview';
+import UserHelp from './Components/User/UserHelp';
 
 
 
@@ -36,26 +38,32 @@ function App() {
       <BrowserRouter>
 
         <Routes>
-          {/* user hai*/}
+          {/* user*/}
           <Route path='/' element={<UserLogin />} />
           <Route path='/user_reg' element={<UserRegistration />} />
           <Route path='/user/restpassword' element={<UserResetpassword />} />
           <Route path='/user/forgetpassword' element={<UserForgetpassword />} />
           <Route path='/user/books' element={<UserBooks />} />
           <Route path='/user/orders' element={<UserOrders />} />
-          <Route path='/user/profile' element={<UserProfile />} />
           <Route path='/user/settings' element={<UserSettings />} />
-          <Route path='/user/wishlist' element={<UserWishlist />} />
           <Route path='/user/homepage' element={<Homepage />} />
-          <Route path='/user/homepage/product' element={<HomepageProduct />} />
+          <Route path='/user/homepage/product' element={<HomepageProduct />} /
           <Route path="/book/:id" element={<ProductDetail />} />
           <Route path='/user/hompepage/contact' element={<ContactForm />} />
           <Route path='/user/homepage/cart' element={<Cart />} />
+          <Route path='/user/homepage/wishlist' element={<Wishlist />} />
           <Route path='/user/homepage/aboutus' element={<AboutUs />} />
+
           <Route path='user/homepage/order' element={<UserOrders/>}/>
           
-          {/* // {admin} */}
+    
 
+          <Route path='/user/homepage/profile' element={<UserProfile/>}/>
+          <Route path='/user/homepage/reviews' element={<UserReview/>}/>
+          <Route path='/user/homepage/support' element={<UserHelp/>}/>
+
+
+          {/* // {admin} */}
           <Route path='admin' element={<AdminLogin />} />
           <Route path='admin/dashboard' element={<AdminDashboard />} />
           <Route path='admin/orders' element={<AdminOrders />} />
