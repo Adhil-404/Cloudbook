@@ -50,26 +50,49 @@ function Cart() {
   const handleOrder = async () => {
     setIsOrdering(true);
 
-    const orderData = {
-      items: cartItems,
-      totalAmount: totalPrice,
-      orderDate: new Date().toISOString(),
-      itemCount: cartItems.reduce((sum, item) => sum + item.quantity, 0)
-    };
-
     try {
-      const response = await axios.post('http://localhost:5000/orders/place', orderData);
+      const token = localStorage.getItem('token') || localStorage.getItem('authToken') || sessionStorage.getItem('token');
+      
+      if (!token) {
+        alert('Please login to place an order');
+        setIsOrdering(false);
+        return;
+      }
+
+      const orderData = {
+        items: cartItems,
+        totalAmount: totalPrice,
+        itemCount: cartItems.reduce((sum, item) => sum + item.quantity, 0)
+      };
+
+      console.log('Sending order data:', orderData);
+
+      const response = await axios.post('http://localhost:5000/api/orders', orderData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
 
       if (response.status === 201) {
         clearCart();
         setCartItems([]);
         alert('Order placed successfully!');
-      } else {
-        alert('Unexpected response from server.');
+        window.location.href = '/user/homepage/orders';
       }
     } catch (error) {
       console.error('Order failed:', error);
-      alert('Failed to place order. Please try again.');
+      if (error.response?.status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('authToken');
+        sessionStorage.removeItem('token');
+        alert('Please login again to place an order');
+      } else if (error.response) {
+        console.error('Error response:', error.response.data);
+        alert(`Failed to place order: ${error.response.data.message || 'Server error'}`);
+      } else {
+        alert('Failed to place order. Please check your connection.');
+      }
     } finally {
       setIsOrdering(false);
     }
@@ -88,14 +111,10 @@ function Cart() {
         <UserNav />
         <div className="cart-empty">
           <div className="empty-cart-content">
-            <div className="empty-cart-icon"></div>
+            <div className="empty-cart-icon">🛒</div>
             <h3>Your cart is empty</h3>
             <p>Discover your next favorite book!</p>
-
-            <Link to='/user/homepage/product'
-              className="btn btn-primary"
-              onClick={() => window.history.back()}
-            >
+            <Link to='/user/homepage/product' className="continue-shopping-btn">
               Continue Shopping
             </Link>
           </div>
@@ -139,7 +158,7 @@ function Cart() {
                     {item.author && (
                       <p className="item-author">by {item.author}</p>
                     )}
-  <p className='card-category1'>Category : {item.category}</p>  
+                    <p className='card-category1'>Category : {item.category}</p>
                     <p className="item-price">
                       ₹{item.price.toFixed(2)}
                       {item.originalPrice && item.originalPrice > item.price && (
@@ -199,21 +218,13 @@ function Cart() {
 
               <div className="summary-row">
                 <span>Shipping:</span>
-                <span className="free-shipping">
-                  {totalPrice >= 25 ? 'Free' : '$4.99'}
-                </span>
+                <span className="free-shipping">Free</span>
               </div>
 
               <div className="summary-row total-row">
                 <span>Total:</span>
-                <span>₹{(totalPrice + (totalPrice >= 25 ? 0 : 4.99)).toFixed(2)}</span>
+                <span>₹{totalPrice.toFixed(2)}</span>
               </div>
-
-              {totalPrice < 25 && (
-                <div className="shipping-notice">
-                  <p>Add ₹{(25 - totalPrice).toFixed(2)} more for free shipping!</p>
-                </div>
-              )}
 
               <div className="cart-actions">
                 <button

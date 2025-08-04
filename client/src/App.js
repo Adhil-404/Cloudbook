@@ -28,6 +28,7 @@ import AboutUs from './Components/User/AboutUs';
 import Wishlist from './Components/User/Wishlist';
 import UserReview from './Components/User/UserReview';
 import UserHelp from './Components/User/UserHelp';
+import UserNotification from './Components/User/UserNotification';
 
 
 
@@ -44,7 +45,7 @@ function App() {
           <Route path='/user/restpassword' element={<UserResetpassword />} />
           <Route path='/user/forgetpassword' element={<UserForgetpassword />} />
           <Route path='/user/books' element={<UserBooks />} />
-          <Route path='/user/orders' element={<UserOrders />} />
+          <Route path='/user/homepage/orders' element={<UserOrders />} />
           <Route path='/user/settings' element={<UserSettings />} />
           <Route path='/user/homepage' element={<Homepage />} />
           <Route path='/user/homepage/product' element={<HomepageProduct />} />
@@ -56,6 +57,8 @@ function App() {
           <Route path='/user/homepage/profile' element={<UserProfile/>}/>
           <Route path='/user/homepage/reviews' element={<UserReview/>}/>
           <Route path='/user/homepage/support' element={<UserHelp/>}/>
+          <Route path='/user/homepage/notifications' element={<UserNotification/>}/>
+          
           
 
           {/* // {admin} */}
