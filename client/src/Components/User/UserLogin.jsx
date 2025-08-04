@@ -13,7 +13,10 @@ function UserLogin() {
 const handleSubmit = (e) => {
   e.preventDefault();
 
-  axios.post("http://localhost:5000/userlogin", { email, password })
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+  axios.post("http://localhost:5000/user/userlogin", { email, password })
     .then((res) => {
       const token = res.data.token;
       if (token) {
@@ -29,6 +32,7 @@ const handleSubmit = (e) => {
   console.error("Error data:", err.response?.data);
   alert(err.response?.data?.err || "Login failed");
 });
+
 
 };
 

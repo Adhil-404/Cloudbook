@@ -49,11 +49,16 @@ function App() {
           <Route path='/user/settings' element={<UserSettings />} />
           <Route path='/user/homepage' element={<Homepage />} />
           <Route path='/user/homepage/product' element={<HomepageProduct />} />
-          <Route path="/product/:id" element={<ProductDetail />} />
-          <Route path='/user/homepage/contact' element={<ContactForm />} />
+          <Route path="/book/:id" element={<ProductDetail />} />
+          <Route path='/user/hompepage/contact' element={<ContactForm />} />
           <Route path='/user/homepage/cart' element={<Cart />} />
           <Route path='/user/homepage/wishlist' element={<Wishlist />} />
           <Route path='/user/homepage/aboutus' element={<AboutUs />} />
+
+          <Route path='user/homepage/order' element={<UserOrders/>}/>
+          
+    
+
           <Route path='/user/homepage/profile' element={<UserProfile/>}/>
           <Route path='/user/homepage/reviews' element={<UserReview/>}/>
           <Route path='/user/homepage/support' element={<UserHelp/>}/>

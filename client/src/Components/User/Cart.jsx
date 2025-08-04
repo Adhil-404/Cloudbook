@@ -4,11 +4,12 @@ import UserNav from './Usernav';
 import UserFooter from './UserFooter';
 import "../../Assets/Styles/Userstyles/Cart.css";
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function Cart() {
   const [cartItems, setCartItems] = useState([]);
   const [isOrdering, setIsOrdering] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setCartItems(getCart());
@@ -50,49 +51,34 @@ function Cart() {
   const handleOrder = async () => {
     setIsOrdering(true);
 
+    const orderData = {
+      items: cartItems.map(item => ({
+        id: item.id,
+        title: item.title,
+        author: item.author,
+        category: item.category,
+        price: item.price,
+        quantity: item.quantity,
+        coverImage: item.coverImage
+      })),
+      totalAmount: totalPrice,
+      itemCount: cartItems.reduce((sum, item) => sum + item.quantity, 0)
+    };
+
     try {
-      const token = localStorage.getItem('token') || localStorage.getItem('authToken') || sessionStorage.getItem('token');
-      
-      if (!token) {
-        alert('Please login to place an order');
-        setIsOrdering(false);
-        return;
-      }
-
-      const orderData = {
-        items: cartItems,
-        totalAmount: totalPrice,
-        itemCount: cartItems.reduce((sum, item) => sum + item.quantity, 0)
-      };
-
-      console.log('Sending order data:', orderData);
-
-      const response = await axios.post('http://localhost:5000/api/orders', orderData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
+      const response = await axios.post('http://localhost:5000/orders/place', orderData);
 
       if (response.status === 201) {
         clearCart();
         setCartItems([]);
         alert('Order placed successfully!');
-        window.location.href = '/user/homepage/orders';
+        navigate('/user/homepage/orders');
+      } else {
+        alert('Unexpected response from server.');
       }
     } catch (error) {
       console.error('Order failed:', error);
-      if (error.response?.status === 401) {
-        localStorage.removeItem('token');
-        localStorage.removeItem('authToken');
-        sessionStorage.removeItem('token');
-        alert('Please login again to place an order');
-      } else if (error.response) {
-        console.error('Error response:', error.response.data);
-        alert(`Failed to place order: ${error.response.data.message || 'Server error'}`);
-      } else {
-        alert('Failed to place order. Please check your connection.');
-      }
+      alert('Failed to place order. Please try again.');
     } finally {
       setIsOrdering(false);
     }
@@ -114,6 +100,7 @@ function Cart() {
             <div className="empty-cart-icon">🛒</div>
             <h3>Your cart is empty</h3>
             <p>Discover your next favorite book!</p>
+
             <Link to='/user/homepage/product' className="continue-shopping-btn">
               Continue Shopping
             </Link>
