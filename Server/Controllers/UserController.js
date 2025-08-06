@@ -51,36 +51,39 @@ const UserRegistration = async (req, res) => {
 
 
 const login = async (req, res) => {
-    const { email, password } = req.body;
+  const { email, password } = req.body;
+  console.log("Login attempt with:", email, password);
 
-    if (!email || !password) {
-        return res.status(400).json({ err: "Missing email or password" });
+  if (!email || !password) {
+    return res.status(400).json({ err: "Missing email or password" });
+  }
+
+  try {
+    const result = await UserController.findOne({ userEmail: email });
+    if (!result) {
+      console.log("Email not found");
+      return res.status(401).json({ err: "Email is wrong" });
     }
 
-    try {
-        const result = await UserController.findOne({ userEmail: email });
-        if (!result) {
-            return res.status(401).json({ err: "Email is wrong" });
-        }
-
-        const isMatching = await bcrypt.compare(password, result.password);
-        if (!isMatching) {
-            return res.status(401).json({ err: "Password is wrong" });
-        }
-
-        const token = jwt.sign(
-            { _id: result._id, userEmail: result.userEmail },
-            process.env.JWT_KEY
-
-        );
-
-        return res.status(200).json({ token });
-    } catch (err) {
-        console.error(err);
-        return res.status(500).json({ err: "Internal server error" });
+    const isMatching = await bcrypt.compare(password, result.password);
+    if (!isMatching) {
+      console.log("Password mismatch");
+      return res.status(401).json({ err: "Password is wrong" });
     }
+
+    const token = jwt.sign(
+      { _id: result._id, userEmail: result.userEmail },
+      process.env.JWT_KEY
+    );
+
+    console.log("Login successful, token generated");
+    return res.status(200).json({ token });
+
+  } catch (err) {
+    console.error("Server error during login:", err);
+    return res.status(500).json({ err: "Internal server error" });
+  }
 };
-
 
 
 

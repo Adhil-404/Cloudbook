@@ -9,6 +9,8 @@ import {
 import UserNav from './Usernav';
 import UserFooter from './UserFooter';
 import "../../Assets/Styles/Userstyles/Cart.css";
+import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 function Cart() {
   const navigate = useNavigate();
@@ -56,50 +58,32 @@ function Cart() {
   };
 
   const handleOrder = async () => {
-  if (cartItems.length === 0) {
-    alert("Cart is empty");
-    return;
-  }
-
-  const user = JSON.parse(localStorage.getItem("user"));
-  if (!user || !user._id) {
-    alert("You must be logged in to place an order.");
-    navigate("/");
-    return;
-  }
-
-  const orderData = {
-    userId: user._id,
-    items: cartItems,
-    totalAmount: totalPrice,
-    itemCount: cartItems.reduce((sum, item) => sum + item.quantity, 0),
-  };
-
-  try {
     setIsOrdering(true);
-    const response = await fetch("http://localhost:5000/api/orders", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(orderData),
-    });
 
-    if (!response.ok) throw new Error("Order submission failed");
+    const orderData = {
+      items: cartItems,
+      totalAmount: totalPrice,
+      orderDate: new Date().toISOString(),
+      itemCount: cartItems.reduce((sum, item) => sum + item.quantity, 0)
+    };
 
-    const savedOrder = await response.json();
-    clearCart();
-    setCartItems([]);
-    navigate("/order", {
-      state: { orderData: savedOrder },
-    });
-  } catch (error) {
-    console.error("Failed to place order:", error);
-    alert("Something went wrong while placing the order.");
-  } finally {
-    setIsOrdering(false);
-  }
-};
+    try {
+      const response = await axios.post('http://localhost:5000/orders/place', orderData);
+
+      if (response.status === 201) {
+        clearCart();
+        setCartItems([]);
+        alert('Order placed successfully!');
+      } else {
+        alert('Unexpected response from server.');
+      }
+    } catch (error) {
+      console.error('Order failed:', error);
+      alert('Failed to place order. Please try again.');
+    } finally {
+      setIsOrdering(false);
+    }
+  };
 
   const totalPrice = cartItems.reduce(
     (total, item) => total + item.price * item.quantity,
@@ -117,9 +101,13 @@ function Cart() {
             <div className="empty-cart-icon"></div>
             <h3>Your cart is empty</h3>
             <p>Discover your next favorite book!</p>
-            <button className="continue-shopping-btn" onClick={() => navigate(-1)}>
+
+            <Link to='/user/homepage/product'
+              className="btn btn-primary"
+              onClick={() => window.history.back()}
+            >
               Continue Shopping
-            </button>
+            </Link>
           </div>
         </div>
         <UserFooter />
@@ -143,23 +131,31 @@ function Cart() {
             <ul className="cart-list">
               {cartItems.map(item => (
                 <li key={item.id} className="cart-item">
-                  <div className="item-image">
-                    <img
-                      src={item.coverImage?.[0] || '/default-book-cover.jpg'}
-                      alt={item.title}
-                      onError={(e) => {
-                        e.target.src = '/default-book-cover.jpg';
-                      }}
-                    />
+                  <div className="item-image-wrapper">
+                    <div className="item-image">
+                      <img
+                        src={`http://localhost:5000/uploads/${Array.isArray(item.coverImage) ? item.coverImage[0] : item.coverImage}`}
+                        alt={item.title}
+                        onError={(e) => {
+                          e.target.src = '/default-book-cover.jpg';
+                        }}
+                      />
+                    </div>
                   </div>
 
                   <div className="cart-details">
                     <h4 className="item-title">{item.title}</h4>
-                    {item.author && <p className="item-author">by {item.author}</p>}
+
+                    {item.author && (
+                      <p className="item-author">by {item.author}</p>
+                    )}
+  <p className='card-category1'>Category : {item.category}</p>  
                     <p className="item-price">
                       ₹{item.price.toFixed(2)}
                       {item.originalPrice && item.originalPrice > item.price && (
-                        <span className="original-price">₹{item.originalPrice.toFixed(2)}</span>
+                        <span className="original-price">
+                          ₹{item.originalPrice.toFixed(2)}
+                        </span>
                       )}
                     </p>
 
@@ -168,14 +164,18 @@ function Cart() {
                         className="quantity-btn decrement"
                         onClick={() => handleDecrement(item.id, item.quantity)}
                         disabled={isOrdering}
+                        aria-label="Decrease quantity"
                       >
                         −
                       </button>
-                      <span className="quantity-display">Qty: {item.quantity}</span>
+                      <span className="quantity-display">
+                        Qty: {item.quantity}
+                      </span>
                       <button
                         className="quantity-btn increment"
                         onClick={() => handleIncrement(item.id, item.quantity)}
                         disabled={isOrdering}
+                        aria-label="Increase quantity"
                       >
                         +
                       </button>
@@ -201,16 +201,19 @@ function Cart() {
           <div className="cart-summary">
             <div className="summary-card">
               <h3>Order Summary</h3>
+
               <div className="summary-row">
                 <span>Items ({totalItems}):</span>
                 <span>₹{totalPrice.toFixed(2)}</span>
               </div>
+
               <div className="summary-row">
                 <span>Shipping:</span>
                 <span className="free-shipping">
-                  {totalPrice >= 25 ? 'Free' : '₹4.99'}
+                  {totalPrice >= 25 ? 'Free' : '$4.99'}
                 </span>
               </div>
+
               <div className="summary-row total-row">
                 <span>Total:</span>
                 <span>₹{(totalPrice + (totalPrice >= 25 ? 0 : 4.99)).toFixed(2)}</span>
@@ -228,7 +231,7 @@ function Cart() {
                   onClick={handleOrder}
                   disabled={isOrdering || cartItems.length === 0}
                 >
-                  {isOrdering ? 'Processing...' : 'Proceed to Order'}
+                  {isOrdering ? 'Processing...' : 'Place Order'}
                 </button>
 
                 <button
