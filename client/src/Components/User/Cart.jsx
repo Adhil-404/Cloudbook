@@ -1,23 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import {
-  getCart,
-  removeFromCart,
-  clearCart,
-  updateCartQuantity
-} from './Utils/cartUtils';
+import { getCart, removeFromCart, clearCart, updateCartQuantity } from './Utils/cartUtils';
 import UserNav from './Usernav';
 import UserFooter from './UserFooter';
 import "../../Assets/Styles/Userstyles/Cart.css";
-
+import { Link, useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
 
 function Cart() {
-  const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]);
-  const [isOrdering, setIsOrdering] = useState(false);
-
-  // ✅ Get current user from localStorage
-  const user = JSON.parse(localStorage.getItem("user")); 
+  const [isProcessing, setIsProcessing] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setCartItems(getCart());
@@ -30,6 +22,7 @@ function Cart() {
   const handleRemove = (id) => {
     removeFromCart(id);
     refreshCart();
+    toast.success("Item removed from cart");
   };
 
   const handleQuantityChange = (id, newQuantity) => {
@@ -53,107 +46,55 @@ function Cart() {
     if (window.confirm('Are you sure you want to clear your cart?')) {
       clearCart();
       setCartItems([]);
+      toast.success("Cart cleared successfully");
     }
   };
 
-  const handleOrder = async () => {
+  // Updated handleOrder to navigate to payment page
+  const handleProceedToPayment = () => {
+    // Check if user is logged in
+    const token = localStorage.getItem('token') || localStorage.getItem('userToken') || localStorage.getItem('authToken');
+    
+    if (!token) {
+      toast.error("Please login to proceed with payment");
+      navigate('/user/userlogin');
+      return;
+    }
 
-  if (cartItems.length === 0) {
-    alert("Cart is empty");
-    return;
-  }
+    if (cartItems.length === 0) {
+      toast.error("Your cart is empty");
+      return;
+    }
 
-  const user = JSON.parse(localStorage.getItem("user"));
-  if (!user || !user._id) {
-    alert("You must be logged in to place an order.");
-    navigate("/");
-    return;
-  }
+    setIsProcessing(true);
 
-  const orderData = {
-    userId: user._id,
-    items: cartItems,
-    totalAmount: totalPrice,
-    itemCount: cartItems.reduce((sum, item) => sum + item.quantity, 0),
-  };
-
-  try {
-    setIsOrdering(true);
-    const response = await fetch("http://localhost:5000/api/orders", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(orderData),
-    });
-
-    if (!response.ok) throw new Error("Order submission failed");
-
-    const savedOrder = await response.json();
-    clearCart();
-    setCartItems([]);
-    navigate("/order", {
-      state: { orderData: savedOrder },
-    });
-  } catch (error) {
-    console.error("Failed to place order:", error);
-    alert("Something went wrong while placing the order.");
-  } finally {
-    setIsOrdering(false);
-  }
-};
-
-  const totalPrice = cartItems.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0
-  );
-
-  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-
-  if (cartItems.length === 0) {
-    return (
-      <>
-        <UserNav />
-        <div className="cart-empty">
-          <div className="empty-cart-content">
-            <div className="empty-cart-icon"></div>
-            <h3>Your cart is empty</h3>
-            <p>Discover your next favorite book!</p>
-            <button className="continue-shopping-btn" onClick={() => navigate(-1)}>
-              Continue Shopping
-            </button>
-          </div>
-        </div>
-        <UserFooter />
-      </>
-    );
-  }
-
-    setIsOrdering(true);
-
+    // Prepare order data for payment page
     const orderData = {
-      items: cartItems,
+      items: cartItems.map(item => ({
+        id: item.id,
+        title: item.title,
+        author: item.author,
+        category: item.category,
+        price: item.price,
+        quantity: item.quantity,
+        coverImage: item.coverImage
+      })),
       totalAmount: totalPrice,
+      itemCount: cartItems.reduce((sum, item) => sum + item.quantity, 0),
       orderDate: new Date().toISOString(),
-      itemCount: cartItems.reduce((sum, item) => sum + item.quantity, 0)
+      status: 'pending'
     };
 
-    try {
-      const response = await axios.post('http://localhost:5000/orders/place', orderData);
-
-      if (response.status === 201) {
-        clearCart();
-        setCartItems([]);
-        alert('Order placed successfully!');
-      } else {
-        alert('Unexpected response from server.');
-      }
-    } catch (error) {
-      console.error('Order failed:', error);
-      alert('Failed to place order. Please try again.');
-    } finally {
-      setIsOrdering(false);
-    }
+    // Navigate to payment page with order data
+    setTimeout(() => {
+      navigate('/user/payment', {
+        state: {
+          orderData: orderData,
+          fromCart: true
+        }
+      });
+      setIsProcessing(false);
+    }, 500);
   };
 
   const totalPrice = cartItems.reduce(
@@ -169,23 +110,20 @@ function Cart() {
         <UserNav />
         <div className="cart-empty">
           <div className="empty-cart-content">
-            <div className="empty-cart-icon"></div>
+            <div className="empty-cart-icon">🛒</div>
             <h3>Your cart is empty</h3>
             <p>Discover your next favorite book!</p>
 
-            <Link to='/user/homepage/product'
-              className="btn btn-primary"
-              onClick={() => window.history.back()}
-            >
+            <Link to='/user/homepage/product' className="continue-shopping-btn">
               Continue Shopping
             </Link>
           </div>
         </div>
         <UserFooter />
+        <ToastContainer />
       </>
     );
   }
-
 
   return (
     <>
@@ -203,24 +141,6 @@ function Cart() {
             <ul className="cart-list">
               {cartItems.map(item => (
                 <li key={item.id} className="cart-item">
-                  <div className="item-image">
-                    <img
-                      src={item.coverImage?.[0] || '/default-book-cover.jpg'}
-                      alt={item.title}
-                      onError={(e) => {
-                        e.target.src = '/default-book-cover.jpg';
-                      }}
-                    />
-                  </div>
-
-                  <div className="cart-details">
-                    <h4 className="item-title">{item.title}</h4>
-                    {item.author && <p className="item-author">by {item.author}</p>}
-                    <p className="item-price">
-                      ₹{item.price.toFixed(2)}
-                      {item.originalPrice && item.originalPrice > item.price && (
-                        <span className="original-price">₹{item.originalPrice.toFixed(2)}</span>
-
                   <div className="item-image-wrapper">
                     <div className="item-image">
                       <img
@@ -239,14 +159,13 @@ function Cart() {
                     {item.author && (
                       <p className="item-author">by {item.author}</p>
                     )}
-  <p className='card-category1'>Category : {item.category}</p>  
+                    <p className='card-category1'>Category: {item.category}</p>
                     <p className="item-price">
                       ₹{item.price.toFixed(2)}
                       {item.originalPrice && item.originalPrice > item.price && (
                         <span className="original-price">
                           ₹{item.originalPrice.toFixed(2)}
                         </span>
-
                       )}
                     </p>
 
@@ -254,13 +173,7 @@ function Cart() {
                       <button
                         className="quantity-btn decrement"
                         onClick={() => handleDecrement(item.id, item.quantity)}
-                        disabled={isOrdering}
-
-                      >
-                        −
-                      </button>
-                      <span className="quantity-display">Qty: {item.quantity}</span>
-
+                        disabled={isProcessing}
                         aria-label="Decrease quantity"
                       >
                         −
@@ -268,13 +181,10 @@ function Cart() {
                       <span className="quantity-display">
                         Qty: {item.quantity}
                       </span>
-
                       <button
                         className="quantity-btn increment"
                         onClick={() => handleIncrement(item.id, item.quantity)}
-                        disabled={isOrdering}
-
-
+                        disabled={isProcessing}
                         aria-label="Increase quantity"
                       >
                         +
@@ -288,10 +198,13 @@ function Cart() {
                     <button
                       className="remove-btn"
                       onClick={() => handleRemove(item.id)}
-                      disabled={isOrdering}
+                      disabled={isProcessing}
                     >
                       Remove
                     </button>
+                    <Link to={`/product/${item._id}`}>
+                      <button className="detail-btn">Details</button>
+                    </Link>
                   </div>
                 </li>
               ))}
@@ -309,56 +222,41 @@ function Cart() {
 
               <div className="summary-row">
                 <span>Shipping:</span>
-                <span className="free-shipping">
-                  {totalPrice >= 25 ? 'Free' : '₹4.99'}
-                </span>
+                <span className="free-shipping">Free</span>
               </div>
-
-
-              <div className="summary-row">
-                <span>Shipping:</span>
-                <span className="free-shipping">
-                  {totalPrice >= 25 ? 'Free' : '$4.99'}
-                </span>
-              </div>
-
 
               <div className="summary-row total-row">
                 <span>Total:</span>
-                <span>₹{(totalPrice + (totalPrice >= 25 ? 0 : 4.99)).toFixed(2)}</span>
+                <span>₹{totalPrice.toFixed(2)}</span>
               </div>
-
-              {totalPrice < 25 && (
-                <div className="shipping-notice">
-                  <p>Add ₹{(25 - totalPrice).toFixed(2)} more for free shipping!</p>
-                </div>
-              )}
 
               <div className="cart-actions">
                 <button
                   className="order-btn primary-btn"
-                  onClick={handleOrder}
-                  disabled={isOrdering || cartItems.length === 0}
+                  onClick={handleProceedToPayment}
+                  disabled={isProcessing || cartItems.length === 0}
                 >
-
-                  {isOrdering ? 'Processing...' : 'Proceed to Order'}
-
-                  {isOrdering ? 'Processing...' : 'Place Order'}
+                  {isProcessing ? 'Processing...' : 'Proceed to Payment'}
                 </button>
 
                 <button
                   className="clear-cart secondary-btn"
                   onClick={handleClear}
-                  disabled={isOrdering}
+                  disabled={isProcessing}
                 >
                   Clear Cart
                 </button>
+              </div>
+
+              <div className="secure-checkout-note">
+                <p>🔒 Secure checkout with multiple payment options</p>
               </div>
             </div>
           </div>
         </div>
       </div>
       <UserFooter />
+      <ToastContainer />
     </>
   );
 }

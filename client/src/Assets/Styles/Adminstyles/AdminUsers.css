@@ -1,0 +1,137 @@
+.admin-users-container {
+    padding: 20px;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+}
+
+.admin-users-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.admin-users-header h2 {
+    color: #0b7a6c;
+    margin: 0;
+}
+
+.users-count {
+    background-color: #0b7a6c;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+}
+
+.users-table-container {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    overflow-x: auto;
+}
+
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1000px;
+}
+
+.users-table th {
+    background-color: #0b7a6c;
+    color: white;
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid #179584;
+}
+
+.users-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+}
+
+.users-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: capitalize;
+}
+
+.status-badge.active {
+    background-color: #28a745;
+}
+
+.status-badge.blocked {
+    background-color: #dc3545;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.status-btn, .delete-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.status-btn.block {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.status-btn.activate {
+    background-color: #28a745;
+    color: white;
+}
+
+.delete-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
+.status-btn:hover, .delete-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.admin-loading, .admin-error {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50vh;
+    font-size: 18px;
+    color: #666;
+}
+
+.admin-error {
+    color: #dc3545;
+}
+
+@media (max-width: 768px) {
+    .admin-users-container {
+        padding: 10px;
+    }
+    
+    .users-table-container {
+        overflow-x: scroll;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        gap: 4px;
+    }
+}

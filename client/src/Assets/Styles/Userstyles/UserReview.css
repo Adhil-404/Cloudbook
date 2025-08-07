@@ -273,7 +273,7 @@
 
 .helpful-btn,
 .edit-btn,
-.delete-btn {
+.delete1-btn {
   padding: 8px 16px;
   border: 1px solid #ddd;
   background: white;
@@ -290,18 +290,18 @@
   background-color: #0b7a6c;
   color: white;
   border-color: #0b7a6c;
-}
+}   
 
 .edit-btn:hover {
-  background-color: #ffc107;
+  background-color: #3778e9;
   color: white;
-  border-color: #ffc107;
+
 }
 
-.delete-btn:hover {
+.delete1-btn:hover {
   background-color: #dc3545;
   color: white;
-  border-color: #dc3545;
+
 }
 
 .no-reviews {
@@ -637,7 +637,7 @@
   color: #333;
 }
 
-/* Responsive Design */
+
 @media (max-width: 768px) {
   .reviews-container {
     padding: 15px;
@@ -788,7 +788,7 @@
   }
 }
 
-/* Animation for new reviews */
+
 @keyframes slideInFromTop {
   0% {
     opacity: 0;
@@ -804,7 +804,7 @@
   animation: slideInFromTop 0.5s ease-out;
 }
 
-/* Hover effects for interactive elements */
+
 .book-card,
 .review-item,
 .tab,
@@ -831,7 +831,6 @@
   left: 100%;
 }
 
-/* Custom scrollbar for book grid */
 .book-grid::-webkit-scrollbar {
   width: 8px;
 }
@@ -848,4 +847,19 @@
 
 .book-grid::-webkit-scrollbar-thumb:hover {
   background: #179584;
+}
+
+
+.edit-review-form input,
+.edit-review-form textarea {
+  width: 100%;
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.edit-review-form .form-actions {
+  display: flex;
+  gap: 10px;
 }

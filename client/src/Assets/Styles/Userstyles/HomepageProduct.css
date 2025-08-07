@@ -618,7 +618,7 @@
   margin-bottom: 20px;
 }
 
-/* Responsive Design */
+
 @media (max-width: 1200px) {
   .product-grid {
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -658,3 +658,4 @@
     max-width: 100%;
   }
 }
+

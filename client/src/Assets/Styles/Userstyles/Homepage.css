@@ -1,3 +1,4 @@
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -28,9 +29,17 @@ body {
   padding: 120px 0 80px;
   position: relative;
   overflow: hidden;
+  margin-top: 10px;
+
 }
 .leaf-1{
-  margin-right: 479px;
+  margin-right: 351px;
+  margin-top: -14px;
+}
+
+.leaf-2{
+  margin-right: -125px;
+  margin-bottom: -2px;
 }
 
 .hero-section::before {
@@ -59,12 +68,11 @@ body {
   padding: 0 20px;
   position: relative;
   z-index: 1;
+  margin-bottom: 10px;
+  margin-right: 20px ;
 }
 
-.hero-text {
-  flex: 1;
-  max-width: 500px;
-}
+
 
 .special-offer {
   background: rgba(255, 255, 255, 0.2);
@@ -78,11 +86,11 @@ body {
   letter-spacing: 1px;
 }
 
-.hero-text h1 {
+.special-text {
   font-size: 3rem;
-  font-weight: bold;
   margin: 20px 0;
   line-height: 1.2;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 
 .hero-text p {
@@ -101,6 +109,7 @@ body {
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
+  margin-top: 25px;
 }
 
 .shop-now-btn:hover {
@@ -114,6 +123,7 @@ body {
   justify-content: center;
   align-items: center;
   position: relative;
+  margin-right: 110px;
 }
 
 .floating-books {
@@ -314,6 +324,8 @@ body {
   margin: 0;
 }
 
+
+
 .view-all {
   color: #0b7a6c;
   text-decoration: none;
@@ -394,6 +406,11 @@ body {
   text-decoration: none;
   font-weight: bold;
   font-size: 14px;
+}
+
+.view-btn:hover{
+  color: #0b7a6c;
+  background-color: white;
 }
 
 .book-info {
@@ -618,3 +635,4 @@ body {
   font-weight: 600;
   color: #0b7a4c;
 }
+

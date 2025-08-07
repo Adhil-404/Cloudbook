@@ -22,6 +22,16 @@ const router=require('./router')
 app.use("/user",router)
 
 
+const orderRoutes = require('./Routes/OrderRoutes');
+app.use('/api/orders', orderRoutes);
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: 'Something went wrong!' });
+});
+
+
+
 app.listen(5000, function () {
   console.log("Server successfully working at port 5000");
 });

@@ -49,7 +49,6 @@ const UserRegistration = async (req, res) => {
 
 
 
-
 const login = async (req, res) => {
   const { email, password } = req.body;
   console.log("Login attempt with:", email, password);
@@ -84,8 +83,6 @@ const login = async (req, res) => {
     return res.status(500).json({ err: "Internal server error" });
   }
 };
-
-
 
 
 

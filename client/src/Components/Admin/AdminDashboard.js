@@ -65,7 +65,7 @@ function BookCard({ book, onDelete, onEdit }) {
         <button className="edit-btn" onClick={onEdit}>
           <i className="bi bi-pencil-square"></i>Edit
         </button>
-        <button className="delete-btn" onClick={() => onDelete(book._id)}>
+        <button className="admindelete-btn" onClick={() => onDelete(book._id)}>
           <i className="bi bi-trash-fill"></i>Delete
         </button>
       </div>

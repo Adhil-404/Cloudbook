@@ -1,49 +1,39 @@
-import React, { useState } from 'react'
-import '../../Assets/Styles/Userstyles/UserLogin.css'
+import React, { useState } from 'react';
+import '../../Assets/Styles/Userstyles/UserLogin.css';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 function UserLogin() {
-
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-
-const handleSubmit = (e) => {
-  e.preventDefault();
-
-
   const handleSubmit = (e) => {
     e.preventDefault();
-  axios.post("http://localhost:5000/user/userlogin", { email, password })
-    .then((res) => {
-      const token = res.data.token;
-      if (token) {
-        localStorage.setItem("userToken", token); 
-        navigate('/user/dashboard');
-      } else {
-        alert("Login failed: No token received");
-      }
-    })
-    .catch((err) => {
-  console.error("Full error object:", err);
-  console.error("Error response:", err.response);
-  console.error("Error data:", err.response?.data);
-  alert(err.response?.data?.err || "Login failed");
-});
-
-
-};
-
-
-
+    axios.post("http://localhost:5000/user/userlogin", { email, password })
+      .then((res) => {
+        const token = res.data.token;
+        if (token) {
+          localStorage.setItem("token", token); 
+          localStorage.setItem("userToken", token);
+          console.log("Token saved successfully:", token);
+          navigate('/user/homepage');
+        } else {
+          alert("Login failed: No token received");
+        }
+      })
+      .catch((err) => {
+        console.error("Full error object:", err);
+        console.error("Error response:", err.response);
+        console.error("Error data:", err.response?.data);
+        alert(err.response?.data?.err || "Login failed");
+      });
+  };
 
   return (
     <div className="container">
       <div className="login-card">
         <div className="left_container">
-
           <h2>Welcome to</h2>
           <h1>CloudBooks</h1>
           <p className='intro-detail'>
@@ -52,7 +42,6 @@ const handleSubmit = (e) => {
           </p>
         </div>
         <div className="right_container">
-
           <form onSubmit={handleSubmit}>
             <div className="input-group">
               <label>Email Address</label>
@@ -72,7 +61,7 @@ const handleSubmit = (e) => {
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                autoComplete='password'
+                autoComplete="current-password"
                 required
               />
             </div>
@@ -86,12 +75,11 @@ const handleSubmit = (e) => {
             <div className="signup">
               <p className='pass-detail'>Don't have an account? <Link to='/user_reg' className='sign-link'> sign up</Link></p>
             </div>
-
           </form>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export default UserLogin;

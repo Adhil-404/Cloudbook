@@ -109,12 +109,12 @@
 }
 
 
-.delete-btn {
+.admindelete-btn {
   background-color: #f8d7da;
   color: #842029;
 }
 
-.delete-btn:hover {
+.admindelete-btn:hover {
   background-color: #f1c2c6;
 }
 
