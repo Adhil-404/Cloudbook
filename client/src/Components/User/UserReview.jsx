@@ -20,14 +20,14 @@ function UserReview() {
   const [showWriteReview, setShowWriteReview] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Fetch books from your API
+  
   useEffect(() => {
     const fetchBooks = async () => {
       try {
         const response = await axios.get('http://localhost:5000/api/allbooks');
         setBooks(response.data);
         
-        // Mock reviews data - replace this when you implement reviews API
+       
         const mockReviews = [
           {
             id: 1,
@@ -111,10 +111,8 @@ function UserReview() {
       verified: true
     };
 
-    // Add to reviews (replace with API call when you implement reviews backend)
     setReviews([reviewData, ...reviews]);
-    
-    // Reset form
+ 
     setNewReview({
       bookId: '',
       rating: 5,

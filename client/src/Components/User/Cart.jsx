@@ -17,7 +17,7 @@ function Cart() {
   const [cartItems, setCartItems] = useState([]);
   const [isOrdering, setIsOrdering] = useState(false);
 
-  // ✅ Get current user from localStorage
+  
   const user = JSON.parse(localStorage.getItem("user")); 
 
   useEffect(() => {
