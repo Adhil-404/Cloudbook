@@ -5,6 +5,7 @@ import visaImg from "../../Assets/Images/visa-png.png";
 import mastercardImg from "../../Assets/Images/mastercard.jpg"
 import paytmImg from "../../Assets/Images/Paytm.jpg"
 import gpayImg from "../../Assets/Images/gpay.png"
+import { Link } from "react-router-dom";
 
 function UserFooter() {
     return (
@@ -63,7 +64,7 @@ function UserFooter() {
                     <div className="subscribe-box">
                         <i className="bi bi-envelope"></i>
                         <input type="email" placeholder="Email address" />
-                        <button>Subscribe </button>
+                        <Link to='/user/subscribe'><button>Subscribe </button></Link>
                     </div>
 
                 </div>

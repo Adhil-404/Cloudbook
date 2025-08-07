@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import UserNav from './Usernav';
 import '../../Assets/Styles/Userstyles/UserProfile.css';
+
 const UserProfile = () => {
   const [activeTab, setActiveTab] = useState('personal');
   const [isEditing, setIsEditing] = useState(false);
@@ -46,7 +47,7 @@ const UserProfile = () => {
           return;
         }
 
-        const response = await fetch('/api/user/profile', {
+        const response = await fetch('http://localhost:5000/api/user/profile', {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -61,7 +62,7 @@ const UserProfile = () => {
             lastName: userData.lastName || '',
             email: userData.email || '',
             phone: userData.phone || '',
-            dateOfBirth: userData.dateOfBirth || '',
+            dateOfBirth: userData.dateOfBirth ? userData.dateOfBirth.split('T')[0] : '',
             gender: userData.gender || '',
             bio: userData.bio || '',
             profileImage: userData.profileImage || null,
@@ -148,7 +149,7 @@ const UserProfile = () => {
       setIsLoading(true);
       const token = localStorage.getItem('userToken');
       
-      const response = await fetch('/api/user/profile', {
+      const response = await fetch('http://localhost:5000/api/user/profile', {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -172,6 +173,25 @@ const UserProfile = () => {
 
   const handleCancel = () => {
     setIsEditing(false);
+  };
+
+  const getDisplayName = () => {
+    const firstName = profileData.firstName?.trim();
+    const lastName = profileData.lastName?.trim();
+    
+    if (firstName && lastName) {
+      return `${firstName} ${lastName}`;
+    } else if (firstName) {
+      return firstName;
+    } else if (lastName) {
+      return lastName;
+    } else {
+      return 'User Profile';
+    }
+  };
+
+  const getDisplayEmail = () => {
+    return profileData.email?.trim() || 'No email provided';
   };
 
   const tabs = [
@@ -201,7 +221,6 @@ const UserProfile = () => {
           </div>
         ) : (
           <>
-
         <div className="profile-header">
           <div className="profile-header-content">
             <div className="profile-avatar">
@@ -209,13 +228,10 @@ const UserProfile = () => {
             </div>
             <div className="profile-info">
               <h1 className="profile-name">
-                {profileData.firstName || profileData.lastName 
-                  ? `${profileData.firstName} ${profileData.lastName}`.trim()
-                  : 'User Profile'
-                }
+                {getDisplayName()}
               </h1>
               <p className="profile-email">
-                {profileData.email || 'No email provided'}
+                {getDisplayEmail()}
               </p>
               <p className="profile-member-since">
                 Member since January 2023
@@ -231,7 +247,6 @@ const UserProfile = () => {
           </div>
         </div>
 
-
         <div className="profile-tabs">
           <div className="tab-navigation">
             {tabs.map(tab => (
@@ -245,7 +260,6 @@ const UserProfile = () => {
               </button>
             ))}
           </div>
-
 
           <div className="tab-content">
             {activeTab === 'personal' && (
@@ -516,7 +530,7 @@ const UserProfile = () => {
                         key={genre}
                         className={`genre-tag ${profileData.readingGoals.favoriteGenres.includes(genre) ? 'selected' : ''}`}
                         onClick={() => isEditing && handleGenreToggle(genre)}
-                        style={{ cursor: isEditing ? 'pointer' : 'default' }}
+                        style={{ cursor: isEditing ? 'pointer' : 'default' }}   
                       >
                         {genre}
                       </div>

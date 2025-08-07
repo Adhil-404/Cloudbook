@@ -3,12 +3,12 @@ import { getCart, removeFromCart, clearCart, updateCartQuantity } from './Utils/
 import UserNav from './Usernav';
 import UserFooter from './UserFooter';
 import "../../Assets/Styles/Userstyles/Cart.css";
-import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
 
 function Cart() {
   const [cartItems, setCartItems] = useState([]);
-  const [isOrdering, setIsOrdering] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,6 +22,7 @@ function Cart() {
   const handleRemove = (id) => {
     removeFromCart(id);
     refreshCart();
+    toast.success("Item removed from cart");
   };
 
   const handleQuantityChange = (id, newQuantity) => {
@@ -45,12 +46,29 @@ function Cart() {
     if (window.confirm('Are you sure you want to clear your cart?')) {
       clearCart();
       setCartItems([]);
+      toast.success("Cart cleared successfully");
     }
   };
 
-  const handleOrder = async () => {
-    setIsOrdering(true);
+  // Updated handleOrder to navigate to payment page
+  const handleProceedToPayment = () => {
+    // Check if user is logged in
+    const token = localStorage.getItem('token') || localStorage.getItem('userToken') || localStorage.getItem('authToken');
+    
+    if (!token) {
+      toast.error("Please login to proceed with payment");
+      navigate('/user/userlogin');
+      return;
+    }
 
+    if (cartItems.length === 0) {
+      toast.error("Your cart is empty");
+      return;
+    }
+
+    setIsProcessing(true);
+
+    // Prepare order data for payment page
     const orderData = {
       items: cartItems.map(item => ({
         id: item.id,
@@ -62,26 +80,21 @@ function Cart() {
         coverImage: item.coverImage
       })),
       totalAmount: totalPrice,
-      itemCount: cartItems.reduce((sum, item) => sum + item.quantity, 0)
+      itemCount: cartItems.reduce((sum, item) => sum + item.quantity, 0),
+      orderDate: new Date().toISOString(),
+      status: 'pending'
     };
 
-    try {
-      const response = await axios.post('http://localhost:5000/orders/place', orderData);
-
-      if (response.status === 201) {
-        clearCart();
-        setCartItems([]);
-        alert('Order placed successfully!');
-        navigate('/user/homepage/orders');
-      } else {
-        alert('Unexpected response from server.');
-      }
-    } catch (error) {
-      console.error('Order failed:', error);
-      alert('Failed to place order. Please try again.');
-    } finally {
-      setIsOrdering(false);
-    }
+    // Navigate to payment page with order data
+    setTimeout(() => {
+      navigate('/user/payment', {
+        state: {
+          orderData: orderData,
+          fromCart: true
+        }
+      });
+      setIsProcessing(false);
+    }, 500);
   };
 
   const totalPrice = cartItems.reduce(
@@ -107,6 +120,7 @@ function Cart() {
           </div>
         </div>
         <UserFooter />
+        <ToastContainer />
       </>
     );
   }
@@ -145,7 +159,7 @@ function Cart() {
                     {item.author && (
                       <p className="item-author">by {item.author}</p>
                     )}
-                    <p className='card-category1'>Category : {item.category}</p>
+                    <p className='card-category1'>Category: {item.category}</p>
                     <p className="item-price">
                       ₹{item.price.toFixed(2)}
                       {item.originalPrice && item.originalPrice > item.price && (
@@ -159,7 +173,7 @@ function Cart() {
                       <button
                         className="quantity-btn decrement"
                         onClick={() => handleDecrement(item.id, item.quantity)}
-                        disabled={isOrdering}
+                        disabled={isProcessing}
                         aria-label="Decrease quantity"
                       >
                         −
@@ -170,7 +184,7 @@ function Cart() {
                       <button
                         className="quantity-btn increment"
                         onClick={() => handleIncrement(item.id, item.quantity)}
-                        disabled={isOrdering}
+                        disabled={isProcessing}
                         aria-label="Increase quantity"
                       >
                         +
@@ -184,10 +198,13 @@ function Cart() {
                     <button
                       className="remove-btn"
                       onClick={() => handleRemove(item.id)}
-                      disabled={isOrdering}
+                      disabled={isProcessing}
                     >
                       Remove
                     </button>
+                    <Link to={`/product/${item._id}`}>
+                      <button className="detail-btn">Details</button>
+                    </Link>
                   </div>
                 </li>
               ))}
@@ -216,25 +233,30 @@ function Cart() {
               <div className="cart-actions">
                 <button
                   className="order-btn primary-btn"
-                  onClick={handleOrder}
-                  disabled={isOrdering || cartItems.length === 0}
+                  onClick={handleProceedToPayment}
+                  disabled={isProcessing || cartItems.length === 0}
                 >
-                  {isOrdering ? 'Processing...' : 'Place Order'}
+                  {isProcessing ? 'Processing...' : 'Proceed to Payment'}
                 </button>
 
                 <button
                   className="clear-cart secondary-btn"
                   onClick={handleClear}
-                  disabled={isOrdering}
+                  disabled={isProcessing}
                 >
                   Clear Cart
                 </button>
+              </div>
+
+              <div className="secure-checkout-note">
+                <p>🔒 Secure checkout with multiple payment options</p>
               </div>
             </div>
           </div>
         </div>
       </div>
       <UserFooter />
+      <ToastContainer />
     </>
   );
 }

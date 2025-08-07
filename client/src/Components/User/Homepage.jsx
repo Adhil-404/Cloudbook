@@ -111,7 +111,7 @@ function UserHomepage() {
         <div className="hero-content">
           <div className="hero-text">
             <div className="special-offer">SPECIAL OFFER</div>
-            <h1>There is nothing better than to read</h1>
+            <h1 className='special-text'>There is nothing better than to read</h1>
             <p>Find the perfect gift for everyone on your list.</p>
             <button className="shop-now-btn" onClick={() => navigate('/user/homepage/product')}>
               Shop now →
