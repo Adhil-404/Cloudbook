@@ -16,13 +16,13 @@ const orderSchema = new mongoose.Schema({
     quantity: Number,
     coverImage: mongoose.Schema.Types.Mixed
   }],
-
+  
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true
+    required: false
   },
-
+  
   totalAmount: {
     type: Number,
     required: true
@@ -33,12 +33,16 @@ const orderSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['pending', 'confirmed', 'shipped', 'delivered'],
+    enum: ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'],
     default: 'pending'
   },
   orderDate: {
     type: Date,
     default: Date.now
+  },
+  paymentMethod: {
+    type: String,
+    default: 'Cash on Delivery'
   }
 }, {
   timestamps: true

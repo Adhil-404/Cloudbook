@@ -1,4 +1,4 @@
-/* Enhanced Admin Orders CSS */
+
 
 .admin-orders-container {
     padding: 24px;
@@ -7,7 +7,6 @@
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-/* Header Section */
 .admin-orders-header {
     display: flex;
     justify-content: space-between;

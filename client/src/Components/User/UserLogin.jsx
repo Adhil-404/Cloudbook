@@ -13,9 +13,24 @@ function UserLogin() {
     axios.post("http://localhost:5000/user/userlogin", { email, password })
       .then((res) => {
         const token = res.data.token;
+        const user = res.data.user;
+        
         if (token) {
-          localStorage.setItem("token", token); 
+          localStorage.setItem("token", token);
           localStorage.setItem("userToken", token);
+          
+          // Save user information
+          if (user) {
+            const userInfo = {
+              _id: user._id,
+              name: user.userName || user.fullName,
+              username: user.userName || user.username,
+              email: user.userEmail || user.email
+            };
+            localStorage.setItem("user", JSON.stringify(userInfo));
+            console.log("User info saved:", userInfo);
+          }
+          
           console.log("Token saved successfully:", token);
           navigate('/user/homepage');
         } else {
