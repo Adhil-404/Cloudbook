@@ -28,6 +28,9 @@ import AboutUs from './Components/User/AboutUs';
 import Wishlist from './Components/User/Wishlist';
 import UserReview from './Components/User/UserReview';
 import UserHelp from './Components/User/UserHelp';
+import UserNotification from './Components/User/UserNotification';
+import UserPayment from './Components/User/UserPayment';
+import Subscribe from './Components/User/Subscribe';
 
 
 
@@ -53,20 +56,27 @@ function App() {
           <Route path='/user/homepage/cart' element={<Cart />} />
           <Route path='/user/homepage/wishlist' element={<Wishlist />} />
           <Route path='/user/homepage/aboutus' element={<AboutUs />} />
+          <Route path='user/homepage/order' element={<UserOrders/>}/>
           <Route path='/user/homepage/profile' element={<UserProfile/>}/>
           <Route path='/user/homepage/reviews' element={<UserReview/>}/>
           <Route path='/user/homepage/support' element={<UserHelp/>}/>
+          <Route path='/user/homepage/notifications' element={<UserNotification/>}/>
+          <Route path='/user/payment' element={<UserPayment/>}/>
+          <Route path='/user/subscribe' element={<Subscribe/>}/>
+
+
+          
           
 
           {/* // {admin} */}
-          <Route path='admin' element={<AdminLogin />} />
-          <Route path='admin/dashboard' element={<AdminDashboard />} />
-          <Route path='admin/orders' element={<AdminOrders />} />
-          <Route path='admin/books' element={<AdminBooks />} />
-          <Route path='admin/users' element={<AdminUsers />} />
-          <Route path='admin/reviews' element={<AdminReviews />} />
-          <Route path='admin/settings' element={<AdminSettings />} />
-          <Route path='admin/addbook' element={<AdminAddbook />} />
+          <Route path='/admin' element={<AdminLogin />} />
+          <Route path='//admin/dashboard' element={<AdminDashboard />} />
+          <Route path='/admin/orders' element={<AdminOrders />} />
+          <Route path='/admin/books' element={<AdminBooks />} />
+          <Route path='/admin/users' element={<AdminUsers />} />
+          <Route path='/admin/reviews' element={<AdminReviews />} />
+          <Route path='/admin/settings' element={<AdminSettings />} />
+          <Route path='/admin/addbook' element={<AdminAddbook />} />
           <Route path="/admin/editbook/:id" element={<AdminEditBook />} />
 
         </Routes>

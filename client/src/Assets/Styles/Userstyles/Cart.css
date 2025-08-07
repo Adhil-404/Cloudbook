@@ -215,6 +215,27 @@
   cursor: not-allowed;
 }
 
+.detail-btn{
+   background-color: #1d87b8;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background-color 0.3s ease;
+  margin-left: 20px;
+}
+
+.detail-btn:hover:not(:disabled){
+  background-color:#348eb8 ;
+}
+
+.detail-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .cart-summary {
   position: sticky;
   top: 20px;
@@ -332,7 +353,6 @@
   cursor: not-allowed;
 }
 
-/* Image wrapper styling */
 .item-image-wrapper {
   width: 80px;
   height: 120px;
@@ -398,4 +418,112 @@
   .cart-item {
     padding: 15px 0;
   }
+}
+
+.item-image-wrapper {
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  text-decoration: none;
+}
+
+.item-image-wrapper:hover {
+  transform: scale(1.02);
+  opacity: 0.9;
+}
+
+
+.clickable-title {
+  cursor: pointer;
+  transition: color 0.2s ease;
+  text-decoration: none;
+  color: inherit;
+}
+
+.clickable-title:hover {
+  color: #007bff;
+  text-decoration: underline;
+}
+
+
+a.item-image-wrapper {
+  color: inherit;
+  text-decoration: none;
+}
+
+a.item-image-wrapper:hover {
+  color: inherit;
+  text-decoration: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+
+.item-image-wrapper:hover .item-image img {
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+  transition: box-shadow 0.2s ease;
+}
+
+/* Add this CSS to your existing Cart.css file */
+
+.secure-checkout-note {
+  text-align: center;
+  margin-top: 20px;
+  padding: 12px;
+  background: linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%);
+  border-radius: 8px;
+  border: 1px solid #d4edda;
+}
+
+.secure-checkout-note p {
+  margin: 0;
+  color: #155724;
+  font-size: 0.9em;
+  font-weight: 500;
+}
+
+/* Enhanced primary button for payment flow */
+.primary-btn {
+  background: linear-gradient(135deg, #28a745 0%, #20a13a 100%);
+  color: white;
+  border: none;
+  padding: 15px 20px;
+  border-radius: 8px;
+  font-size: 1.1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+}
+
+.primary-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #218838 0%, #1e7e34 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+}
+
+.primary-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Toast notification styling */
+.Toastify__toast--success {
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  color: #155724;
+}
+
+.Toastify__toast--error {
+  background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+  color: #721c24;
 }

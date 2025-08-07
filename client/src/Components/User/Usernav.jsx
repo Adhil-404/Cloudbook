@@ -6,9 +6,63 @@ function UserNav() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All category');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [userData, setUserData] = useState({
+    firstName: '',
+    lastName: '',
+    email: ''
+  });
   const navigate = useNavigate();
   const location = useLocation();
   const sidebarRef = useRef(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem('userToken');
+        if (!token) return;
+
+        const response = await fetch('http://localhost:5000/api/user/profile', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setUserData({
+            firstName: data.firstName || '',
+            lastName: data.lastName || '',
+            email: data.email || ''
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  const getDisplayName = () => {
+    const firstName = userData.firstName?.trim();
+    const lastName = userData.lastName?.trim();
+    
+    if (firstName && lastName) {
+      return `${firstName} ${lastName}`;
+    } else if (firstName) {
+      return firstName;
+    } else if (lastName) {
+      return lastName;
+    } else {
+      return 'User';
+    }
+  };
+
+  const getDisplayEmail = () => {
+    return userData.email?.trim() || 'user@email.com';
+  };
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
@@ -77,10 +131,9 @@ function UserNav() {
 
   const sidebarItems = [
     { icon: "bi bi-person-fill", label: "My Profile", path: "/user/homepage/profile", description: "Manage your account details" },
-    { icon: "bi bi-bag-fill", label: "My Orders", path: "/user/homepage/orders", description: "Track your order history" },
+    { icon: "bi bi-bag-fill", label: "My Orders", path: "/user/orders", description: "Track your order history" },
     { icon: "bi bi-heart-fill", label: "Wishlist", path: "/user/homepage/wishlist", description: "Your saved items" },
     { icon: "bi bi-cart-fill", label: "Shopping Cart", path: "/user/homepage/cart", description: "Items in your cart" },
-    { icon: "bi bi-credit-card-fill", label: "Payment Methods", path: "/user/homepage/payment-methods", description: "Manage cards & payments" },
     { icon: "bi bi-bell-fill", label: "Notifications", path: "/user/homepage/notifications", description: "Your alerts & updates" },
     { icon: "bi bi-star-fill", label: "Reviews & Ratings", path: "/user/homepage/reviews", description: "Your product reviews" },
     { icon: "bi bi-question-circle-fill", label: "Help & Support", path: "/user/homepage/support", description: "Get help" },
@@ -153,10 +206,10 @@ function UserNav() {
           <i className="bi bi-list"></i>
         </button>
         <div className="nav-links">
-          <NavLink to="/user/homepage" className={({ isActive }) => (isActive ? 'active' : '')} end>Home</NavLink>
-          <NavLink to="/user/homepage/product" className={({ isActive }) => (isActive ? 'active' : '')}>Products</NavLink>
-          <NavLink to="/user/homepage/contact" className={({ isActive }) => (isActive ? 'active' : '')}>Contact</NavLink>
-          <NavLink to="/user/homepage/aboutus" className={({ isActive }) => (isActive ? 'active' : '')}>About Us</NavLink>
+          <Link to="/user/homepage" className={({ isActive }) => isActive ? 'active' : ''} end>Home</Link>
+          <Link to="/user/homepage/product" className={({ isActive }) => isActive ? 'active' : ''}>Products</Link>
+          <Link to="/user/homepage/contact" className={({ isActive }) => isActive ? 'active' : ''}>Contact</Link>
+          <Link to="/user/homepage/aboutus" className={({ isActive }) => isActive ? 'active' : ''}>About Us</Link>
         </div>
         <div className="header-right">
           <div className="support-info">
@@ -179,8 +232,8 @@ function UserNav() {
               <i className="bi bi-person-circle"></i>
             </div>
             <div className="user-details">
-              <h3>John Doe</h3>
-              <p>john.doe@email.com</p>
+              <h3>{getDisplayName()}</h3>
+              <p>{getDisplayEmail()}</p>
             </div>
           </div>
           <button className="close-btn" onClick={closeSidebar}>

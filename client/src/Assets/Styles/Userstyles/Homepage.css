@@ -1,5 +1,5 @@
 
-{
+* {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -405,7 +405,7 @@ body {
   border-radius: 20px;
   text-decoration: none;
   font-weight: bold;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .view-btn:hover{
@@ -635,3 +635,4 @@ body {
   font-weight: 600;
   color: #0b7a4c;
 }
+

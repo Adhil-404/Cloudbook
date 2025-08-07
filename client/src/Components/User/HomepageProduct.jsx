@@ -6,7 +6,7 @@ import '../../Assets/Styles/Userstyles/HomepageProduct.css';
 import UserNav from './Usernav';
 import UserFooter from './UserFooter';
 import { Link, useLocation } from 'react-router-dom';
-import { addToWishlist, removeFromWishlist, isInWishlist, getWishlist} from './Utils/wishlistUtils';
+import { addToWishlist, removeFromWishlist, isInWishlist, getWishlist } from './Utils/wishlistUtils';
 
 function HomepageProduct() {
   const [products, setProducts] = useState([]);
@@ -16,7 +16,6 @@ function HomepageProduct() {
   const [loading, setLoading] = useState(true);
   const location = useLocation();
 
-  // Get search parameters from URL
   const searchParams = new URLSearchParams(location.search);
   const searchQuery = searchParams.get('search') || '';
   const categoryFilter = searchParams.get('category') || '';
@@ -26,7 +25,6 @@ function HomepageProduct() {
     updateWishlistState();
   }, []);
 
-  // Filter products when search parameters or products change
   useEffect(() => {
     filterProducts();
   }, [products, location.search]);
@@ -51,7 +49,6 @@ function HomepageProduct() {
   const filterProducts = () => {
     let filtered = [...products];
 
-    // Filter by search query (title, author, description)
     if (searchQuery) {
       filtered = filtered.filter(product =>
         product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -60,7 +57,6 @@ function HomepageProduct() {
       );
     }
 
-    // Filter by category
     if (categoryFilter && categoryFilter !== 'All category') {
       filtered = filtered.filter(product =>
         product.category.toLowerCase() === categoryFilter.toLowerCase()
@@ -77,18 +73,14 @@ function HomepageProduct() {
   };
 
   const handleWishlistToggle = (product) => {
-    const isCurrentlyInWishlist = isInWishlist(product._id);
-    
-    if (isCurrentlyInWishlist) {
+    if (isInWishlist(product._id)) {
       removeFromWishlist(product._id);
     } else {
       addToWishlist(product);
     }
-    
     updateWishlistState();
   };
 
-  // Sort the filtered products
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     switch (sortOption) {
       case 'priceLowHigh': return a.price - b.price;
@@ -115,20 +107,17 @@ function HomepageProduct() {
     <div>
       <UserNav />
 
-      {/* Search Results Info */}
       {(searchQuery || categoryFilter) && (
         <div className="search-results-info">
           <div className="search-info-content">
             {searchQuery && (
               <p className="search-query">
-                <i className="bi bi-search"></i>
-                Search results for: "<strong>{searchQuery}</strong>"
+                <i className="bi bi-search"></i> Search results for: "<strong>{searchQuery}</strong>"
               </p>
             )}
             {categoryFilter && categoryFilter !== 'All category' && (
               <p className="category-filter">
-                <i className="bi bi-tag"></i>
-                Category: <strong>{categoryFilter}</strong>
+                <i className="bi bi-tag"></i> Category: <strong>{categoryFilter}</strong>
               </p>
             )}
             <p className="results-count">
@@ -149,7 +138,6 @@ function HomepageProduct() {
         </select>
       </div>
 
-      {/* Products Grid */}
       <div className="product-grid">
         {sortedProducts.length > 0 ? (
           sortedProducts.map((product) => (
@@ -161,30 +149,25 @@ function HomepageProduct() {
                     className="card-img-top"
                     alt={product.title}
                     onError={(e) => {
-                      e.target.src = '/path/to/default-book-cover.png'; 
+                      e.target.src = '/path/to/default-book-cover.png';
                     }}
                   />
-                  <button 
+                  <button
                     className={`wishlist-icon ${wishlistItems.has(product._id) ? 'active' : ''}`}
                     onClick={() => handleWishlistToggle(product)}
                     title={wishlistItems.has(product._id) ? 'Remove from wishlist' : 'Add to wishlist'}
                   >
-                    <svg 
-                      width="20" 
-                      height="18" 
-                      viewBox="0 0 24 22" 
+                    <svg width="20" height="18" viewBox="0 0 24 22"
                       fill={wishlistItems.has(product._id) ? '#ff4757' : 'none'}
-                      stroke={wishlistItems.has(product._id) ? '#ff4757' : '#666'}
-                      strokeWidth="2"
-                    >
-                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                      stroke={wishlistItems.has(product._id) ? '#ff4757' : '#666'} strokeWidth="2">
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                     </svg>
                   </button>
                 </div>
                 <div className="card-body">
                   <h4 className="card-title">{product.title}</h4>
                   <p className="card-author">Author : {product.author}</p>
-                  <p className='card-category1'>Category : {product.category}</p>  
+                  <p className='card-category1'>Category : {product.category}</p>
                   <h6 className="card-subtitle">₹{product.price}</h6>
                   <p className="card-text">
                     {product.description.length > 100
@@ -204,10 +187,9 @@ function HomepageProduct() {
               <i className="bi bi-search" style={{ fontSize: '48px', color: '#ccc', marginBottom: '20px' }}></i>
               <h3>No books found</h3>
               <p>
-                {searchQuery || categoryFilter 
+                {searchQuery || categoryFilter
                   ? "Try adjusting your search criteria or browse all categories."
-                  : "No products available at the moment."
-                }
+                  : "No products available at the moment."}
               </p>
               {(searchQuery || categoryFilter) && (
                 <Link to="/user/homepage/product" className="btn btn-primary" style={{ marginTop: '15px' }}>
@@ -220,7 +202,6 @@ function HomepageProduct() {
       </div>
 
       <UserFooter />
-      
       <ToastContainer stacked />
     </div>
   );

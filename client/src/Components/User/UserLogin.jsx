@@ -14,7 +14,9 @@ function UserLogin() {
       .then((res) => {
         const token = res.data.token;
         if (token) {
-          localStorage.setItem("userToken", token); 
+          localStorage.setItem("token", token); 
+          localStorage.setItem("userToken", token);
+          console.log("Token saved successfully:", token);
           navigate('/user/homepage');
         } else {
           alert("Login failed: No token received");
