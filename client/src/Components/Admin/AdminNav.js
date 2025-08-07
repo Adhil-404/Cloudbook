@@ -36,9 +36,6 @@ function AdminNav() {
             </div>
 
             <header className="admin-header">
-                <div className="admin-header-bottom">
-                    <button className="admin-btn">☰ Admin Menu</button>
-                </div>
                 <div>
                     <nav className="admin-nav-links">
                         <Link to="/admin/dashboard">Dashboard</Link>
