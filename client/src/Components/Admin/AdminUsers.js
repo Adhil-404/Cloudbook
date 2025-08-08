@@ -15,6 +15,8 @@ function AdminUsers() {
     const [updating, setUpdating] = useState(false);
 
     useEffect(() => {
+        console.log('AdminUsers component mounted');
+        checkAdminAuth();
         fetchUsers();
     }, []);
 
@@ -22,60 +24,162 @@ function AdminUsers() {
         applyFilters();
     }, [searchTerm, statusFilter, users]);
 
-    const fetchUsers = async () => {
-        setLoading(true);
-        try {
-            console.log('Fetching users from API...');
-            const response = await axios.get('http://localhost:5000/api/admin/users', {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
-                    'Content-Type': 'application/json'
+    const checkAdminAuth = () => {
+        const adminToken = localStorage.getItem('adminToken');
+        console.log('🔍 Checking admin auth...');
+        console.log('Admin token check:', adminToken ? 'Token exists' : 'No token found');
+        
+        if (adminToken) {
+            console.log('Token preview:', adminToken.substring(0, 20) + '...');
+            try {
+                // Decode token to check expiry (optional)
+                const tokenPayload = JSON.parse(atob(adminToken.split('.')[1]));
+                console.log('Token payload:', tokenPayload);
+                if (tokenPayload.exp * 1000 < Date.now()) {
+                    console.log('❌ Token expired');
+                    localStorage.removeItem('adminToken');
+                    return false;
                 }
-            });
-            console.log('Users received:', response.data);
+            } catch (e) {
+                console.log('❌ Invalid token format');
+                localStorage.removeItem('adminToken');
+                return false;
+            }
+        } else {
+            console.log('❌ No admin token found');
+            return false;
+        }
+        
+        console.log('✅ Admin token valid');
+        return true;
+    };
+
+    const getAuthHeaders = () => {
+        const adminToken = localStorage.getItem('adminToken');
+        if (!adminToken) {
+            throw new Error('No admin token found');
+        }
+        
+        const headers = {
+            'Authorization': `Bearer ${adminToken}`,
+            'Content-Type': 'application/json'
+        };
+        
+        console.log('🔧 Request headers prepared:', {
+            'Authorization': `Bearer ${adminToken.substring(0, 20)}...`,
+            'Content-Type': 'application/json'
+        });
+        
+        return headers;
+    };
+
+    const fetchUsers = async () => {
+        console.log('🚀 Starting fetchUsers...');
+        setLoading(true);
+        setError(null);
+        
+        try {
+            console.log('📡 Fetching users from API...');
             
-            // If response is empty, try to get from localStorage for demo
+            // Check if we have admin token first
+            if (!checkAdminAuth()) {
+                setError('Admin authentication required. Please login as admin first.');
+                setLoading(false);
+                return;
+            }
+            
+            const headers = getAuthHeaders();
+            console.log('🌐 Making request to: http://localhost:5000/api/users');
+            
+            const response = await axios.get('http://localhost:5000/api/users', {
+                headers: headers,
+                timeout: 10000 // 10 second timeout
+            });
+            
+            console.log('✅ Users response received:', {
+                status: response.status,
+                dataType: typeof response.data,
+                userCount: response.data?.length || 0
+            });
+            console.log('👥 Users data:', response.data);
+            
             let usersData = response.data || [];
             
             if (usersData.length === 0) {
-                // Get users from global storage for admin visibility
+                console.log('⚠️ No users from API, checking localStorage...');
                 const globalUsers = JSON.parse(localStorage.getItem('globalUsers') || '[]');
                 usersData = globalUsers.map(user => ({
                     ...user,
                     status: user.status || 'active',
                     totalOrders: user.totalOrders || 0,
-                    totalSpent: user.totalSpent || 0
+                    totalSpent: user.totalSpent || 0,
+                    orders: user.orders || []
                 }));
+                console.log('📦 Users from localStorage:', usersData.length);
             }
             
             setUsers(usersData);
             setFilteredUsers(usersData);
             setLoading(false);
+            console.log('✅ Users loaded successfully');
+            
         } catch (error) {
-            console.error('Error fetching users:', error);
+            console.error('❌ Error fetching users:', error);
+            console.error('Error response:', error.response?.data);
+            console.error('Error status:', error.response?.status);
+            console.error('Error message:', error.message);
             
-            // Fallback to global users storage for demo
-            const globalUsers = JSON.parse(localStorage.getItem('globalUsers') || '[]');
-            const formattedUsers = globalUsers.map(user => ({
-                ...user,
-                status: user.status || 'active',
-                totalOrders: user.totalOrders || 0,
-                totalSpent: user.totalSpent || 0
-            }));
+            let errorMessage = 'Failed to fetch users';
             
-            setUsers(formattedUsers);
-            setFilteredUsers(formattedUsers);
+            if (error.response?.status === 401) {
+                errorMessage = 'Authentication failed. Please login as admin again.';
+                console.log('🔑 Removing invalid admin token');
+                localStorage.removeItem('adminToken');
+            } else if (error.response?.status === 403) {
+                errorMessage = 'Access denied. Admin privileges required.';
+            } else if (error.response?.data?.message) {
+                errorMessage = error.response.data.message;
+            } else if (error.message.includes('Network Error')) {
+                errorMessage = 'Server connection failed. Please check if backend is running on http://localhost:5000';
+            } else if (error.message.includes('timeout')) {
+                errorMessage = 'Request timeout. Server may be slow or unavailable.';
+            } else if (error.code === 'ECONNREFUSED') {
+                errorMessage = 'Connection refused. Make sure your backend server is running on port 5000.';
+            }
+            
+            setError(errorMessage);
+            
+            // Fallback to localStorage
+            console.log('🔄 Falling back to localStorage...');
+            try {
+                const globalUsers = JSON.parse(localStorage.getItem('globalUsers') || '[]');
+                const formattedUsers = globalUsers.map(user => ({
+                    ...user,
+                    status: user.status || 'active',
+                    totalOrders: user.totalOrders || 0,
+                    totalSpent: user.totalSpent || 0,
+                    orders: user.orders || []
+                }));
+                
+                setUsers(formattedUsers);
+                setFilteredUsers(formattedUsers);
+                console.log('📦 Fallback successful, loaded from localStorage');
+            } catch (localStorageError) {
+                console.error('❌ localStorage fallback failed:', localStorageError);
+            }
+            
             setLoading(false);
         }
     };
 
     const toggleUserStatus = async (userId, currentStatus) => {
+        console.log('🔄 Toggling user status:', userId, currentStatus);
         setUpdating(true);
         try {
             const newStatus = currentStatus === 'active' ? 'blocked' : 'active';
-            console.log('Updating user status:', userId, newStatus);
+            console.log('➡️ New status:', newStatus);
             
-            // Update in global users for admin visibility
+            // Update localStorage first
             const globalUsers = JSON.parse(localStorage.getItem('globalUsers') || '[]');
             const updatedGlobalUsers = globalUsers.map(user => 
                 user._id === userId ? { ...user, status: newStatus } : user
@@ -84,24 +188,20 @@ function AdminUsers() {
             
             // Try to update via API
             try {
-                await axios.put(`http://localhost:5000/api/admin/users/${userId}`, 
+                const headers = getAuthHeaders();
+                const response = await axios.put(`http://localhost:5000/api/users/${userId}`,
                     { status: newStatus },
-                    {
-                        headers: {
-                            'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
-                            'Content-Type': 'application/json'
-                        }
-                    }
+                    { headers: headers }
                 );
+                console.log('✅ User status updated successfully via API:', response.data);
             } catch (apiError) {
-                console.log('API not available, using localStorage only');
+                console.log('⚠️ API update failed, using localStorage only:', apiError.message);
             }
             
-            console.log('User status updated successfully');
-            fetchUsers(); // Refresh the users list
+            fetchUsers();
             setUpdating(false);
         } catch (error) {
-            console.error('Error updating user status:', error);
+            console.error('❌ Error updating user status:', error);
             alert('Failed to update user status: ' + (error.response?.data?.message || error.message));
             setUpdating(false);
         }
@@ -109,35 +209,74 @@ function AdminUsers() {
 
     const deleteUser = async (userId) => {
         if (window.confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+            console.log('🗑️ Deleting user:', userId);
             setUpdating(true);
             try {
-                console.log('Deleting user:', userId);
-                
-                // Remove from global users for admin visibility
+                // Update localStorage first
                 const globalUsers = JSON.parse(localStorage.getItem('globalUsers') || '[]');
                 const updatedGlobalUsers = globalUsers.filter(user => user._id !== userId);
                 localStorage.setItem('globalUsers', JSON.stringify(updatedGlobalUsers));
                 
                 // Try to delete via API
                 try {
-                    await axios.delete(`http://localhost:5000/api/admin/users/${userId}`, {
-                        headers: {
-                            'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
-                            'Content-Type': 'application/json'
-                        }
+                    const headers = getAuthHeaders();
+                    const response = await axios.delete(`http://localhost:5000/api/users/${userId}`, {
+                        headers: headers
                     });
+                    console.log('✅ User deleted successfully via API:', response.data);
                 } catch (apiError) {
-                    console.log('API not available, using localStorage only');
+                    console.log('⚠️ API deletion failed, using localStorage only:', apiError.message);
                 }
                 
-                console.log('User deleted successfully');
-                fetchUsers(); // Refresh the users list
+                fetchUsers();
                 setUpdating(false);
             } catch (error) {
-                console.error('Error deleting user:', error);
+                console.error('❌ Error deleting user:', error);
                 alert('Failed to delete user: ' + (error.response?.data?.message || error.message));
                 setUpdating(false);
             }
+        }
+    };
+
+    const adminLogin = async () => {
+        console.log('🔑 Attempting admin login...');
+        try {
+            const loginData = {
+                email: 'admin@bookstore.com',
+                password: 'admin123'
+            };
+            
+            console.log('📡 Making login request to: http://localhost:5000/api/admin/login');
+            const response = await axios.post('http://localhost:5000/api/admin/login', loginData, {
+                timeout: 10000
+            });
+            
+            console.log('✅ Login response:', response.data);
+            
+            if (response.data.token) {
+                localStorage.setItem('adminToken', response.data.token);
+                console.log('🔐 Admin token stored successfully');
+                setError(null);
+                fetchUsers();
+            } else {
+                console.error('❌ No token in response');
+                setError('Login successful but no token received');
+            }
+        } catch (error) {
+            console.error('❌ Admin login failed:', error);
+            console.error('Error response:', error.response?.data);
+            console.error('Error status:', error.response?.status);
+            
+            let errorMessage = 'Admin login failed';
+            if (error.response?.data?.message) {
+                errorMessage = error.response.data.message;
+            } else if (error.message.includes('Network Error')) {
+                errorMessage = 'Cannot connect to server. Make sure backend is running on http://localhost:5000';
+            } else if (error.message.includes('timeout')) {
+                errorMessage = 'Login request timeout. Server may be slow.';
+            }
+            
+            setError(errorMessage);
         }
     };
 
@@ -146,10 +285,9 @@ function AdminUsers() {
 
         if (searchTerm.trim()) {
             filtered = filtered.filter(user =>
-                user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                user.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                user.phone?.includes(searchTerm)
+                user.userName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                user.userEmail?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                user.contact?.toString().includes(searchTerm)
             );
         }
 
@@ -170,6 +308,14 @@ function AdminUsers() {
         };
     };
 
+    const getStatusInfo = (status) => {
+        const statusMap = {
+            active: { color: '#10b981', icon: '✅', label: 'Active' },
+            blocked: { color: '#dc2626', icon: '🚫', label: 'Blocked' }
+        };
+        return statusMap[status?.toLowerCase()] || statusMap.active;
+    };
+
     const viewUserDetails = (user) => {
         setSelectedUser(user);
         setShowUserModal(true);
@@ -178,6 +324,18 @@ function AdminUsers() {
     const closeUserModal = () => {
         setShowUserModal(false);
         setSelectedUser(null);
+    };
+
+    const testConnection = async () => {
+        console.log('🧪 Testing API connection...');
+        try {
+            const response = await axios.get('http://localhost:5000/api/test', { timeout: 5000 });
+            console.log('✅ API test successful:', response.data);
+            alert('API connection successful!');
+        } catch (error) {
+            console.error('❌ API test failed:', error);
+            alert('API connection failed: ' + error.message);
+        }
     };
 
     const UserModal = ({ user, onClose }) => {
@@ -199,22 +357,23 @@ function AdminUsers() {
                             </div>
                             <div className="modal-field">
                                 <span className="modal-label">Name:</span>
-                                <span className="modal-value">{user.name || user.username || 'N/A'}</span>
+                                <span className="modal-value">{user.userName || 'N/A'}</span>
                             </div>
                             <div className="modal-field">
                                 <span className="modal-label">Email:</span>
-                                <span className="modal-value email">{user.email}</span>
+                                <span className="modal-value email">{user.userEmail}</span>
                             </div>
                             <div className="modal-field">
                                 <span className="modal-label">Phone:</span>
-                                <span className="modal-value">{user.phone || 'N/A'}</span>
+                                <span className="modal-value">{user.contact || 'N/A'}</span>
                             </div>
                             <div className="modal-field">
                                 <span className="modal-label">Status:</span>
                                 <span 
-                                    className={`status-badge ${user.status || 'active'}`}
+                                    className="status-badge"
+                                    style={{ backgroundColor: getStatusInfo(user.status).color }}
                                 >
-                                    {user.status || 'active'}
+                                    {getStatusInfo(user.status).icon} {getStatusInfo(user.status).label}
                                 </span>
                             </div>
                             <div className="modal-field">
@@ -234,6 +393,34 @@ function AdminUsers() {
                                 <span className="modal-value">{user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : 'N/A'}</span>
                             </div>
                         </div>
+
+                        {user.orders && user.orders.length > 0 && (
+                            <div className="modal-items">
+                                <div className="modal-items-header">Recent Orders ({user.orders.length})</div>
+                                <div className="items-container">
+                                    {user.orders.slice(0, 5).map((order, index) => (
+                                        <div key={order._id || index} className="modal-item">
+                                            <div className="modal-item-info">
+                                                <h4>Order #{order.orderNumber || `ORD-${order._id?.slice(-6) || index}`}</h4>
+                                                <p className="modal-item-quantity">{new Date(order.orderDate || order.createdAt).toLocaleDateString()}</p>
+                                            </div>
+                                            <div className="modal-item-price">
+                                                ₹{(order.totalAmount || 0).toFixed(2)}
+                                            </div>
+                                        </div>
+                                    ))}
+                                    {user.orders.length > 5 && (
+                                        <p className="orders-note">Showing 5 of {user.orders.length} orders</p>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                        
+                        {(!user.orders || user.orders.length === 0) && (
+                            <div className="no-orders">
+                                <p>No orders found for this user.</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -259,7 +446,23 @@ function AdminUsers() {
                 <div className="error-icon">⚠️</div>
                 <h3>Error Loading Users</h3>
                 <p>{error}</p>
-                <button onClick={fetchUsers} className="retry-button">Retry</button>
+                <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                    <button onClick={fetchUsers} className="retry-button">Retry</button>
+                    <button onClick={testConnection} className="retry-button" style={{ background: '#3b82f6' }}>
+                        Test Connection
+                    </button>
+                    <button onClick={adminLogin} className="retry-button" style={{ background: '#10b981' }}>
+                        Login as Admin
+                    </button>
+                </div>
+                <div style={{ marginTop: '20px', padding: '15px', backgroundColor: '#f3f4f6', borderRadius: '8px', fontSize: '14px', textAlign: 'left' }}>
+                    <strong>Debug Info:</strong>
+                    <br />Admin Token: {localStorage.getItem('adminToken') ? 'Present' : 'Missing'}
+                    <br />Backend URL: http://localhost:5000/api/users
+                    <br />Server Status: Click "Test Connection" to check
+                    <br />Timestamp: {new Date().toLocaleString()}
+                    <br />Check browser console for detailed logs
+                </div>
             </div>
         </>
     );
@@ -330,8 +533,8 @@ function AdminUsers() {
                         <option value="active">Active</option>
                         <option value="blocked">Blocked</option>
                     </select>
-                    <button 
-                        onClick={fetchUsers} 
+                    <button
+                        onClick={fetchUsers}
                         className="refresh-button"
                         disabled={loading || updating}
                     >
@@ -345,8 +548,8 @@ function AdminUsers() {
                         <div className="empty-icon">👥</div>
                         <h3>No users found</h3>
                         <p>
-                            {searchTerm || statusFilter !== 'all' 
-                                ? 'No users match your current filters.' 
+                            {searchTerm || statusFilter !== 'all'
+                                ? 'No users match your current filters.'
                                 : 'Users will appear here once they register.'
                             }
                         </p>
@@ -373,16 +576,17 @@ function AdminUsers() {
                                         <td className="user-id">{user._id?.slice(-8) || 'N/A'}</td>
                                         <td>
                                             <div className="user-info">
-                                                <div className="user-name">{user.name || user.username || 'N/A'}</div>
+                                                <div className="user-name">{user.userName || 'N/A'}</div>
                                             </div>
                                         </td>
-                                        <td className="user-email">{user.email}</td>
-                                        <td className="user-phone">{user.phone || 'N/A'}</td>
+                                        <td className="user-email">{user.userEmail}</td>
+                                        <td className="user-phone">{user.contact || 'N/A'}</td>
                                         <td>
                                             <span 
-                                                className={`status-badge ${user.status || 'active'}`}
+                                                className="status-badge"
+                                                style={{ backgroundColor: getStatusInfo(user.status).color }}
                                             >
-                                                {user.status || 'active'}
+                                                {getStatusInfo(user.status).icon} {getStatusInfo(user.status).label}
                                             </span>
                                         </td>
                                         <td>
@@ -396,23 +600,22 @@ function AdminUsers() {
                                         </td>
                                         <td>
                                             <div className="action-buttons">
-                                                <button 
+                                                <button
                                                     onClick={() => viewUserDetails(user)}
                                                     className="action-button view-button"
                                                     title="View Details"
                                                 >
                                                     <span className="action-icon">👁️</span>
                                                 </button>
-                                                <button
-                                                    className={`action-button status-btn ${(user.status || 'active') === 'active' ? 'block' : 'activate'}`}
-                                                    onClick={() => toggleUserStatus(user._id, user.status || 'active')}
+                                                <select 
+                                                    value={user.status || 'active'}
+                                                    onChange={(e) => toggleUserStatus(user._id, e.target.value)}
+                                                    className="status-select"
                                                     disabled={updating}
-                                                    title={(user.status || 'active') === 'active' ? 'Block User' : 'Activate User'}
                                                 >
-                                                    <span className="action-icon">
-                                                        {(user.status || 'active') === 'active' ? '🚫' : '✅'}
-                                                    </span>
-                                                </button>
+                                                    <option value="active">Active</option>
+                                                    <option value="blocked">Blocked</option>
+                                                </select>
                                                 <button
                                                     className="action-button delete-btn"
                                                     onClick={() => deleteUser(user._id)}
@@ -434,7 +637,7 @@ function AdminUsers() {
                     <div className="results-summary">
                         Showing {filteredUsers.length} of {users.length} users
                         {(searchTerm || statusFilter !== 'all') && (
-                            <button 
+                            <button
                                 onClick={() => {
                                     setSearchTerm('');
                                     setStatusFilter('all');

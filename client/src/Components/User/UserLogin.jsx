@@ -5,44 +5,54 @@ import axios from 'axios';
 
 function UserLogin() {
   const navigate = useNavigate();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    axios.post("http://localhost:5000/user/userlogin", { email, password })
-      .then((res) => {
-        const token = res.data.token;
-        const user = res.data.user;
-        
-        if (token) {
-          localStorage.setItem("token", token);
-          localStorage.setItem("userToken", token);
-          
-          // Save user information
-          if (user) {
-            const userInfo = {
-              _id: user._id,
-              name: user.userName || user.fullName,
-              username: user.userName || user.username,
-              email: user.userEmail || user.email
-            };
-            localStorage.setItem("user", JSON.stringify(userInfo));
-            console.log("User info saved:", userInfo);
-          }
-          
-          console.log("Token saved successfully:", token);
-          navigate('/user/homepage');
-        } else {
-          alert("Login failed: No token received");
-        }
-      })
-      .catch((err) => {
-        console.error("Full error object:", err);
-        console.error("Error response:", err.response);
-        console.error("Error data:", err.response?.data);
-        alert(err.response?.data?.err || "Login failed");
-      });
+
+    if (!email || !password) {
+      alert("Please fill in all fields.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await axios.post("http://localhost:5000/user/userlogin", { email, password });
+
+      const { token, user } = response.data;
+
+      if (!token) {
+        alert("Login failed: No token received");
+        return;
+      }
+
+      // Store token
+      localStorage.setItem("userToken", token);
+
+      // Store user info
+      if (user) {
+        const userInfo = {
+          _id: user._id,
+          name: user.userName || user.fullName || "",
+          username: user.userName || user.username || "",
+          email: user.userEmail || user.email || ""
+        };
+        localStorage.setItem("user", JSON.stringify(userInfo));
+        console.log("User info saved:", userInfo);
+      }
+
+      console.log("Token saved successfully:", token);
+      navigate('/user/homepage');
+
+    } catch (err) {
+      console.error("Login Error:", err);
+      alert(err.response?.data?.err || "Login failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -69,6 +79,7 @@ function UserLogin() {
                 required
               />
             </div>
+
             <div className="input-group">
               <label>Password</label>
               <input
@@ -80,15 +91,22 @@ function UserLogin() {
                 required
               />
             </div>
+
             <div className="options">
               <label className='remember'>
                 <input type="checkbox" /> Remember me
               </label>
               <Link to='/user/forgetpassword'>Forgot password?</Link>
             </div>
-            <button type="submit" className="btn-signin">Sign In</button>
+
+            <button type="submit" className="btn-signin" disabled={loading}>
+              {loading ? "Signing In..." : "Sign In"}
+            </button>
+
             <div className="signup">
-              <p className='pass-detail'>Don't have an account? <Link to='/user_reg' className='sign-link'> sign up</Link></p>
+              <p className='pass-detail'>
+                Don't have an account? <Link to='/user_reg' className='sign-link'>Sign up</Link>
+              </p>
             </div>
           </form>
         </div>
