@@ -8,6 +8,8 @@ const Book = require('../Schema/BookSchema');
 const Order = require('../Schema/OrderSchema');
 const User = require('../Schema/UserSchema');
 
+
+
 router.post('/addbook', upload.single('coverImage'), addBook); 
 router.get('/allbooks', async (req, res) => {
   try {
@@ -159,5 +161,70 @@ router.delete('/admin/users/:id', async (req, res) => {
         res.status(500).json({ message: 'Error deleting user' });
     }
 });
+
+
+
+// GET /api/admin/users
+router.get('/', verifyAdminToken, async (req, res) => {
+    try {
+        const users = await User.find({ role: 'admin' }); // Filter only admin users
+
+        const formattedUsers = users.map(user => ({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+            status: user.status,
+            totalOrders: user.totalOrders || 0,
+            totalSpent: user.totalSpent || 0,
+            createdAt: user.createdAt
+        }));
+
+        res.status(200).json(formattedUsers);
+    } catch (err) {
+        console.error('Error fetching users:', err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+// PUT /api/admin/users/:userId
+router.put('/:userId', verifyAdminToken, async (req, res) => {
+    const { userId } = req.params;
+    const { status } = req.body;
+
+    if (!['active', 'blocked'].includes(status)) {
+        return res.status(400).json({ message: 'Invalid status' });
+    }
+
+    try {
+        const user = await User.findByIdAndUpdate(userId, { status }, { new: true });
+
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        res.status(200).json({ message: 'User status updated', user });
+    } catch (err) {
+        console.error('Error updating user:', err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+// DELETE /api/admin/users/:userId
+router.delete('/:userId', verifyAdminToken, async (req, res) => {
+    const { userId } = req.params;
+
+    try {
+        const deletedUser = await User.findByIdAndDelete(userId);
+
+        if (!deletedUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.status(200).json({ message: 'Admin user deleted' });
+    } catch (err) {
+        console.error('Error deleting user:', err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+
+
 
 module.exports = router;

@@ -4,15 +4,15 @@ import axios from 'axios';
 import "../../Assets/Styles/Adminstyles/AdminUsers.css";
 
 function AdminUsers() {
-    const [users, setUsers] = useState([]);
+    const [adminUsers, setAdminUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        fetchUsers();
+        fetchAdminUsers();
     }, []);
 
-    const fetchUsers = async () => {
+    const fetchAdminUsers = async () => {
         try {
             const response = await axios.get('http://localhost:5000/api/admin/users', {
                 headers: {
@@ -20,16 +20,16 @@ function AdminUsers() {
                     'Content-Type': 'application/json'
                 }
             });
-            setUsers(response.data);
+            setAdminUsers(response.data);
             setLoading(false);
         } catch (error) {
-            console.error('Error fetching users:', error);
-            setError('Failed to fetch users');
+            console.error('Error fetching admin users:', error);
+            setError('Failed to fetch admin users');
             setLoading(false);
         }
     };
 
-    const toggleUserStatus = async (userId, currentStatus) => {
+    const toggleStatus = async (userId, currentStatus) => {
         try {
             const newStatus = currentStatus === 'active' ? 'blocked' : 'active';
             await axios.put(`http://localhost:5000/api/admin/users/${userId}`, 
@@ -41,15 +41,15 @@ function AdminUsers() {
                     }
                 }
             );
-            fetchUsers();
+            fetchAdminUsers();
         } catch (error) {
-            console.error('Error updating user status:', error);
-            alert('Failed to update user status');
+            console.error('Error updating admin user status:', error);
+            alert('Failed to update status');
         }
     };
 
-    const deleteUser = async (userId) => {
-        if (window.confirm('Are you sure you want to delete this user?')) {
+    const deleteAdminUser = async (userId) => {
+        if (window.confirm('Are you sure you want to delete this admin user?')) {
             try {
                 await axios.delete(`http://localhost:5000/api/admin/users/${userId}`, {
                     headers: {
@@ -57,10 +57,10 @@ function AdminUsers() {
                         'Content-Type': 'application/json'
                     }
                 });
-                fetchUsers();
+                fetchAdminUsers();
             } catch (error) {
-                console.error('Error deleting user:', error);
-                alert('Failed to delete user');
+                console.error('Error deleting admin user:', error);
+                alert('Failed to delete admin user');
             }
         }
     };
@@ -68,7 +68,7 @@ function AdminUsers() {
     if (loading) return (
         <>
             <AdminNav />
-            <div className="admin-loading">Loading users...</div>
+            <div className="admin-loading">Loading admin users...</div>
         </>
     );
 
@@ -84,8 +84,8 @@ function AdminUsers() {
             <AdminNav />
             <div className="admin-users-container">
                 <div className="admin-users-header">
-                    <h2>All Users</h2>
-                    <span className="users-count">Total: {users.length}</span>
+                    <h2>All Admin Users</h2>
+                    <span className="users-count">Total: {adminUsers.length}</span>
                 </div>
 
                 <div className="users-table-container">
@@ -104,33 +104,31 @@ function AdminUsers() {
                             </tr>
                         </thead>
                         <tbody>
-                            {users.map(user => (
+                            {adminUsers.map(user => (
                                 <tr key={user._id}>
                                     <td>{user._id?.slice(-8)}</td>
-                                    <td>{user.name || user.username || 'N/A'}</td>
-                                    <td>{user.email}</td>
+                                    <td>{user.name || 'N/A'}</td>
+                                    <td>{user.email || 'N/A'}</td>
                                     <td>{user.phone || 'N/A'}</td>
                                     <td>
-                                        <span 
-                                            className={`status-badge ${user.status || 'active'}`}
-                                        >
-                                            {user.status || 'active'}
+                                        <span className={`status-badge ${user.status}`}>
+                                            {user.status}
                                         </span>
                                     </td>
-                                    <td>{user.totalOrders || 0}</td>
-                                    <td>₹{user.totalSpent || 0}</td>
-                                    <td>{new Date(user.createdAt || user.joinDate).toLocaleDateString()}</td>
+                                    <td>{user.totalOrders}</td>
+                                    <td>₹{user.totalSpent}</td>
+                                    <td>{new Date(user.createdAt).toLocaleDateString()}</td>
                                     <td>
                                         <div className="action-buttons">
                                             <button
-                                                className={`status-btn ${(user.status || 'active') === 'active' ? 'block' : 'activate'}`}
-                                                onClick={() => toggleUserStatus(user._id, user.status || 'active')}
+                                                className={`status-btn ${user.status === 'active' ? 'block' : 'activate'}`}
+                                                onClick={() => toggleStatus(user._id, user.status)}
                                             >
-                                                {(user.status || 'active') === 'active' ? 'Block' : 'Activate'}
+                                                {user.status === 'active' ? 'Block' : 'Activate'}
                                             </button>
                                             <button
                                                 className="delete-btn"
-                                                onClick={() => deleteUser(user._id)}
+                                                onClick={() => deleteAdminUser(user._id)}
                                             >
                                                 Delete
                                             </button>
