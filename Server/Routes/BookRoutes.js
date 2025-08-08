@@ -1,16 +1,58 @@
 const express = require('express');
 const router = express.Router();
 const upload = require('../Middleware/Upload');
+const adminAuth = require('../Middleware/adminAuth');
 const { addBook, deleteBook } = require("../Controllers/BookController");
 const { getBookById, updateBook } = require('../Controllers/BookController');
-const auth = require('../middleware/auth');
-const adminAuth = require('../middleware/adminAuth');
 
 const Book = require('../Schema/BookSchema');
 const Order = require('../Schema/OrderSchema');
 const User = require('../Schema/UserSchema');
 
-router.post('/addbook', upload.single('coverImage'), addBook);
+// Admin login route - MUST be before adminAuth middleware
+router.post('/admin/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        
+        console.log('Admin login attempt:', email);
+        
+        const hardcodedAdminEmail = 'admin@bookstore.com';
+        const hardcodedAdminPassword = 'admin123';
+        
+        if (email === hardcodedAdminEmail && password === hardcodedAdminPassword) {
+            const jwt = require('jsonwebtoken');
+            const adminToken = jwt.sign(
+                { 
+                    _id: 'admin_001', 
+                    email: hardcodedAdminEmail,
+                    role: 'admin' 
+                },
+                process.env.JWT_KEY || 'your-secret-key', // Add fallback
+                { expiresIn: '24h' }
+            );
+            
+            console.log('Admin login successful, token generated:', adminToken);
+            res.json({
+                message: 'Admin login successful',
+                token: adminToken,
+                admin: {
+                    _id: 'admin_001',
+                    email: hardcodedAdminEmail,
+                    role: 'admin'
+                }
+            });
+        } else {
+            console.log('Invalid admin credentials');
+            res.status(401).json({ message: 'Invalid admin credentials' });
+        }
+    } catch (error) {
+        console.error('Admin login error:', error);
+        res.status(500).json({ message: 'Server error during admin login' });
+    }
+});
+
+// Book routes
+router.post('/addbook', adminAuth, upload.single('coverImage'), addBook);
 router.get('/allbooks', async (req, res) => {
   try {
     const books = await Book.find();
@@ -24,10 +66,11 @@ router.get('/test', (req, res) => {
   res.send('API is working!');
 });
 
-router.delete('/deletebook/:id', deleteBook);
+router.delete('/deletebook/:id', adminAuth, deleteBook);
 router.get('/book/:id', getBookById);
-router.put('/updatebook/:id', upload.single('coverImage'), updateBook);
+router.put('/updatebook/:id', adminAuth, upload.single('coverImage'), updateBook);
 
+// Order routes
 router.post('/orders', async (req, res) => {
     try {
         const orderData = req.body;
@@ -52,7 +95,7 @@ router.post('/orders', async (req, res) => {
 router.get('/orders', async (req, res) => {
     try {
         const orders = await Order.find()
-            .populate('userId', 'name email username')
+            .populate('userId', 'userName userEmail contact')
             .sort({ orderDate: -1 });
         res.json(orders);
     } catch (error) {
@@ -61,7 +104,7 @@ router.get('/orders', async (req, res) => {
     }
 });
 
-router.put('/orders/:id', async (req, res) => {
+router.put('/orders/:id', adminAuth, async (req, res) => {
     try {
         const { id } = req.params;
         const { status } = req.body;
@@ -83,11 +126,12 @@ router.put('/orders/:id', async (req, res) => {
     }
 });
 
-router.get('/admin/orders', async (req, res) => {
+// Admin order routes
+router.get('/admin/orders', adminAuth, async (req, res) => {
     try {
-        console.log('Fetching orders...');
+        console.log('Fetching orders for admin...');
         const orders = await Order.find()
-            .populate('userId', 'name email username')
+            .populate('userId', 'userName userEmail contact')
             .sort({ orderDate: -1 });
 
         console.log('Orders found:', orders.length);
@@ -95,8 +139,8 @@ router.get('/admin/orders', async (req, res) => {
         const formattedOrders = orders.map(order => ({
             _id: order._id,
             orderNumber: order.orderNumber,
-            customerName: order.userId?.name || order.userId?.username || 'Guest User',
-            customerEmail: order.userId?.email || 'N/A',
+            customerName: order.userId?.userName || 'Guest User',
+            customerEmail: order.userId?.userEmail || 'N/A',
             items: order.items || [],
             itemCount: order.itemCount || order.items?.length || 0,
             totalAmount: order.totalAmount,
@@ -116,7 +160,7 @@ router.get('/admin/orders', async (req, res) => {
     }
 });
 
-router.put('/admin/orders/:id', async (req, res) => {
+router.put('/admin/orders/:id', adminAuth, async (req, res) => {
     try {
         const { id } = req.params;
         const { status } = req.body;
@@ -144,31 +188,37 @@ router.put('/admin/orders/:id', async (req, res) => {
         res.status(500).json({ message: 'Error updating order status' });
     }
 });
-
-router.get('/admin/users', async (req, res) => {
+// User management routes - UPDATED VERSION
+router.get('/users', adminAuth, async (req, res) => {
     try {
-        console.log('Fetching all users for admin...');
+        console.log('Admin fetching all users...');
+        console.log('Admin token from request:', req.headers.authorization);
         
         const users = await User.find({})
             .select('-password')
             .sort({ createdAt: -1 });
 
+        console.log(`Found ${users.length} users in database`);
+
         const usersWithStats = await Promise.all(
             users.map(async (user) => {
                 try {
+                    // Updated query to properly match user orders
                     const userOrders = await Order.find({ 
                         $or: [
                             { userId: user._id },
-                            { customerEmail: user.userEmail }
+                            { userId: user._id.toString() },
+                            { customerEmail: user.userEmail },
+                            { 'customerEmail': { $regex: new RegExp(user.userEmail, 'i') } }
                         ]
-                    });
+                    }).sort({ orderDate: -1 });
+
+                    console.log(`User ${user.userEmail} has ${userOrders.length} orders`);
 
                     const totalOrders = userOrders.length;
                     const totalSpent = userOrders.reduce((sum, order) => {
                         return sum + (order.totalAmount || 0);
                     }, 0);
-
-                    const lastLogin = user.lastLogin || user.updatedAt;
 
                     return {
                         _id: user._id,
@@ -182,8 +232,19 @@ router.get('/admin/users', async (req, res) => {
                         totalSpent: Math.round(totalSpent * 100) / 100,
                         createdAt: user.createdAt,
                         joinDate: user.createdAt,
-                        lastLogin,
-                        updatedAt: user.updatedAt
+                        lastLogin: user.lastLogin || user.updatedAt,
+                        updatedAt: user.updatedAt,
+                        orders: userOrders.map(order => ({
+                            _id: order._id,
+                            orderNumber: order.orderNumber || `ORD-${order._id.toString().slice(-6)}`,
+                            totalAmount: order.totalAmount || 0,
+                            status: order.status || 'pending',
+                            orderDate: order.orderDate || order.createdAt,
+                            items: order.items || [],
+                            itemCount: order.itemCount || order.items?.length || 0,
+                            paymentMethod: order.paymentMethod || 'N/A',
+                            createdAt: order.createdAt
+                        }))
                     };
                 } catch (error) {
                     console.error(`Error processing user ${user._id}:`, error);
@@ -200,17 +261,19 @@ router.get('/admin/users', async (req, res) => {
                         createdAt: user.createdAt,
                         joinDate: user.createdAt,
                         lastLogin: user.lastLogin || user.updatedAt,
-                        updatedAt: user.updatedAt
+                        updatedAt: user.updatedAt,
+                        orders: []
                     };
                 }
             })
         );
 
-        console.log(`Successfully fetched ${usersWithStats.length} users`);
+        console.log(`Successfully processed ${usersWithStats.length} users for admin`);
         res.json(usersWithStats);
 
     } catch (error) {
         console.error('Error fetching users:', error);
+        console.error('Error stack:', error.stack);
         res.status(500).json({ 
             message: 'Error fetching users', 
             error: error.message 
@@ -218,13 +281,13 @@ router.get('/admin/users', async (req, res) => {
     }
 });
 
-router.get('/admin/users/:id', async (req, res) => {
+// Add a new route to get user orders separately if needed
+router.get('/users/:id/orders', adminAuth, async (req, res) => {
     try {
         const { id } = req.params;
-        console.log('Fetching user details for:', id);
+        console.log('Admin fetching orders for user:', id);
 
-        const user = await User.findById(id).select('-password');
-        
+        const user = await User.findById(id);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
@@ -232,232 +295,82 @@ router.get('/admin/users/:id', async (req, res) => {
         const userOrders = await Order.find({ 
             $or: [
                 { userId: user._id },
-                { customerEmail: user.userEmail }
+                { userId: user._id.toString() },
+                { customerEmail: user.userEmail },
+                { 'customerEmail': { $regex: new RegExp(user.userEmail, 'i') } }
             ]
-        }).sort({ createdAt: -1 });
+        }).sort({ orderDate: -1 });
 
-        const totalOrders = userOrders.length;
-        const totalSpent = userOrders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
-        const pendingOrders = userOrders.filter(order => order.status === 'pending').length;
-        const completedOrders = userOrders.filter(order => order.status === 'delivered').length;
-        
-        const recentOrders = userOrders.slice(0, 5).map(order => ({
+        const formattedOrders = userOrders.map(order => ({
             _id: order._id,
-            orderNumber: order.orderNumber,
-            totalAmount: order.totalAmount,
-            status: order.status,
+            orderNumber: order.orderNumber || `ORD-${order._id.toString().slice(-6)}`,
+            totalAmount: order.totalAmount || 0,
+            status: order.status || 'pending',
+            orderDate: order.orderDate || order.createdAt,
+            items: order.items || [],
+            itemCount: order.itemCount || order.items?.length || 0,
+            paymentMethod: order.paymentMethod || 'N/A',
             createdAt: order.createdAt
         }));
 
-        const userWithStats = {
-            _id: user._id,
-            userName: user.userName,
-            userEmail: user.userEmail,
-            contact: user.contact,
-            dob: user.dob,
-            gender: user.gender,
-            status: user.status || 'active',
-            totalOrders,
-            totalSpent: Math.round(totalSpent * 100) / 100,
-            pendingOrders,
-            completedOrders,
-            recentOrders,
-            createdAt: user.createdAt,
-            lastLogin: user.lastLogin || user.updatedAt,
-            updatedAt: user.updatedAt
-        };
-
-        res.json(userWithStats);
-
-    } catch (error) {
-        console.error('Error fetching user details:', error);
-        res.status(500).json({ 
-            message: 'Error fetching user details', 
-            error: error.message 
-        });
-    }
-});
-
-router.put('/admin/users/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { status, userName, contact, ...otherUpdates } = req.body;
-
-        console.log('Updating user:', id, 'with data:', req.body);
-
-        if (status && !['active', 'blocked', 'suspended'].includes(status)) {
-            return res.status(400).json({ 
-                message: 'Invalid status. Must be active, blocked, or suspended' 
-            });
-        }
-
-        const user = await User.findById(id);
-        
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        if (status !== undefined) user.status = status;
-        if (userName !== undefined) user.userName = userName;
-        if (contact !== undefined) user.contact = contact;
-
-        const safeUpdates = ['userName', 'contact', 'status', 'dob', 'gender'];
-        safeUpdates.forEach(field => {
-            if (otherUpdates[field] !== undefined) {
-                user[field] = otherUpdates[field];
-            }
-        });
-
-        user.updatedAt = new Date();
-        await user.save();
-
-        console.log('User updated successfully:', user._id);
-
-        const updatedUser = await User.findById(id).select('-password');
         res.json({
-            message: 'User updated successfully',
-            user: updatedUser
+            user: {
+                _id: user._id,
+                userName: user.userName,
+                userEmail: user.userEmail
+            },
+            orders: formattedOrders,
+            totalOrders: formattedOrders.length,
+            totalSpent: formattedOrders.reduce((sum, order) => sum + order.totalAmount, 0)
         });
 
     } catch (error) {
-        console.error('Error updating user:', error);
+        console.error('Error fetching user orders:', error);
         res.status(500).json({ 
-            message: 'Error updating user', 
+            message: 'Error fetching user orders', 
             error: error.message 
         });
     }
 });
 
-router.delete('/admin/users/:id', async (req, res) => {
+// Updated order creation route to better link with users
+router.post('/orders', async (req, res) => {
     try {
-        const { id } = req.params;
-        const { permanent = false } = req.query;
+        const orderData = req.body;
+        console.log('Creating order with data:', orderData);
 
-        console.log('Deleting user:', id, 'permanent:', permanent);
-
-        const user = await User.findById(id);
-
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+        // Try to find user by email if userId is not provided
+        let userId = orderData.userId;
+        if (!userId && orderData.customerEmail) {
+            const user = await User.findOne({ userEmail: orderData.customerEmail });
+            if (user) {
+                userId = user._id;
+            }
         }
 
-        if (permanent === 'true') {
-            await Order.deleteMany({ 
-                $or: [
-                    { userId: id },
-                    { customerEmail: user.userEmail }
-                ]
-            });
-            await User.findByIdAndDelete(id);
-            console.log('User permanently deleted:', id);
-            res.json({ message: 'User permanently deleted' });
-        } else {
-            user.status = 'deleted';
-            user.deletedAt = new Date();
-            user.userEmail = `deleted_${Date.now()}_${user.userEmail}`;
-            await user.save();
-            
-            console.log('User soft deleted:', id);
-            res.json({ message: 'User deleted successfully' });
-        }
-
-    } catch (error) {
-        console.error('Error deleting user:', error);
-        res.status(500).json({ 
-            message: 'Error deleting user', 
-            error: error.message 
+        const newOrder = new Order({
+            orderNumber: orderData.orderNumber || `ORD-${Date.now()}`,
+            items: orderData.items || [],
+            userId: userId,
+            customerName: orderData.customerName,
+            customerEmail: orderData.customerEmail,
+            totalAmount: orderData.totalAmount || 0,
+            itemCount: orderData.itemCount || orderData.items?.length || 0,
+            status: orderData.status || 'confirmed',
+            orderDate: orderData.orderDate || new Date(),
+            paymentMethod: orderData.paymentMethod || 'N/A'
         });
+
+        const savedOrder = await newOrder.save();
+        console.log('Order created successfully:', savedOrder._id);
+        
+        res.json(savedOrder);
+    } catch (error) {
+        console.error('Error creating order:', error);
+        res.status(500).json({ message: 'Error creating order', error: error.message });
     }
 });
 
-router.post('/admin/users/:id/restore', async (req, res) => {
-    try {
-        const { id } = req.params;
 
-        console.log('Restoring user:', id);
-
-        const user = await User.findById(id);
-        
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        if (user.status !== 'deleted') {
-            return res.status(400).json({ message: 'User is not deleted' });
-        }
-
-        user.status = 'active';
-        user.deletedAt = null;
-        
-        if (user.userEmail.startsWith('deleted_')) {
-            const originalEmail = user.userEmail.substring(user.userEmail.lastIndexOf('_') + 1);
-            user.userEmail = originalEmail;
-        }
-        
-        await user.save();
-
-        console.log('User restored successfully:', id);
-        res.json({ 
-            message: 'User restored successfully',
-            user: await User.findById(id).select('-password')
-        });
-
-    } catch (error) {
-        console.error('Error restoring user:', error);
-        res.status(500).json({ 
-            message: 'Error restoring user', 
-            error: error.message 
-        });
-    }
-});
-
-router.get('/admin/users/stats/overview', async (req, res) => {
-    try {
-        console.log('Fetching user statistics overview...');
-
-        const [
-            totalUsers,
-            activeUsers,
-            blockedUsers,
-            newUsersThisMonth,
-            totalOrders,
-            totalRevenue
-        ] = await Promise.all([
-            User.countDocuments({}),
-            User.countDocuments({ status: { $ne: 'blocked' } }),
-            User.countDocuments({ status: 'blocked' }),
-            User.countDocuments({
-                createdAt: {
-                    $gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1)
-                }
-            }),
-            Order.countDocuments({}),
-            Order.aggregate([
-                { $match: { status: { $ne: 'cancelled' } } },
-                { $group: { _id: null, total: { $sum: '$totalAmount' } } }
-            ])
-        ]);
-
-        const stats = {
-            totalUsers,
-            activeUsers,
-            blockedUsers,
-            newUsersThisMonth,
-            totalOrders,
-            totalRevenue: totalRevenue[0]?.total || 0,
-            averageOrdersPerUser: totalUsers > 0 ? Math.round((totalOrders / totalUsers) * 100) / 100 : 0
-        };
-
-        console.log('User statistics:', stats);
-        res.json(stats);
-
-    } catch (error) {
-        console.error('Error fetching user statistics:', error);
-        res.status(500).json({ 
-            message: 'Error fetching user statistics', 
-            error: error.message 
-        });
-    }
-});
 
 module.exports = router;

@@ -1,51 +1,69 @@
 const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
-  orderNumber: {
-    type: String,
-    default: function () {
-      return 'ORD' + Date.now() + Math.floor(Math.random() * 1000);
+    orderNumber: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'user',
+        default: null
+    },
+    customerName: {
+        type: String,
+        default: 'Guest User'
+    },
+    customerEmail: {
+        type: String,
+        required: true
+    },
+    items: [{
+        _id: String,
+        title: String,
+        author: String,
+        price: Number,
+        quantity: Number,
+        coverImage: String,
+        category: String
+    }],
+    totalAmount: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    itemCount: {
+        type: Number,
+        default: 0
+    },
+    status: {
+        type: String,
+        enum: ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'],
+        default: 'confirmed'
+    },
+    paymentMethod: {
+        type: String,
+        default: 'N/A'
+    },
+    orderDate: {
+        type: Date,
+        default: Date.now
+    },
+    shippingAddress: {
+        street: String,
+        city: String,
+        state: String,
+        zipCode: String,
+        country: { type: String, default: 'India' }
     }
-  },
-  items: [{
-    id: String,
-    title: String,
-    author: String,
-    category: String,
-    price: Number,
-    quantity: Number,
-    coverImage: mongoose.Schema.Types.Mixed
-  }],
-  
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: false
-  },
-  
-  totalAmount: {
-    type: Number,
-    required: true
-  },
-  itemCount: {
-    type: Number,
-    required: true
-  },
-  status: {
-    type: String,
-    enum: ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'],
-    default: 'pending'
-  },
-  orderDate: {
-    type: Date,
-    default: Date.now
-  },
-  paymentMethod: {
-    type: String,
-    default: 'Cash on Delivery'
-  }
 }, {
-  timestamps: true
+    timestamps: true
 });
+
+// Index for better query performance
+orderSchema.index({ userId: 1 });
+orderSchema.index({ customerEmail: 1 });
+orderSchema.index({ orderDate: -1 });
 
 module.exports = mongoose.model('Order', orderSchema);
