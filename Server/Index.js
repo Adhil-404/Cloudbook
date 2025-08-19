@@ -4,6 +4,7 @@ const cors = require("cors");
 const path = require("path");
 const bodyparser = require("body-parser");
 
+
 dotenv.config();
 
 const app = express();
@@ -18,6 +19,8 @@ app.use("/uploads", express.static(path.join(__dirname, "Uploads")));
 const bookroutes = require("./Routes/BookRoutes");
 app.use("/api", bookroutes);
 
+const Otp=require("./Routes/Otp")
+app.use('/api/auth', authRoutes);
 const router=require('./router')
 app.use("/user",router)
 

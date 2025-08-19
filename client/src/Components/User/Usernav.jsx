@@ -141,12 +141,18 @@ function UserNav() {
   ];
 
   const handleItemClick = (item) => {
-    if (item.action === 'logout') {
-      handleLogout();
-    } else {
+  if (item.action === 'logout') {
+    const confirmLogout = window.confirm("Are you sure you want to log out?");
+    if (confirmLogout) {
+      localStorage.removeItem('userToken');
+      navigate('/');
       closeSidebar();
     }
-  };
+  } else {
+    closeSidebar();
+  }
+};
+
 
   return (
     <>

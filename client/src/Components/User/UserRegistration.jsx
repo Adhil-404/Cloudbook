@@ -17,76 +17,83 @@ function UserRegistration() {
   const [msg, setMsg] = useState('');
   const [isError, setIsError] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({});
-  const navigate=useNavigate();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const newErrors = {};
+  const handleSubmit = async (e) => {
+  e.preventDefault();
 
+  const newErrors = {};
+  const { fullName, email, phone, dob, gender, password, confirmPassword } = formData;
 
-    if (!formData.fullName.trim()) newErrors.fullName = "Full Name is required!";
-    if (!formData.email.trim()) newErrors.email = "Email is required!";
-    if (!formData.phone.trim()) newErrors.phone = "Phone number is required!";
-    if (!formData.dob) newErrors.dob = "Date of birth is required!";
-    if (!formData.gender) newErrors.gender = "Gender is required!";
-    if (!formData.password.trim()) newErrors.password = "Password is required!";
-    if (!formData.confirmPassword.trim()) newErrors.confirmPassword = "Please confirm your password.";
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match!";
-    }
+  if (!fullName.trim()) newErrors.fullName = "Full Name is required!";
+  if (!email.trim()) newErrors.email = "Email is required!";
+  if (!phone.trim()) newErrors.phone = "Phone number is required!";
+  if (!dob) newErrors.dob = "Date of birth is required!";
+  if (!gender) newErrors.gender = "Gender is required!";
+  if (!password.trim()) newErrors.password = "Password is required!";
+  if (!confirmPassword.trim()) newErrors.confirmPassword = "Please confirm your password.";
+  if (password !== confirmPassword) newErrors.confirmPassword = "Passwords do not match!";
 
+  if (Object.keys(newErrors).length > 0) {
+    setFieldErrors(newErrors);
+    setMsg('');
+    setIsError(true);
+    return;
+  }
 
-    if (Object.keys(newErrors).length > 0) {
-      setFieldErrors(newErrors);
-      setMsg('');
-      setIsError(true);
-      return;
+  setFieldErrors({});
+
+  try {
+    console.log("Attempting to register with:", formData);
+    
+    const response = await axios.post("http://localhost:5000/user/user_reg", formData, {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      timeout: 10000 // 10 second timeout
+    });
+    
+    console.log("Response received:", response);
+    const data = response.data;
+
+    if (response.status === 200 && data.status === 200) {
+      setMsg(data.msg || "Registered successfully!");
+      setIsError(false);
+
+      setTimeout(() => {
+        navigate('/');
+      }, 1500);
     } else {
-      setFieldErrors({});
+      if (data.msg === "Email already exists") {
+        setFieldErrors({ email: "Email already exists" });
+      } else {
+        setMsg(data.msg || "Registration failed.");
+      }
+      setIsError(true);
     }
 
+  } catch (err) {
+    console.error("Registration error:", err);
 
-    axios.post("http://localhost:5000/user/user_reg", formData)
-      .then((res) => {
-        console.log("Response from server:", res.data);
+    if (err.code === 'ERR_NETWORK' || err.message.includes('ERR_CONNECTION_REFUSED')) {
+      setMsg("Cannot connect to server. Please make sure the backend server is running on port 5000.");
+    } else if (err.response?.data?.msg) {
+      setMsg(err.response.data.msg);
+    } else if (err.code === 'ECONNABORTED') {
+      setMsg("Request timeout. Please try again.");
+    } else {
+      setMsg("Network error or server not reachable");
+    }
 
-        if (res.data.status === 200) {
-          setMsg(res.data.msg || "Registered successfully!");
-          setIsError(false);
-          setFieldErrors({});
-          setTimeout(() => {
-            navigate('/');
-        
-          },1500);
-        } else {
-          if (res.data.msg === "Email already exists") {
-            setFieldErrors({ email: "Email already exists" });
-            setMsg('');
-          } else {
-            setMsg(res.data.msg || "Registration failed.");
-            setFieldErrors({});
-          }
-          setIsError(true);
-        }
-      })
-      .catch((err) => {
-        console.error("Axios registration error:", err);
-        if (err.response && err.response.data) {
-          const serverMsg = err.response.data.msg || "Server responded with an error";
-          setMsg(serverMsg);
-        } else {
-          setMsg("Network error or server not reachable");
-        }
-        setIsError(true);
-        setFieldErrors({});
-      });
-  };
+    setIsError(true);
+    setFieldErrors({});
+  }
+};
 
-  
   return (
     <div className="signup-container">
       <div className="signup-card">
@@ -153,7 +160,7 @@ function UserRegistration() {
               <option value="other">Other</option>
               <option value="preferNotToSay">Prefer not to say</option>
             </select>
-            {fieldErrors.gender && <p className=" user-error-message">{fieldErrors.gender}</p>}
+            {fieldErrors.gender && <p className="user-error-message">{fieldErrors.gender}</p>}
           </div>
 
           <div className="input-group">

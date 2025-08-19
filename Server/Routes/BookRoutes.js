@@ -1,16 +1,58 @@
 const express = require('express');
 const router = express.Router();
 const upload = require('../Middleware/Upload');
-const { addBook , deleteBook } = require("../Controllers/BookController");
+const adminAuth = require('../Middleware/adminAuth');
+const { addBook, deleteBook } = require("../Controllers/BookController");
 const { getBookById, updateBook } = require('../Controllers/BookController');
 
 const Book = require('../Schema/BookSchema');
 const Order = require('../Schema/OrderSchema');
 const User = require('../Schema/UserSchema');
 
+// Admin login route - MUST be before adminAuth middleware
+router.post('/admin/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        
+        console.log('Admin login attempt:', email);
+        
+        const hardcodedAdminEmail = 'admin@bookstore.com';
+        const hardcodedAdminPassword = 'admin123';
+        
+        if (email === hardcodedAdminEmail && password === hardcodedAdminPassword) {
+            const jwt = require('jsonwebtoken');
+            const adminToken = jwt.sign(
+                { 
+                    _id: 'admin_001', 
+                    email: hardcodedAdminEmail,
+                    role: 'admin' 
+                },
+                process.env.JWT_KEY || 'your-secret-key', // Add fallback
+                { expiresIn: '24h' }
+            );
+            
+            console.log('Admin login successful, token generated:', adminToken);
+            res.json({
+                message: 'Admin login successful',
+                token: adminToken,
+                admin: {
+                    _id: 'admin_001',
+                    email: hardcodedAdminEmail,
+                    role: 'admin'
+                }
+            });
+        } else {
+            console.log('Invalid admin credentials');
+            res.status(401).json({ message: 'Invalid admin credentials' });
+        }
+    } catch (error) {
+        console.error('Admin login error:', error);
+        res.status(500).json({ message: 'Server error during admin login' });
+    }
+});
 
-
-router.post('/addbook', upload.single('coverImage'), addBook); 
+// Book routes
+router.post('/addbook', adminAuth, upload.single('coverImage'), addBook);
 router.get('/allbooks', async (req, res) => {
   try {
     const books = await Book.find();
@@ -24,15 +66,72 @@ router.get('/test', (req, res) => {
   res.send('API is working!');
 });
 
-router.delete('/deletebook/:id', deleteBook);
+router.delete('/deletebook/:id', adminAuth, deleteBook);
 router.get('/book/:id', getBookById);
-router.put('/updatebook/:id', upload.single('coverImage'), updateBook);
+router.put('/updatebook/:id', adminAuth, upload.single('coverImage'), updateBook);
 
-router.get('/admin/orders', async (req, res) => {
+// Order routes
+router.post('/orders', async (req, res) => {
     try {
-        console.log('Fetching orders...');
+        const orderData = req.body;
+        const newOrder = new Order({
+            orderNumber: orderData.orderNumber || 'ORD' + Date.now(),
+            items: orderData.items,
+            userId: orderData.userId || null,
+            totalAmount: orderData.totalAmount,
+            itemCount: orderData.itemCount,
+            status: orderData.status || 'confirmed',
+            orderDate: orderData.orderDate || new Date()
+        });
+
+        const savedOrder = await newOrder.save();
+        res.json(savedOrder);
+    } catch (error) {
+        console.error('Error creating order:', error);
+        res.status(500).json({ message: 'Error creating order' });
+    }
+});
+
+router.get('/orders', async (req, res) => {
+    try {
         const orders = await Order.find()
-            .populate('userId', 'name email username')
+            .populate('userId', 'userName userEmail contact')
+            .sort({ orderDate: -1 });
+        res.json(orders);
+    } catch (error) {
+        console.error('Error fetching user orders:', error);
+        res.status(500).json({ message: 'Error fetching orders' });
+    }
+});
+
+router.put('/orders/:id', adminAuth, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+
+        const order = await Order.findByIdAndUpdate(
+            id,
+            { status },
+            { new: true }
+        );
+
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
+
+        res.json({ message: 'Order updated successfully', order });
+    } catch (error) {
+        console.error('Error updating order:', error);
+        res.status(500).json({ message: 'Error updating order' });
+    }
+});
+
+// Admin order routes
+router.get('/admin/orders', adminAuth, async (req, res) => {
+    try {
+        console.log('Fetching orders for admin...');
+        const orders = await Order.find()
+            .populate('userId', 'userName userEmail contact')
             .sort({ orderDate: -1 });
 
         console.log('Orders found:', orders.length);
@@ -40,8 +139,8 @@ router.get('/admin/orders', async (req, res) => {
         const formattedOrders = orders.map(order => ({
             _id: order._id,
             orderNumber: order.orderNumber,
-            customerName: order.userId?.name || order.userId?.username || 'User',
-            customerEmail: order.userId?.email || 'N/A',
+            customerName: order.userId?.userName || 'Guest User',
+            customerEmail: order.userId?.userEmail || 'N/A',
             items: order.items || [],
             itemCount: order.itemCount || order.items?.length || 0,
             totalAmount: order.totalAmount,
@@ -61,14 +160,14 @@ router.get('/admin/orders', async (req, res) => {
     }
 });
 
-router.put('/admin/orders/:id', async (req, res) => {
+router.put('/admin/orders/:id', adminAuth, async (req, res) => {
     try {
         const { id } = req.params;
         const { status } = req.body;
 
         console.log('Updating order:', id, 'to status:', status);
 
-        const validStatuses = ['pending', 'confirmed', 'shipped', 'delivered'];
+        const validStatuses = ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'];
         if (!validStatuses.includes(status)) {
             return res.status(400).json({ message: 'Invalid status' });
         }
@@ -89,140 +188,194 @@ router.put('/admin/orders/:id', async (req, res) => {
         res.status(500).json({ message: 'Error updating order status' });
     }
 });
-
-router.get('/admin/users', async (req, res) => {
+// User management routes - UPDATED VERSION
+router.get('/users', adminAuth, async (req, res) => {
     try {
-        console.log('Fetching users...');
-        const users = await User.find().sort({ createdAt: -1 });
-        console.log('Users found:', users.length);
+        console.log('Admin fetching all users...');
+        console.log('Admin token from request:', req.headers.authorization);
         
+        const users = await User.find({})
+            .select('-password')
+            .sort({ createdAt: -1 });
+
+        console.log(`Found ${users.length} users in database`);
+
         const usersWithStats = await Promise.all(
             users.map(async (user) => {
-                const orders = await Order.find({ userId: user._id });
-                const totalOrders = orders.length;
-                const totalSpent = orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
+                try {
+                    // Updated query to properly match user orders
+                    const userOrders = await Order.find({ 
+                        $or: [
+                            { userId: user._id },
+                            { userId: user._id.toString() },
+                            { customerEmail: user.userEmail },
+                            { 'customerEmail': { $regex: new RegExp(user.userEmail, 'i') } }
+                        ]
+                    }).sort({ orderDate: -1 });
 
-                return {
-                    _id: user._id,
-                    name: user.name || user.username || 'Unknown',
-                    email: user.email,
-                    phone: user.phone,
-                    status: user.status || 'active',
-                    totalOrders,
-                    totalSpent,
-                    createdAt: user.createdAt,
-                    joinDate: user.createdAt
-                };
+                    console.log(`User ${user.userEmail} has ${userOrders.length} orders`);
+
+                    const totalOrders = userOrders.length;
+                    const totalSpent = userOrders.reduce((sum, order) => {
+                        return sum + (order.totalAmount || 0);
+                    }, 0);
+
+                    return {
+                        _id: user._id,
+                        userName: user.userName,
+                        userEmail: user.userEmail,
+                        contact: user.contact,
+                        dob: user.dob,
+                        gender: user.gender,
+                        status: user.status || 'active',
+                        totalOrders,
+                        totalSpent: Math.round(totalSpent * 100) / 100,
+                        createdAt: user.createdAt,
+                        joinDate: user.createdAt,
+                        lastLogin: user.lastLogin || user.updatedAt,
+                        updatedAt: user.updatedAt,
+                        orders: userOrders.map(order => ({
+                            _id: order._id,
+                            orderNumber: order.orderNumber || `ORD-${order._id.toString().slice(-6)}`,
+                            totalAmount: order.totalAmount || 0,
+                            status: order.status || 'pending',
+                            orderDate: order.orderDate || order.createdAt,
+                            items: order.items || [],
+                            itemCount: order.itemCount || order.items?.length || 0,
+                            paymentMethod: order.paymentMethod || 'N/A',
+                            createdAt: order.createdAt
+                        }))
+                    };
+                } catch (error) {
+                    console.error(`Error processing user ${user._id}:`, error);
+                    return {
+                        _id: user._id,
+                        userName: user.userName,
+                        userEmail: user.userEmail,
+                        contact: user.contact,
+                        dob: user.dob,
+                        gender: user.gender,
+                        status: user.status || 'active',
+                        totalOrders: 0,
+                        totalSpent: 0,
+                        createdAt: user.createdAt,
+                        joinDate: user.createdAt,
+                        lastLogin: user.lastLogin || user.updatedAt,
+                        updatedAt: user.updatedAt,
+                        orders: []
+                    };
+                }
             })
         );
 
+        console.log(`Successfully processed ${usersWithStats.length} users for admin`);
         res.json(usersWithStats);
+
     } catch (error) {
         console.error('Error fetching users:', error);
-        res.status(500).json({ message: 'Error fetching users' });
+        console.error('Error stack:', error.stack);
+        res.status(500).json({ 
+            message: 'Error fetching users', 
+            error: error.message 
+        });
     }
 });
 
-router.put('/admin/users/:id', async (req, res) => {
+// Add a new route to get user orders separately if needed
+router.get('/users/:id/orders', adminAuth, async (req, res) => {
     try {
         const { id } = req.params;
-        const { status } = req.body;
+        console.log('Admin fetching orders for user:', id);
 
-        const user = await User.findByIdAndUpdate(
-            id,
-            { status },
-            { new: true }
-        );
-
+        const user = await User.findById(id);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        res.json({ message: 'User status updated successfully', user });
-    } catch (error) {
-        console.error('Error updating user:', error);
-        res.status(500).json({ message: 'Error updating user status' });
-    }
-});
+        const userOrders = await Order.find({ 
+            $or: [
+                { userId: user._id },
+                { userId: user._id.toString() },
+                { customerEmail: user.userEmail },
+                { 'customerEmail': { $regex: new RegExp(user.userEmail, 'i') } }
+            ]
+        }).sort({ orderDate: -1 });
 
-router.delete('/admin/users/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-
-        const user = await User.findByIdAndDelete(id);
-
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        res.json({ message: 'User deleted successfully' });
-    } catch (error) {
-        console.error('Error deleting user:', error);
-        res.status(500).json({ message: 'Error deleting user' });
-    }
-});
-
-
-
-// GET /api/admin/users
-router.get('/', verifyAdminToken, async (req, res) => {
-    try {
-        const users = await User.find({ role: 'admin' }); // Filter only admin users
-
-        const formattedUsers = users.map(user => ({
-            _id: user._id,
-            name: user.name,
-            email: user.email,
-            phone: user.phone,
-            status: user.status,
-            totalOrders: user.totalOrders || 0,
-            totalSpent: user.totalSpent || 0,
-            createdAt: user.createdAt
+        const formattedOrders = userOrders.map(order => ({
+            _id: order._id,
+            orderNumber: order.orderNumber || `ORD-${order._id.toString().slice(-6)}`,
+            totalAmount: order.totalAmount || 0,
+            status: order.status || 'pending',
+            orderDate: order.orderDate || order.createdAt,
+            items: order.items || [],
+            itemCount: order.itemCount || order.items?.length || 0,
+            paymentMethod: order.paymentMethod || 'N/A',
+            createdAt: order.createdAt
         }));
 
-        res.status(200).json(formattedUsers);
-    } catch (err) {
-        console.error('Error fetching users:', err);
-        res.status(500).json({ message: 'Server error' });
+        res.json({
+            user: {
+                _id: user._id,
+                userName: user.userName,
+                userEmail: user.userEmail
+            },
+            orders: formattedOrders,
+            totalOrders: formattedOrders.length,
+            totalSpent: formattedOrders.reduce((sum, order) => sum + order.totalAmount, 0)
+        });
+
+    } catch (error) {
+        console.error('Error fetching user orders:', error);
+        res.status(500).json({ 
+            message: 'Error fetching user orders', 
+            error: error.message 
+        });
     }
 });
-// PUT /api/admin/users/:userId
-router.put('/:userId', verifyAdminToken, async (req, res) => {
-    const { userId } = req.params;
-    const { status } = req.body;
 
-    if (!['active', 'blocked'].includes(status)) {
-        return res.status(400).json({ message: 'Invalid status' });
-    }
-
+// Updated order creation route to better link with users
+router.post('/orders', async (req, res) => {
     try {
-        const user = await User.findByIdAndUpdate(userId, { status }, { new: true });
+        const orderData = req.body;
+        console.log('Creating order with data:', orderData);
 
-        if (!user) return res.status(404).json({ message: 'User not found' });
-
-        res.status(200).json({ message: 'User status updated', user });
-    } catch (err) {
-        console.error('Error updating user:', err);
-        res.status(500).json({ message: 'Server error' });
-    }
-});
-// DELETE /api/admin/users/:userId
-router.delete('/:userId', verifyAdminToken, async (req, res) => {
-    const { userId } = req.params;
-
-    try {
-        const deletedUser = await User.findByIdAndDelete(userId);
-
-        if (!deletedUser) {
-            return res.status(404).json({ message: 'User not found' });
+        // Try to find user by email if userId is not provided
+        let userId = orderData.userId;
+        if (!userId && orderData.customerEmail) {
+            const user = await User.findOne({ userEmail: orderData.customerEmail });
+            if (user) {
+                userId = user._id;
+            }
         }
 
-        res.status(200).json({ message: 'Admin user deleted' });
-    } catch (err) {
-        console.error('Error deleting user:', err);
-        res.status(500).json({ message: 'Server error' });
+        const newOrder = new Order({
+            orderNumber: orderData.orderNumber || `ORD-${Date.now()}`,
+            items: orderData.items || [],
+            userId: userId,
+            customerName: orderData.customerName,
+            customerEmail: orderData.customerEmail,
+            totalAmount: orderData.totalAmount || 0,
+            itemCount: orderData.itemCount || orderData.items?.length || 0,
+            status: orderData.status || 'confirmed',
+            orderDate: orderData.orderDate || new Date(),
+            paymentMethod: orderData.paymentMethod || 'N/A'
+        });
+
+        const savedOrder = await newOrder.save();
+        console.log('Order created successfully:', savedOrder._id);
+        
+        res.json(savedOrder);
+    } catch (error) {
+        console.error('Error creating order:', error);
+        res.status(500).json({ message: 'Error creating order', error: error.message });
     }
 });
+
+
+
+
+
+
 
 
 

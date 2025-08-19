@@ -2,7 +2,6 @@ const UserController = require('../Schema/UserSchema')
 const jwt = require('jsonwebtoken');
 const bcrypt = require("bcrypt")
 
-
 const UserRegistration = async (req, res) => {
   try {
     const { fullName, email, phone, dob, gender, password } = req.body;
@@ -47,8 +46,6 @@ const UserRegistration = async (req, res) => {
   }
 };
 
-
-
 const login = async (req, res) => {
   const { email, password } = req.body;
   console.log("Login attempt with:", email, password);
@@ -75,16 +72,24 @@ const login = async (req, res) => {
       process.env.JWT_KEY
     );
 
+    // Return user data along with token
+    const userData = {
+      _id: result._id,
+      userName: result.userName,
+      userEmail: result.userEmail,
+      contact: result.contact
+    };
+
     console.log("Login successful, token generated");
-    return res.status(200).json({ token });
+    return res.status(200).json({ 
+      token,
+      user: userData
+    });
 
   } catch (err) {
     console.error("Server error during login:", err);
     return res.status(500).json({ err: "Internal server error" });
   }
 };
-
-
-
 
 module.exports = { UserRegistration, login }

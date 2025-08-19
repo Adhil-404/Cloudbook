@@ -1,27 +1,29 @@
-import React from 'react'
-import '../../Assets/Styles/Userstyles/UserResetpassword.css'
+import { useState } from 'react';
+import axios from 'axios';
 
-function UserResetpassword() {
+export default function UserResetpassword() {
+  const [password, setPassword] = useState('');
+  const [msg, setMsg] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem('resetToken');
+    try {
+      const res = await axios.post('http://localhost:5000/api/auth/reset-password', { password }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setMsg(res.data.message);
+    } catch (err) {
+      setMsg(err.response.data.message);
+    }
+  };
+
   return (
-    <div>
-        <div className="container">
-      <div className="reset-card">
-        <h2 className="title">Reset Password</h2>
-        <form>
-          <div className="input-group">
-            <label className="label">New Password</label>
-            <input type="password" required className="input" />
-          </div>
-          <div className="input-group">
-            <label className="label">Confirm Password</label>
-            <input type="password" required className="input" />
-          </div>
-          <button type="submit" className="button">Reset Password</button>
-        </form>
-      </div>
-    </div>
-    </div>
-  )
+    <form onSubmit={handleSubmit}>
+      <h2>Reset Password</h2>
+      <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
+      <button type="submit">Reset</button>
+      {msg && <p>{msg}</p>}
+    </form>
+  );
 }
-
-export default UserResetpassword

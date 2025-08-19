@@ -1,36 +1,22 @@
-import React from 'react'
-import '../../Assets/Styles/Userstyles/UserForgetpassword.css'
-import { Link } from 'react-router-dom'
+import { useState } from 'react';
+import axios from 'axios';
 
-function UserForgetpassword() {
+export default function UserForgetpasswordr() {
+  const [email, setEmail] = useState('');
+  const [msg, setMsg] = useState('');
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const res = await axios.post('http://localhost:5000/api/auth/request-password-reset', { email });
+    setMsg(res.data.message);
+  };
 
   return (
-
-    <div>
-
-      <div className="container">
-        <div className="forget-card">
-          <h2 className="title">Forgot Password</h2>
-          <form>
-            <div className="input-group">
-              <label className="label">Email Address</label>
-              <input
-                type="email"
-                required
-                className="input"
-              />
-            </div>
-            < Link to={'/user/restpassword'}> <button type="submit" className="button">
-              Reset Password
-            </button></Link>
-          </form>
-        </div>
-      </div>
-
-
-    </div>
-  )
+    <form onSubmit={handleSubmit}>
+      <h2>Forgot Password</h2>
+      <input type="email" value={email} required onChange={(e) => setEmail(e.target.value)} />
+      <button type="submit">Send OTP</button>
+      {msg && <p>{msg}</p>}
+    </form>
+  );
 }
-
-export default UserForgetpassword
