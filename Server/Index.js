@@ -19,14 +19,16 @@ app.use("/uploads", express.static(path.join(__dirname, "Uploads")));
 const bookroutes = require("./Routes/BookRoutes");
 app.use("/api", bookroutes);
 
-const Otp=require("./Routes/Otp")
-app.use('/api/auth', authRoutes);
+     
 const router=require('./router')
 app.use("/user",router)
 
 
 const orderRoutes = require('./Routes/OrderRoutes');
 app.use('/api/orders', orderRoutes);
+
+const otpRoutes=require("./Routes/Otp")
+app.use("/otp",otpRoutes)
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

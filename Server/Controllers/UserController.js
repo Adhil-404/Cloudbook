@@ -72,7 +72,6 @@ const login = async (req, res) => {
       process.env.JWT_KEY
     );
 
-    // Return user data along with token
     const userData = {
       _id: result._id,
       userName: result.userName,

@@ -188,7 +188,7 @@ router.put('/admin/orders/:id', adminAuth, async (req, res) => {
         res.status(500).json({ message: 'Error updating order status' });
     }
 });
-// User management routes - UPDATED VERSION
+
 router.get('/users', adminAuth, async (req, res) => {
     try {
         console.log('Admin fetching all users...');
@@ -203,7 +203,7 @@ router.get('/users', adminAuth, async (req, res) => {
         const usersWithStats = await Promise.all(
             users.map(async (user) => {
                 try {
-                    // Updated query to properly match user orders
+                 
                     const userOrders = await Order.find({ 
                         $or: [
                             { userId: user._id },
@@ -281,7 +281,7 @@ router.get('/users', adminAuth, async (req, res) => {
     }
 });
 
-// Add a new route to get user orders separately if needed
+
 router.get('/users/:id/orders', adminAuth, async (req, res) => {
     try {
         const { id } = req.params;
@@ -333,13 +333,12 @@ router.get('/users/:id/orders', adminAuth, async (req, res) => {
     }
 });
 
-// Updated order creation route to better link with users
+
 router.post('/orders', async (req, res) => {
     try {
         const orderData = req.body;
         console.log('Creating order with data:', orderData);
 
-        // Try to find user by email if userId is not provided
         let userId = orderData.userId;
         if (!userId && orderData.customerEmail) {
             const user = await User.findOne({ userEmail: orderData.customerEmail });
