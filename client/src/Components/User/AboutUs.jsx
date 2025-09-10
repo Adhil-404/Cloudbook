@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import "../../Assets/Styles/Userstyles/Aboutus.css"
 import UserFooter from './UserFooter';
 import UserNav from './Usernav';
+import { Link } from 'react-router-dom';
 
 const AboutUs = () => {
   const [animateStats, setAnimateStats] = useState(false);
@@ -46,7 +47,7 @@ const AboutUs = () => {
       name: 'Sarah Thompson',
       role: 'Co-Founder & CEO',
       description: 'Literature PhD with 20+ years in publishing',
-      image: 'https://images.unsplash.com/photo-1494790108755-2616b612b412?w=150&h=150&fit=crop&crop=face'
+      image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfBgthbf9ow1iQXaApN2wka5NlVtKly6JFyw&s'
     },
     {
       name: 'Michael Thompson',
@@ -65,21 +66,23 @@ const AboutUs = () => {
   return (
 
     <div className="about-us-page">
-        <UserNav/>
+      <UserNav />
 
       <section className="hero-section">
         <div className="container">
           <div className="hero-content">
             <h1 className="hero-title">CloudBook</h1>
             <p className="hero-subtitle">Where Stories Come to Life</p>
-            <button className="btn btn-custom btn-outline-custom">
-              Explore Our Collection
-            </button>
+            <Link to='/user/homepage/product'>
+              <button className="btn btn-custom btn-outline-custom">
+                Explore Our Collection
+              </button>
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* Story Section */}
+
       <section className="story-section">
         <div className="container">
           <h2 className="section-title">Our Story</h2>
@@ -101,7 +104,6 @@ const AboutUs = () => {
         </div>
       </section>
 
-      {/* Values Section */}
       <section className="values-section">
         <div className="container">
           <h2 className="section-title">Our Values</h2>
@@ -119,7 +121,6 @@ const AboutUs = () => {
         </div>
       </section>
 
-      {/* Stats Section */}
       <section className="stats-section">
         <div className="container">
           <h2 className="section-title text-black">By the Numbers</h2>
@@ -138,7 +139,7 @@ const AboutUs = () => {
         </div>
       </section>
 
-      {/* Team Section */}
+
       <section className="team-section">
         <div className="container">
           <h2 className="section-title">Meet Our Team</h2>
@@ -146,9 +147,9 @@ const AboutUs = () => {
             {teamMembers.map((member, index) => (
               <div key={index} className="col-lg-4 col-md-6 mb-4">
                 <div className="team-card">
-                  <img 
-                    src={member.image} 
-                    alt={member.name} 
+                  <img
+                    src={member.image}
+                    alt={member.name}
                     className="team-image"
                   />
                   <h3 className="team-name">{member.name}</h3>
@@ -161,7 +162,7 @@ const AboutUs = () => {
         </div>
       </section>
 
-      {/* Quote Section */}
+
       <section className="quote-section">
         <div className="container">
           <div className="row">
@@ -175,25 +176,26 @@ const AboutUs = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="cta-section">
         <div className="container">
           <h2 className="cta-title">Start Your Next Chapter</h2>
           <p className="cta-text">
-            Join thousands of readers who have discovered their next favorite book with us. 
+            Join thousands of readers who have discovered their next favorite book with us.
             Explore our curated collection and find stories that will inspire, challenge, and delight you.
           </p>
-          <div className="cta-buttons">
-            <button className="btn btn-custom btn-primary-custom">
-              Browse Books
-            </button>
-            <button className="btn btn-custom btn-outline-custom">
-              Join Our Newsletter
-            </button>
-          </div>
+          <Link to='/user/subscribe'>
+            <div className="cta-buttons">
+              <button className="btn btn-custom btn-primary-custom">
+                Browse Books
+              </button>
+              <button className="btn btn-custom btn-outline-custom">
+                Join Our Newsletter
+              </button>
+            </div>
+          </Link>
         </div>
       </section>
-      <UserFooter/>
+      <UserFooter />
     </div>
   );
 };
