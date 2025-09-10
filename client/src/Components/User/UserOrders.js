@@ -5,7 +5,7 @@ import UserNav from './Usernav';
 import UserFooter from './UserFooter';
 import "../../Assets/Styles/Userstyles/UserOrders.css";
 
-// OrderManager utility
+
 const OrderManager = {
   saveOrderGlobally: (order) => {
     try {
@@ -106,11 +106,11 @@ function Orders() {
         const updatedOrders = [newOrder, ...existingOrders];
         localStorage.setItem('userOrders', JSON.stringify(updatedOrders));
         
-        // Save to global orders for admin visibility
+       
         OrderManager.saveOrderGlobally(newOrder);
         OrderManager.saveOrderForUser(newOrder);
         
-        // Try to save to backend as well
+     
         try {
           const token = localStorage.getItem('token') || 
                        localStorage.getItem('authToken') || 
@@ -196,12 +196,12 @@ function Orders() {
       
       localStorage.setItem('userOrders', JSON.stringify(updatedOrders));
       
-      // Update in global orders as well
+      
       OrderManager.updateOrderStatus(orderId, 'cancelled');
     
       setOrders(updatedOrders);
       
-      // Try to update backend as well
+    
       try {
         const token = localStorage.getItem('token') || 
                      localStorage.getItem('authToken') || 

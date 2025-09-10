@@ -52,7 +52,7 @@ router.post('/admin/login', async (req, res) => {
 });
 
 // Book routes
-router.post('/addbook', adminAuth, upload.single('coverImage'), addBook);
+router.post('/addbook', adminAuth, upload.single('coverImage'),addBook);
 router.get('/allbooks', async (req, res) => {
   try {
     const books = await Book.find();

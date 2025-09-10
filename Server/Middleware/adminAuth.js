@@ -23,14 +23,14 @@ const adminAuth = (req, res, next) => {
   console.log('🔑 Extracted admin token:', token.substring(0, 20) + '...');
 
   try {
-    // Make sure JWT_KEY is available
+   
     const jwtKey = process.env.JWT_KEY || 'your-secret-key';
     console.log('🔐 Using JWT key:', jwtKey ? 'Key available' : 'No key found');
     
     const decoded = jwt.verify(token, jwtKey);
     console.log('✅ Decoded admin token:', decoded);
     
-    // Add admin-specific validation here if needed
+  
     if (decoded.role !== 'admin') {
       console.log('❌ User does not have admin role:', decoded.role);
       return res.status(403).json({ 
