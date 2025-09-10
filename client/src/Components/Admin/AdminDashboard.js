@@ -44,7 +44,12 @@ function AdminDashboard() {
         <h2 className="dashboard-title">Book Inventory</h2>
         <div className="book-list">
           {books.map(book => (
-            <BookCard key={book._id} book={book} onDelete={handleDelete} onEdit={() => navigate(`/admin/editbook/${book._id}`)} />
+            <BookCard
+              key={book._id}
+              book={book}
+              onDelete={handleDelete}
+              onEdit={() => navigate(`/admin/editbook/${book._id}`)}
+            />
           ))}
         </div>
       </div>
@@ -55,12 +60,19 @@ function AdminDashboard() {
 function BookCard({ book, onDelete, onEdit }) {
   return (
     <div className="book-card">
-      <img src={`http://localhost:5000/uploads/${book.coverImage}`} alt={book.title} />
+      <img
+        src={`http://localhost:5000/uploads/${book.coverImage}`}
+        alt={book.title}
+      />
       <h3>{book.title}</h3>
       <p><strong>Author:</strong> {book.author}</p>
       <p><strong>Category:</strong> {book.category}</p>
       <p><strong>Price:</strong> ₹{book.price}</p>
-      <p className="description">{book.description.length > 70 ? `${book.description.slice(0, 70)}...` : book.description}</p>
+      <p className="description">
+        {book.description.length > 70
+          ? `${book.description.slice(0, 70)}...`
+          : book.description}
+      </p>
       <div className="admin-buttons">
         <button className="edit-btn" onClick={onEdit}>
           <i className="bi bi-pencil-square"></i>Edit
@@ -74,4 +86,3 @@ function BookCard({ book, onDelete, onEdit }) {
 }
 
 export default AdminDashboard;
-
