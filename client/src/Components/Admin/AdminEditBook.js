@@ -33,26 +33,35 @@ function AdminEditBook() {
     setBook({ ...book, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
 
-    const formData = new FormData();
-    Object.entries(book).forEach(([key, value]) => formData.append(key, value));
-    if (coverImage) formData.append('coverImage', coverImage);
-
-    try {
-      await axios.put(`http://localhost:5000/api/updatebook/${id}`, formData);
-      alert("Book updated successfully!");
-      navigate('/admin/dashboard');
-    } catch (err) {
-      console.error("Error updating book:", err);
-      alert("Failed to update book, please try again.");
-    } finally {
-      setLoading(false);
+  const formData = new FormData();
+  Object.entries(book).forEach(([key, value]) => {
+    if (key !== 'coverImage') {
+      formData.append(key, value);
     }
-  };
+  });
+  if (coverImage) formData.append('coverImage', coverImage);
 
+  try {
+    const token = localStorage.getItem("adminToken");
+    
+    await axios.put(`http://localhost:5000/api/updatebook/${id}`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    alert("Book updated successfully!");
+    navigate('/admin/dashboard');
+  } catch (err) {
+    console.error("Error updating book:", err);
+    alert("Failed to update book, please try again.");
+  } finally {
+    setLoading(false);
+  }
+};
   return (
     <div className="add-book-container">
       <h2>Edit Book</h2>

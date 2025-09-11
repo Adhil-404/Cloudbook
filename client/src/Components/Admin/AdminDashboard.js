@@ -10,7 +10,7 @@ function AdminDashboard() {
 
   useEffect(() => {
     if (!localStorage.getItem('adminLoggedIn')) {
-      navigate('/admin/login');
+      navigate('/admin');
       return;
     }
     fetchBooks();
@@ -28,14 +28,29 @@ function AdminDashboard() {
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this book?")) return;
+
     try {
-      await axios.delete(`http://localhost:5000/api/deletebook/${id}`);
-      setBooks(b => b.filter(book => book._id !== id));
+      const token = localStorage.getItem("adminToken");
+      if (!token) {
+        alert("No admin token found. Please login again.");
+        navigate("/admin");
+        return;
+      }
+
+      await axios.delete(`http://localhost:5000/api/deletebook/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setBooks((b) => b.filter((book) => book._id !== id));
+      alert("Book deleted successfully");
     } catch (err) {
-      console.error("Error deleting book:", err);
+      console.error("Error deleting book:", err.response?.data || err.message);
       alert("Delete failed, please try again.");
     }
   };
+
 
   return (
     <div>

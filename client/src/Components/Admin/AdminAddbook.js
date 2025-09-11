@@ -22,38 +22,42 @@ function AdminAddbook() {
   const handleImageChange = (e) => {
     setCoverImage(e.target.files[0]); 
   };
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const formData = new FormData();
+  formData.append('title', book.title);
+  formData.append('author', book.author);
+  formData.append('category', book.category);
+  formData.append('description', book.description);
+  formData.append('price', book.price);
+  formData.append('coverImage', coverImage); 
 
-    const formData = new FormData();
-    formData.append('title', book.title);
-    formData.append('author', book.author);
-    formData.append('category', book.category);
-    formData.append('description', book.description);
-    formData.append('price', book.price);
-    formData.append('coverImage', coverImage); 
+  try {
+    const token = localStorage.getItem("adminToken");
+    
+    await axios.post('http://localhost:5000/api/addbook', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-    try {
-     await axios.post('http://localhost:5000/api/addbook', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      alert("Book added successfully!");
-      setBook({
-        title: '',
-        author: '',
-        category: '',
-        description: '',
-        price: '',
-      });
-      setCoverImage(null);
-    } catch (err) {
-      console.error("Error adding book:", err);
-    }
-  };
+    alert("Book added successfully!");
+    setBook({
+      title: '',
+      author: '',
+      category: '',
+      description: '',
+      price: '',
+    });
+    setCoverImage(null);
+    navigate('/admin/dashboard');
+  } catch (err) {
+    console.error("Error adding book:", err);
+    alert("Failed to add book, please try again.");
+  }
+};
 
   return (
     <div className="add-book-form">
@@ -63,12 +67,12 @@ function AdminAddbook() {
         </span>
       </div>
       <h2>Add a New Book</h2>
+      
       <form onSubmit={handleSubmit} encType="multipart/form-data">
         <input type="text" name="title" placeholder="Title" value={book.title} onChange={handleChange} required />
         <input type="text" name="author" placeholder="Author" value={book.author} onChange={handleChange} required />
         <input type="text" name="category" placeholder="Category" value={book.category} onChange={handleChange} required />
         <input type="text" name="price" placeholder="Price" value={book.price} onChange={handleChange} required />
-        
         <input type="file" accept="image/*" onChange={handleImageChange} required />
         
         <textarea name="description" placeholder="Description" value={book.description} onChange={handleChange} required />
