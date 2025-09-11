@@ -28,7 +28,7 @@ router.post('/admin/login', async (req, res) => {
                     role: 'admin' 
                 },
                 process.env.JWT_KEY || 'your-secret-key', // Add fallback
-                { expiresIn: '24h' }
+                { expiresIn: '30d' }
             );
             
             console.log('Admin login successful, token generated:', adminToken);
@@ -69,6 +69,8 @@ router.get('/test', (req, res) => {
 router.delete('/deletebook/:id', adminAuth, deleteBook);
 router.get('/book/:id', getBookById);
 router.put('/updatebook/:id', adminAuth, upload.single('coverImage'), updateBook);
+
+
 
 // Order routes
 router.post('/orders', async (req, res) => {
