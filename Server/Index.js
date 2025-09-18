@@ -4,6 +4,7 @@ const cors = require("cors");
 const path = require("path");
 const bodyparser = require("body-parser");
 
+
 dotenv.config();
 
 const app = express();
@@ -20,12 +21,16 @@ app.use('/api', require('./Routes/BookRoutes'));
 const bookroutes = require("./Routes/BookRoutes");
 app.use("/api", bookroutes);
 
+     
 const router=require('./router')
 app.use("/user",router)
 
 
 const orderRoutes = require('./Routes/OrderRoutes');
 app.use('/api/orders', orderRoutes);
+
+const otpRoutes=require("./Routes/MailLink")
+app.use("/api/auth",otpRoutes)
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

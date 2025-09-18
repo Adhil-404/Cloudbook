@@ -72,7 +72,7 @@ function Orders() {
           totalAmount: orderData.totalAmount,
           itemCount: orderData.items.length,
           paymentMethod: paymentMethod || 'N/A',
-          customerName: 'Guest User', // You can get this from context/props
+          customerName: 'Guest User',
           customerEmail: 'guest@example.com'
         };
 
@@ -105,7 +105,6 @@ function Orders() {
   };
 
   const getAuthToken = () => {
-    // Check multiple possible token storage locations
     return localStorage.getItem('token') || 
            localStorage.getItem('authToken') || 
            localStorage.getItem('userToken') || 
@@ -117,7 +116,6 @@ function Orders() {
       const token = getAuthToken();
       
       if (!token) {
-        // If no token, show empty state or handle guest users
         setOrders([]);
         setLoading(false);
         return;
@@ -133,7 +131,6 @@ function Orders() {
 
         console.log('Orders response:', response.data);
         
-        // Ensure response.data is an array
         const ordersData = Array.isArray(response.data) ? response.data : [];
         setOrders(ordersData);
         setLoading(false);
@@ -153,7 +150,6 @@ function Orders() {
 
   const cancelOrder = async (orderId) => {
     try {
-      // Update local state first
       const updatedOrders = orders.map(order => 
         order._id === orderId 
           ? { ...order, status: 'cancelled' }
@@ -162,7 +158,6 @@ function Orders() {
       
       setOrders(updatedOrders);
       
-      // Try to update backend
       try {
         const token = getAuthToken();
         
@@ -179,7 +174,6 @@ function Orders() {
         }
       } catch (backendError) {
         console.log('Backend not available, order cancelled locally only');
-        // You might want to show a warning to the user here
       }
       
     } catch (error) {

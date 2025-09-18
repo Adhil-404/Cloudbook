@@ -92,7 +92,7 @@ function UserNav() {
     handleSearch({ preventDefault: () => {} });
   };
 
-  const handleKeyPress = (e) => {
+  const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       handleSearch(e);
     }
@@ -155,7 +155,7 @@ function UserNav() {
 
 
   return (
-    <div>
+    <>
       <div className="header-top">
         <div className="contact-info">
           <i className="bi bi-telephone" aria-label="Phone"></i>
@@ -173,15 +173,15 @@ function UserNav() {
       <div className="header-middle">
         <div className="logo">Cloudbook</div>
         <form className="search-bar" onSubmit={handleSearch}>
-          <input 
-            type="text" 
-            placeholder="Search products..." 
+          <input
+            type="text"
+            placeholder="Search products..."
             aria-label="Search products"
             value={searchQuery}
             onChange={handleSearchChange}
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyDown}
           />
-          <select 
+          <select
             aria-label="Select category"
             value={selectedCategory}
             onChange={handleCategoryChange}
@@ -196,8 +196,8 @@ function UserNav() {
             <option value="Historical Fiction">Historical Fiction</option>
             <option value="Dystopian fiction">Dystopian fiction</option>
           </select>
-          <button 
-            type="button" 
+          <button
+            type="button"
             aria-label="Search"
             onClick={handleSearchClick}
             className="search-icon-btn"
@@ -208,7 +208,7 @@ function UserNav() {
       </div>
 
       <header className="homepage-header">
-          <button className="menu-toggle-btn left" onClick={toggleSidebar} aria-label="Open user menu">
+        <button className="menu-toggle-btn left" onClick={toggleSidebar} aria-label="Open user menu">
           <i className="bi bi-list"></i>
         </button>
         <div className="nav-links">
@@ -228,7 +228,7 @@ function UserNav() {
 
       {isSidebarOpen && <div className="sidebar-overlay" onClick={closeSidebar}></div>}
 
-      <div 
+      <div
         ref={sidebarRef}
         className={`user-sidebar ${isSidebarOpen ? 'open' : ''}`}
       >
@@ -249,7 +249,7 @@ function UserNav() {
 
         <div className="sidebar-content">
           <nav className="sidebar-nav">
-            {sidebarItems.map((item, index) => (
+            {sidebarItems.map((item, index) =>
               item.action === 'logout' ? (
                 <div
                   key={index}
@@ -286,11 +286,11 @@ function UserNav() {
                   </div>
                 </Link>
               )
-            ))}
+            )}
           </nav>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

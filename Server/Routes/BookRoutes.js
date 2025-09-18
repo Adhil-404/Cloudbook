@@ -60,7 +60,7 @@ router.get('/test', (req, res) => {
 });
 
 // Book routes
-router.post('/addbook', adminAuth, upload.single('coverImage'), addBook);
+router.post('/addbook', adminAuth, upload.single('coverImage'),addBook);
 router.get('/allbooks', async (req, res) => {
     try {
         const books = await Book.find().sort({ createdAt: -1 });
@@ -321,12 +321,157 @@ router.put('/admin/orders/:id', adminAuth, async (req, res) => {
 });
 
 // Public order creation (for frontend checkout)
+
+router.get('/users', adminAuth, async (req, res) => {
+    try {
+        console.log('Admin fetching all users...');
+        console.log('Admin token from request:', req.headers.authorization);
+        
+        const users = await User.find({})
+            .select('-password')
+            .sort({ createdAt: -1 });
+
+        console.log(`Found ${users.length} users in database`);
+
+        const usersWithStats = await Promise.all(
+            users.map(async (user) => {
+                try {
+                 
+                    const userOrders = await Order.find({ 
+                        $or: [
+                            { userId: user._id },
+                            { userId: user._id.toString() },
+                            { customerEmail: user.userEmail },
+                            { 'customerEmail': { $regex: new RegExp(user.userEmail, 'i') } }
+                        ]
+                    }).sort({ orderDate: -1 });
+
+                    console.log(`User ${user.userEmail} has ${userOrders.length} orders`);
+
+                    const totalOrders = userOrders.length;
+                    const totalSpent = userOrders.reduce((sum, order) => {
+                        return sum + (order.totalAmount || 0);
+                    }, 0);
+
+                    return {
+                        _id: user._id,
+                        userName: user.userName,
+                        userEmail: user.userEmail,
+                        contact: user.contact,
+                        dob: user.dob,
+                        gender: user.gender,
+                        status: user.status || 'active',
+                        totalOrders,
+                        totalSpent: Math.round(totalSpent * 100) / 100,
+                        createdAt: user.createdAt,
+                        joinDate: user.createdAt,
+                        lastLogin: user.lastLogin || user.updatedAt,
+                        updatedAt: user.updatedAt,
+                        orders: userOrders.map(order => ({
+                            _id: order._id,
+                            orderNumber: order.orderNumber || `ORD-${order._id.toString().slice(-6)}`,
+                            totalAmount: order.totalAmount || 0,
+                            status: order.status || 'pending',
+                            orderDate: order.orderDate || order.createdAt,
+                            items: order.items || [],
+                            itemCount: order.itemCount || order.items?.length || 0,
+                            paymentMethod: order.paymentMethod || 'N/A',
+                            createdAt: order.createdAt
+                        }))
+                    };
+                } catch (error) {
+                    console.error(`Error processing user ${user._id}:`, error);
+                    return {
+                        _id: user._id,
+                        userName: user.userName,
+                        userEmail: user.userEmail,
+                        contact: user.contact,
+                        dob: user.dob,
+                        gender: user.gender,
+                        status: user.status || 'active',
+                        totalOrders: 0,
+                        totalSpent: 0,
+                        createdAt: user.createdAt,
+                        joinDate: user.createdAt,
+                        lastLogin: user.lastLogin || user.updatedAt,
+                        updatedAt: user.updatedAt,
+                        orders: []
+                    };
+                }
+            })
+        );
+
+        console.log(`Successfully processed ${usersWithStats.length} users for admin`);
+        res.json(usersWithStats);
+
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        console.error('Error stack:', error.stack);
+        res.status(500).json({ 
+            message: 'Error fetching users', 
+            error: error.message 
+        });
+    }
+});
+
+
+router.get('/users/:id/orders', adminAuth, async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log('Admin fetching orders for user:', id);
+
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const userOrders = await Order.find({ 
+            $or: [
+                { userId: user._id },
+                { userId: user._id.toString() },
+                { customerEmail: user.userEmail },
+                { 'customerEmail': { $regex: new RegExp(user.userEmail, 'i') } }
+            ]
+        }).sort({ orderDate: -1 });
+
+        const formattedOrders = userOrders.map(order => ({
+            _id: order._id,
+            orderNumber: order.orderNumber || `ORD-${order._id.toString().slice(-6)}`,
+            totalAmount: order.totalAmount || 0,
+            status: order.status || 'pending',
+            orderDate: order.orderDate || order.createdAt,
+            items: order.items || [],
+            itemCount: order.itemCount || order.items?.length || 0,
+            paymentMethod: order.paymentMethod || 'N/A',
+            createdAt: order.createdAt
+        }));
+
+        res.json({
+            user: {
+                _id: user._id,
+                userName: user.userName,
+                userEmail: user.userEmail
+            },
+            orders: formattedOrders,
+            totalOrders: formattedOrders.length,
+            totalSpent: formattedOrders.reduce((sum, order) => sum + order.totalAmount, 0)
+        });
+
+    } catch (error) {
+        console.error('Error fetching user orders:', error);
+        res.status(500).json({ 
+            message: 'Error fetching user orders', 
+            error: error.message 
+        });
+    }
+});
+
+
 router.post('/orders', async (req, res) => {
     try {
         const orderData = req.body;
         console.log('Creating order with data:', orderData);
 
-        // Try to find user by email if userId is not provided
         let userId = orderData.userId;
         if (!userId && orderData.customerEmail) {
             const user = await User.findOne({ userEmail: orderData.customerEmail });
@@ -364,6 +509,13 @@ router.post('/orders', async (req, res) => {
         });
     }
 });
+
+
+
+
+
+
+
 
 // Get public orders (for user order history)
 router.get('/orders', async (req, res) => {

@@ -29,10 +29,10 @@ function UserLogin() {
         return;
       }
 
-      // Store token
+     
       localStorage.setItem("userToken", token);
 
-      // Store user info
+    
       if (user) {
         const userInfo = {
           _id: user._id,

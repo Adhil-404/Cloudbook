@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+
 const orderSchema = new mongoose.Schema({
     orderNumber: {
         type: String,
@@ -61,7 +62,7 @@ const orderSchema = new mongoose.Schema({
     timestamps: true
 });
 
-// Index for better query performance
+
 orderSchema.index({ userId: 1 });
 orderSchema.index({ customerEmail: 1 });
 orderSchema.index({ orderDate: -1 });

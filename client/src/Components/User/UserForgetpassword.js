@@ -1,36 +1,58 @@
-import React from 'react'
-import '../../Assets/Styles/Userstyles/UserForgetpassword.css'
-import { Link } from 'react-router-dom'
+import React, { useState } from 'react';
+import axios from 'axios';
+import '../../Assets/Styles/Userstyles/UserForgetpassword.css'; 
 
-function UserForgetpassword() {
+const ForgotPassword = () => {
+  const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage('');
+    setError('');
+
+    try {
+      const response = await axios.post('http://localhost:5000/api/auth/forgot-password', { email });
+      setMessage(response.data.message);
+      setEmail('');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Something went wrong');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
+    <div className="forgot-password-container">
+      <h2>Forgot Password</h2>
+      <p>Enter your email to receive a reset link.</p>
 
-    <div>
+      {message && <div className="success-message">{message}</div>}
+      {error && <div className="error-message">{error}</div>}
 
-      <div className="container">
-        <div className="forget-card">
-          <h2 className="title">Forgot Password</h2>
-          <form>
-            <div className="input-group">
-              <label className="label">Email Address</label>
-              <input
-                type="email"
-                required
-                className="input"
-              />
-            </div>
-            < Link to={'/user/restpassword'}> <button type="submit" className="button">
-              Reset Password
-            </button></Link>
-          </form>
-        </div>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="email"
+          placeholder="Your email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          disabled={loading}
+        />
+        <button type="submit" disabled={loading}>
+          {loading ? 'Sending...' : 'Send Reset Link'}
+        </button>
+      </form>
+
+      {/* Optional: Add back to login link */}
+      <div className="back-to-login">
+        <a href="/login">Back to Login</a>
       </div>
-
-
     </div>
-  )
-}
+  );
+};
 
-export default UserForgetpassword
+export default ForgotPassword;
