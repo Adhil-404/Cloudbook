@@ -5,55 +5,30 @@ import UserNav from './Usernav';
 import UserFooter from './UserFooter';
 import "../../Assets/Styles/Userstyles/UserOrders.css";
 
-// OrderManager utility
+// OrderManager utility - removed localStorage usage as mentioned in constraints
 const OrderManager = {
-  saveOrderGlobally: (order) => {
+  saveOrderGlobally: (order, globalOrders, setGlobalOrders) => {
     try {
-      const globalOrders = JSON.parse(localStorage.getItem('globalOrders') || '[]');
       const existingIndex = globalOrders.findIndex(o => o._id === order._id);
       
       if (existingIndex >= 0) {
-        globalOrders[existingIndex] = order;
+        const updated = [...globalOrders];
+        updated[existingIndex] = order;
+        setGlobalOrders(updated);
       } else {
-        globalOrders.unshift(order);
+        setGlobalOrders([order, ...globalOrders]);
       }
-      
-      localStorage.setItem('globalOrders', JSON.stringify(globalOrders));
     } catch (error) {
       console.error('Error saving order globally:', error);
     }
   },
 
-  saveOrderForUser: (order) => {
+  updateOrderStatus: (orderId, newStatus, orders, setOrders) => {
     try {
-      const userOrders = JSON.parse(localStorage.getItem('userOrders') || '[]');
-      const existingIndex = userOrders.findIndex(o => o._id === order._id);
-      
-      if (existingIndex >= 0) {
-        userOrders[existingIndex] = order;
-      } else {
-        userOrders.unshift(order);
-      }
-      
-      localStorage.setItem('userOrders', JSON.stringify(userOrders));
-    } catch (error) {
-      console.error('Error saving user order:', error);
-    }
-  },
-
-  updateOrderStatus: (orderId, newStatus) => {
-    try {
-      const globalOrders = JSON.parse(localStorage.getItem('globalOrders') || '[]');
-      const globalUpdated = globalOrders.map(order => 
+      const updated = orders.map(order => 
         order._id === orderId ? { ...order, status: newStatus } : order
       );
-      localStorage.setItem('globalOrders', JSON.stringify(globalUpdated));
-
-      const userOrders = JSON.parse(localStorage.getItem('userOrders') || '[]');
-      const userUpdated = userOrders.map(order => 
-        order._id === orderId ? { ...order, status: newStatus } : order
-      );
-      localStorage.setItem('userOrders', JSON.stringify(userUpdated));
+      setOrders(updated);
     } catch (error) {
       console.error('Error updating order status:', error);
     }
@@ -77,18 +52,17 @@ function Orders() {
   const handlePaymentSuccess = async () => {
     try {
       const { orderId, orderData, paymentMethod } = location.state;
-      const existingOrders = JSON.parse(localStorage.getItem('userOrders') || '[]');
-      const orderExists = existingOrders.find(order => order._id === orderId);
       
-      // Get user info from localStorage
-      const userInfo = JSON.parse(localStorage.getItem('user') || '{}');
-      const userName = userInfo.name || userInfo.username || 'Guest User';
-      const userEmail = userInfo.email || 'guest@example.com';
+      // Check if order already exists in current state
+      const orderExists = orders.find(order => order._id === orderId);
       
       if (!orderExists) {
+        // Generate a unique order number if not provided
+        const orderNumber = orderId || `ORD-${Date.now()}`;
+        
         const newOrder = {
-          _id: orderId,
-          orderNumber: orderId,
+          _id: orderId || orderNumber,
+          orderNumber: orderNumber,
           orderDate: new Date().toISOString(),
           status: 'confirmed',
           items: orderData.items.map(item => ({
@@ -97,25 +71,17 @@ function Orders() {
           })),
           totalAmount: orderData.totalAmount,
           itemCount: orderData.items.length,
-          paymentMethod: paymentMethod,
-          customerName: userName,
-          customerEmail: userEmail,
-          userId: userInfo._id || null
+          paymentMethod: paymentMethod || 'N/A',
+          customerName: 'Guest User', // You can get this from context/props
+          customerEmail: 'guest@example.com'
         };
 
-        const updatedOrders = [newOrder, ...existingOrders];
-        localStorage.setItem('userOrders', JSON.stringify(updatedOrders));
+        const updatedOrders = [newOrder, ...orders];
+        setOrders(updatedOrders);
         
-        // Save to global orders for admin visibility
-        OrderManager.saveOrderGlobally(newOrder);
-        OrderManager.saveOrderForUser(newOrder);
-        
-        // Try to save to backend as well
+        // Try to save to backend
         try {
-          const token = localStorage.getItem('token') || 
-                       localStorage.getItem('authToken') || 
-                       localStorage.getItem('userToken') || 
-                       sessionStorage.getItem('token');
+          const token = getAuthToken();
           
           if (token) {
             await axios.post('http://localhost:5000/api/orders', newOrder, {
@@ -128,10 +94,6 @@ function Orders() {
         } catch (backendError) {
           console.log('Backend not available, order saved locally only');
         }
-        
-        setOrders(updatedOrders);
-      } else {
-        setOrders(existingOrders);
       }
       
       setLoading(false);
@@ -142,16 +104,21 @@ function Orders() {
     }
   };
 
+  const getAuthToken = () => {
+    // Check multiple possible token storage locations
+    return localStorage.getItem('token') || 
+           localStorage.getItem('authToken') || 
+           localStorage.getItem('userToken') || 
+           sessionStorage.getItem('token');
+  };
+
   const fetchOrders = async () => {
     try {
-      const token = localStorage.getItem('token') || 
-                   localStorage.getItem('authToken') || 
-                   localStorage.getItem('userToken') || 
-                   sessionStorage.getItem('token');
+      const token = getAuthToken();
       
       if (!token) {
-        const localOrders = JSON.parse(localStorage.getItem('userOrders') || '[]');
-        setOrders(localOrders);
+        // If no token, show empty state or handle guest users
+        setOrders([]);
         setLoading(false);
         return;
       }
@@ -165,48 +132,39 @@ function Orders() {
         });
 
         console.log('Orders response:', response.data);
-        setOrders(response.data || []);
-        setLoading(false);
-      } catch (backendError) {
-        console.log('Backend not available, using local storage');
         
-        const localOrders = JSON.parse(localStorage.getItem('userOrders') || '[]');
-        setOrders(localOrders);
+        // Ensure response.data is an array
+        const ordersData = Array.isArray(response.data) ? response.data : [];
+        setOrders(ordersData);
+        setLoading(false);
+        
+      } catch (backendError) {
+        console.log('Backend not available:', backendError.message);
+        setError('Unable to connect to server. Please try again later.');
         setLoading(false);
       }
 
     } catch (error) {
       console.error('Order fetch error:', error);
-
-      const localOrders = JSON.parse(localStorage.getItem('userOrders') || '[]');
-      setOrders(localOrders);
+      setError('Failed to load orders. Please try again.');
       setLoading(false);
     }
   };
 
   const cancelOrder = async (orderId) => {
     try {
-      const existingOrders = JSON.parse(localStorage.getItem('userOrders') || '[]');
-
-      const updatedOrders = existingOrders.map(order => 
+      // Update local state first
+      const updatedOrders = orders.map(order => 
         order._id === orderId 
           ? { ...order, status: 'cancelled' }
           : order
       );
       
-      localStorage.setItem('userOrders', JSON.stringify(updatedOrders));
-      
-      // Update in global orders as well
-      OrderManager.updateOrderStatus(orderId, 'cancelled');
-    
       setOrders(updatedOrders);
       
-      // Try to update backend as well
+      // Try to update backend
       try {
-        const token = localStorage.getItem('token') || 
-                     localStorage.getItem('authToken') || 
-                     localStorage.getItem('userToken') || 
-                     sessionStorage.getItem('token');
+        const token = getAuthToken();
         
         if (token) {
           await axios.put(`http://localhost:5000/api/orders/${orderId}`, 
@@ -221,25 +179,22 @@ function Orders() {
         }
       } catch (backendError) {
         console.log('Backend not available, order cancelled locally only');
+        // You might want to show a warning to the user here
       }
       
     } catch (error) {
       console.error('Error cancelling order:', error);
+      setError('Failed to cancel order. Please try again.');
     }
   };
 
   const removeOrder = (orderId) => {
     try {
-      const existingOrders = JSON.parse(localStorage.getItem('userOrders') || '[]');
-
-      const updatedOrders = existingOrders.filter(order => order._id !== orderId);
-
-      localStorage.setItem('userOrders', JSON.stringify(updatedOrders));
-
+      const updatedOrders = orders.filter(order => order._id !== orderId);
       setOrders(updatedOrders);
-      
     } catch (error) {
       console.error('Error removing order:', error);
+      setError('Failed to remove order. Please try again.');
     }
   };
 
@@ -288,7 +243,11 @@ function Orders() {
         <div className="orders-error">
           <h3>Error</h3>
           <p>{error}</p>
-          <button onClick={fetchOrders} className="retry-button">
+          <button onClick={() => {
+            setError(null);
+            setLoading(true);
+            fetchOrders();
+          }} className="retry-button">
             Try Again
           </button>
         </div>
@@ -389,17 +348,6 @@ function Orders() {
                     <button 
                       className="cancel-order-btn"
                       onClick={() => cancelOrder(order._id)}
-                      style={{
-                        backgroundColor: '#dc3545',
-                        color: 'white',
-                        border: 'none',
-                        padding: '8px 16px',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                        marginTop: '10px',
-                        marginRight: '10px',
-                        fontSize: '14px'
-                      }}
                     >
                       Cancel Order
                     </button>
