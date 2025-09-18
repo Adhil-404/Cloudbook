@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-// Order Schema (using your existing schema)
+
 const orderSchema = new mongoose.Schema({
     orderNumber: {
         type: String,

@@ -27,8 +27,8 @@ app.use("/user",router)
 const orderRoutes = require('./Routes/OrderRoutes');
 app.use('/api/orders', orderRoutes);
 
-const otpRoutes=require("./Routes/Otp")
-app.use("/otp",otpRoutes)
+const otpRoutes=require("./Routes/MailLink")
+app.use("/api/auth",otpRoutes)
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

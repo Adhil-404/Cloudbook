@@ -2,6 +2,7 @@ const UserController = require('../Schema/UserSchema')
 const jwt = require('jsonwebtoken');
 const bcrypt = require("bcrypt")
 
+
 const UserRegistration = async (req, res) => {
   try {
     const { fullName, email, phone, dob, gender, password } = req.body;
@@ -69,7 +70,7 @@ const login = async (req, res) => {
 
     const token = jwt.sign(
       { _id: result._id, userEmail: result.userEmail },
-      process.env.JWT_KEY
+      process.env.JWT_SECRET
     );
 
     const userData = {
