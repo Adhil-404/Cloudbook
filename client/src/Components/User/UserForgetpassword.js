@@ -1,33 +1,58 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
+import '../../Assets/Styles/Userstyles/UserForgetpassword.css'; 
 
-export default function UserForgetPassword() {
+const ForgotPassword = () => {
   const [email, setEmail] = useState('');
-  const [msg, setMsg] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setMessage('');
+    setError('');
+
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/forgot-password', { email });
-      setMsg(res.data.message);
+      const response = await axios.post('http://localhost:5000/api/auth/forgot-password', { email });
+      setMessage(response.data.message);
+      setEmail('');
     } catch (err) {
-      setMsg(err.response?.data?.message || "Error sending reset link");
+      setError(err.response?.data?.message || 'Something went wrong');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <div className="forgot-password-container">
       <h2>Forgot Password</h2>
-      <input
-        type="email"
-        value={email}
-        required
-        placeholder="Enter your email"
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <button type="submit">Send Reset Link</button>
-      {msg && <p>{msg}</p>}
-    </form>
-  );
-}
+      <p>Enter your email to receive a reset link.</p>
 
+      {message && <div className="success-message">{message}</div>}
+      {error && <div className="error-message">{error}</div>}
+
+      <form onSubmit={handleSubmit}>
+        <input
+          type="email"
+          placeholder="Your email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          disabled={loading}
+        />
+        <button type="submit" disabled={loading}>
+          {loading ? 'Sending...' : 'Send Reset Link'}
+        </button>
+      </form>
+
+      {/* Optional: Add back to login link */}
+      <div className="back-to-login">
+        <a href="/login">Back to Login</a>
+      </div>
+    </div>
+  );
+};
+
+export default ForgotPassword;

@@ -55,7 +55,10 @@ function App() {
           {/* 🟢 User Routes */}
           <Route path='/' element={<UserLogin />} />
           <Route path='/user_reg' element={<UserRegistration />} />
-          <Route path='/user/resetpassword' element={<UserResetpassword />} />
+   <Route path='/reset-password/:token' element={<UserResetpassword />} />
+
+
+
           <Route path='/user/forgetpassword' element={<UserForgetpassword />} />
           <Route path='/user/books' element={<UserBooks />} />
           <Route path='/user/orders' element={<UserOrders />} />
