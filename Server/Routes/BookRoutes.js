@@ -2,21 +2,20 @@ const express = require('express');
 const router = express.Router();
 const upload = require('../Middleware/Upload');
 const adminAuth = require('../Middleware/adminAuth');
-const { addBook, deleteBook } = require("../Controllers/BookController");
-const { getBookById, updateBook } = require('../Controllers/BookController');
+const { addBook, deleteBook, getBookById, updateBook } = require("../Controllers/BookController");
 
 const Book = require('../Schema/BookSchema');
 const Order = require('../Schema/OrderSchema');
 const User = require('../Schema/UserSchema');
 
 // Admin login route - MUST be before adminAuth middleware
-router.post('/admin/login', async (req, res) => {
+router.post('/admin', async (req, res) => {
     try {
         const { email, password } = req.body;
         
         console.log('Admin login attempt:', email);
         
-        const hardcodedAdminEmail = 'admin@bookstore.com';
+        const hardcodedAdminEmail = 'admin@cloudbook.com';
         const hardcodedAdminPassword = 'admin123';
         
         if (email === hardcodedAdminEmail && password === hardcodedAdminPassword) {
@@ -25,13 +24,14 @@ router.post('/admin/login', async (req, res) => {
                 { 
                     _id: 'admin_001', 
                     email: hardcodedAdminEmail,
-                    role: 'admin' 
+                    role: 'admin',
+                    isAdmin: true // Add this flag for frontend check
                 },
-                process.env.JWT_KEY || 'your-secret-key', // Add fallback
-                { expiresIn: '24h' }
+                process.env.JWT_KEY || 'your-secret-key',
+                { expiresIn: '30d' }
             );
             
-            console.log('Admin login successful, token generated:', adminToken);
+            console.log('Admin login successful, token generated');
             res.json({
                 message: 'Admin login successful',
                 token: adminToken,
@@ -51,85 +51,207 @@ router.post('/admin/login', async (req, res) => {
     }
 });
 
+// Test route
+router.get('/test', (req, res) => {
+    res.json({ 
+        message: 'API is working!', 
+        timestamp: new Date().toISOString() 
+    });
+});
+
 // Book routes
 router.post('/addbook', adminAuth, upload.single('coverImage'),addBook);
 router.get('/allbooks', async (req, res) => {
-  try {
-    const books = await Book.find();
-    res.json(books);
-  } catch (err) {
-    res.status(500).json({ message: 'Error fetching books' });
-  }
-});
-
-router.get('/test', (req, res) => {
-  res.send('API is working!');
+    try {
+        const books = await Book.find().sort({ createdAt: -1 });
+        res.json(books);
+    } catch (err) {
+        console.error('Error fetching books:', err);
+        res.status(500).json({ message: 'Error fetching books' });
+    }
 });
 
 router.delete('/deletebook/:id', adminAuth, deleteBook);
 router.get('/book/:id', getBookById);
 router.put('/updatebook/:id', adminAuth, upload.single('coverImage'), updateBook);
 
-// Order routes
-router.post('/orders', async (req, res) => {
+router.get('/users', adminAuth, async (req, res) => {
     try {
-        const orderData = req.body;
-        const newOrder = new Order({
-            orderNumber: orderData.orderNumber || 'ORD' + Date.now(),
-            items: orderData.items,
-            userId: orderData.userId || null,
-            totalAmount: orderData.totalAmount,
-            itemCount: orderData.itemCount,
-            status: orderData.status || 'confirmed',
-            orderDate: orderData.orderDate || new Date()
+        console.log('Fetching all users for admin dashboard');
+
+        // Get all active users (not deleted)
+        const users = await User.find({ 
+            deletedAt: { $exists: false } 
+        })
+        .select('-password')
+        .sort({ createdAt: -1 });
+
+        console.log(`Found ${users.length} users`);
+
+        // Get all orders for statistics
+        const allOrders = await Order.find({});
+
+        // Calculate user statistics
+        const usersWithStats = users.map(user => {
+            // Find orders for this user (by userId or email)
+            const userOrders = allOrders.filter(order => 
+                (order.userId && order.userId.toString() === user._id.toString()) ||
+                (order.customerEmail && order.customerEmail.toLowerCase() === user.userEmail.toLowerCase())
+            );
+
+            const totalOrders = userOrders.length;
+            const totalSpent = userOrders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
+
+            return {
+                _id: user._id,
+                userName: user.userName,
+                userEmail: user.userEmail,
+                contact: user.contact,
+                dob: user.dob,
+                gender: user.gender,
+                status: user.status || 'active',
+                totalOrders,
+                totalSpent: Math.round(totalSpent * 100) / 100,
+                createdAt: user.createdAt,
+                lastLogin: user.lastLogin,
+                recentOrders: userOrders
+                    .slice(0, 3)
+                    .map(order => ({
+                        _id: order._id,
+                        orderNumber: order.orderNumber,
+                        totalAmount: order.totalAmount,
+                        status: order.status,
+                        orderDate: order.orderDate || order.createdAt
+                    }))
+            };
         });
 
-        const savedOrder = await newOrder.save();
-        res.json(savedOrder);
+        res.json(usersWithStats);
+
     } catch (error) {
-        console.error('Error creating order:', error);
-        res.status(500).json({ message: 'Error creating order' });
+        console.error('Error fetching users:', error);
+        res.status(500).json({ 
+            message: 'Error fetching users', 
+            error: error.message 
+        });
     }
 });
 
-router.get('/orders', async (req, res) => {
+// Get specific user details with all orders
+router.get('/users/:id', adminAuth, async (req, res) => {
     try {
-        const orders = await Order.find()
-            .populate('userId', 'userName userEmail contact')
-            .sort({ orderDate: -1 });
-        res.json(orders);
+        const { id } = req.params;
+        console.log('Fetching user details for:', id);
+
+        const user = await User.findById(id).select('-password');
+        if (!user || user.deletedAt) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Get all orders for this user
+        const userOrders = await Order.find({ 
+            $or: [
+                { userId: user._id },
+                { customerEmail: user.userEmail }
+            ]
+        }).sort({ orderDate: -1 });
+
+        const userWithFullDetails = {
+            ...user.toObject(),
+            totalOrders: userOrders.length,
+            totalSpent: userOrders.reduce((sum, order) => sum + (order.totalAmount || 0), 0),
+            orders: userOrders.map(order => ({
+                _id: order._id,
+                orderNumber: order.orderNumber,
+                totalAmount: order.totalAmount,
+                status: order.status,
+                orderDate: order.orderDate || order.createdAt,
+                items: order.items,
+                itemCount: order.itemCount
+            }))
+        };
+
+        res.json(userWithFullDetails);
+
     } catch (error) {
-        console.error('Error fetching user orders:', error);
-        res.status(500).json({ message: 'Error fetching orders' });
+        console.error('Error fetching user details:', error);
+        res.status(500).json({ message: 'Error fetching user details' });
     }
 });
 
-router.put('/orders/:id', adminAuth, async (req, res) => {
+// Update user status
+router.put('/users/:id/status', adminAuth, async (req, res) => {
     try {
         const { id } = req.params;
         const { status } = req.body;
 
-        const order = await Order.findByIdAndUpdate(
-            id,
-            { status },
-            { new: true }
-        );
+        console.log(`Updating user ${id} status to ${status}`);
 
-        if (!order) {
-            return res.status(404).json({ message: 'Order not found' });
+        const validStatuses = ['active', 'blocked', 'suspended'];
+        if (!validStatuses.includes(status)) {
+            return res.status(400).json({ message: 'Invalid status value' });
         }
 
-        res.json({ message: 'Order updated successfully', order });
+        const user = await User.findByIdAndUpdate(
+            id,
+            { 
+                status: status,
+                updatedAt: new Date()
+            },
+            { new: true }
+        ).select('-password');
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.json({
+            message: 'User status updated successfully',
+            user: user
+        });
+
     } catch (error) {
-        console.error('Error updating order:', error);
-        res.status(500).json({ message: 'Error updating order' });
+        console.error('Error updating user status:', error);
+        res.status(500).json({ message: 'Error updating user status' });
     }
 });
 
-// Admin order routes
+// Delete user (soft delete)
+router.delete('/users/:id', adminAuth, async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log(`Admin deleting user: ${id}`);
+
+        const user = await User.findByIdAndUpdate(
+            id,
+            { 
+                status: 'deleted',
+                deletedAt: new Date()
+            },
+            { new: true }
+        ).select('-password');
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.json({
+            message: 'User deleted successfully',
+            user: user
+        });
+
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        res.status(500).json({ message: 'Error deleting user' });
+    }
+});
+
+
+// Order management routes
 router.get('/admin/orders', adminAuth, async (req, res) => {
     try {
         console.log('Fetching orders for admin...');
+        
         const orders = await Order.find()
             .populate('userId', 'userName userEmail contact')
             .sort({ orderDate: -1 });
@@ -138,13 +260,13 @@ router.get('/admin/orders', adminAuth, async (req, res) => {
 
         const formattedOrders = orders.map(order => ({
             _id: order._id,
-            orderNumber: order.orderNumber,
-            customerName: order.userId?.userName || 'Guest User',
-            customerEmail: order.userId?.userEmail || 'N/A',
+            orderNumber: order.orderNumber || `ORD-${order._id.toString().slice(-6)}`,
+            customerName: order.userId?.userName || order.customerName || 'Guest User',
+            customerEmail: order.userId?.userEmail || order.customerEmail || 'N/A',
             items: order.items || [],
             itemCount: order.itemCount || order.items?.length || 0,
-            totalAmount: order.totalAmount,
-            status: order.status,
+            totalAmount: order.totalAmount || 0,
+            status: order.status || 'pending',
             orderDate: order.orderDate || order.createdAt,
             paymentMethod: order.paymentMethod || 'N/A'
         }));
@@ -152,7 +274,6 @@ router.get('/admin/orders', adminAuth, async (req, res) => {
         res.json(formattedOrders);
     } catch (error) {
         console.error('Error fetching orders:', error);
-        console.error('Error details:', error.message);
         res.status(500).json({ 
             message: 'Error fetching orders',
             error: error.message
@@ -167,27 +288,39 @@ router.put('/admin/orders/:id', adminAuth, async (req, res) => {
 
         console.log('Updating order:', id, 'to status:', status);
 
-        const validStatuses = ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'];
+        const validStatuses = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'];
         if (!validStatuses.includes(status)) {
             return res.status(400).json({ message: 'Invalid status' });
         }
 
         const order = await Order.findByIdAndUpdate(
             id,
-            { status },
+            { status, updatedAt: new Date() },
             { new: true }
-        );
+        ).populate('userId', 'userName userEmail');
 
         if (!order) {
             return res.status(404).json({ message: 'Order not found' });
         }
 
-        res.json({ message: 'Order status updated successfully', order });
+        res.json({ 
+            message: 'Order status updated successfully', 
+            order: {
+                _id: order._id,
+                orderNumber: order.orderNumber,
+                status: order.status,
+                totalAmount: order.totalAmount,
+                customerName: order.userId?.userName || order.customerName,
+                updatedAt: order.updatedAt
+            }
+        });
     } catch (error) {
         console.error('Error updating order:', error);
         res.status(500).json({ message: 'Error updating order status' });
     }
 });
+
+// Public order creation (for frontend checkout)
 
 router.get('/users', adminAuth, async (req, res) => {
     try {
@@ -344,6 +477,7 @@ router.post('/orders', async (req, res) => {
             const user = await User.findOne({ userEmail: orderData.customerEmail });
             if (user) {
                 userId = user._id;
+                console.log('Found user for order:', user.userEmail);
             }
         }
 
@@ -363,10 +497,16 @@ router.post('/orders', async (req, res) => {
         const savedOrder = await newOrder.save();
         console.log('Order created successfully:', savedOrder._id);
         
-        res.json(savedOrder);
+        res.json({
+            message: 'Order created successfully',
+            order: savedOrder
+        });
     } catch (error) {
         console.error('Error creating order:', error);
-        res.status(500).json({ message: 'Error creating order', error: error.message });
+        res.status(500).json({ 
+            message: 'Error creating order', 
+            error: error.message 
+        });
     }
 });
 
@@ -377,6 +517,26 @@ router.post('/orders', async (req, res) => {
 
 
 
+// Get public orders (for user order history)
+router.get('/orders', async (req, res) => {
+    try {
+        const { userEmail, userId } = req.query;
+        
+        let query = {};
+        if (userId) {
+            query.userId = userId;
+        } else if (userEmail) {
+            query.customerEmail = userEmail;
+        }
 
+        const orders = await Order.find(query)
+            .sort({ orderDate: -1 });
+            
+        res.json(orders);
+    } catch (error) {
+        console.error('Error fetching user orders:', error);
+        res.status(500).json({ message: 'Error fetching orders' });
+    }
+});
 
 module.exports = router;

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import '../../Assets/Styles/Adminstyles/AdminLogin.css';
 import { useNavigate } from 'react-router-dom';
 
@@ -7,18 +8,21 @@ function AdminLogin() {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-   
-    
-  if (email === 'admin@cloudbook.com' && password === 'admin123') {
-  localStorage.setItem('adminLoggedIn', 'true'); 
-  navigate('/admin/dashboard');
-} else {
-  alert('Invalid credentials');
-}
+    try {
+      const response = await axios.post('http://localhost:5000/api/admin', {
+        email,
+        password
+      });
 
+      localStorage.setItem('adminToken', response.data.token);
+      localStorage.setItem('adminLoggedIn', 'true');
+      navigate('/admin/dashboard');
+    } catch (error) {
+      alert('Invalid credentials');
+    }
   };
 
   return (

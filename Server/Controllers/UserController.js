@@ -90,6 +90,9 @@ const login = async (req, res) => {
     console.error("Server error during login:", err);
     return res.status(500).json({ err: "Internal server error" });
   }
+
+
+  
 };
 
 module.exports = { UserRegistration, login }
