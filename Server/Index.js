@@ -15,6 +15,8 @@ const db = require("./Dbconnection");
 
 app.use("/uploads", express.static(path.join(__dirname, "Uploads"))); 
 
+app.use('/api', require('./Routes/BookRoutes'));
+
 const bookroutes = require("./Routes/BookRoutes");
 app.use("/api", bookroutes);
 
