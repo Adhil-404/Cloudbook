@@ -13,6 +13,7 @@ function AdminOrders() {
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [showOrderModal, setShowOrderModal] = useState(false);
     const [updating, setUpdating] = useState(false);
+    const [deleting, setDeleting] = useState(null); // Track which order is being deleted
 
     useEffect(() => {
         fetchOrders();
@@ -22,25 +23,25 @@ function AdminOrders() {
         applyFilters();
     }, [searchTerm, statusFilter, orders]);
 
+    const getAuthHeaders = () => {
+        const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
+        return {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        };
+    };
+
     const fetchOrders = async () => {
         setLoading(true);
         try {
             console.log('Fetching orders from API...');
-            const response = await axios.get('http://localhost:5000/api/admin/orders');
+            const response = await axios.get('http://localhost:5000/admin/orders', {
+                headers: getAuthHeaders()
+            });
             console.log('Orders received:', response.data);
             
-            // If response is empty, try to get from localStorage for demo
+            // If response is empty, try to get from memory for demo
             let ordersData = response.data || [];
-            
-            if (ordersData.length === 0) {
-                // Get orders from global storage for admin visibility
-                const globalOrders = JSON.parse(localStorage.getItem('globalOrders') || '[]');
-                ordersData = globalOrders.map(order => ({
-                    ...order,
-                    customerName: order.customerName || 'Guest User',
-                    customerEmail: order.customerEmail || 'guest@example.com'
-                }));
-            }
             
             setOrders(ordersData);
             setFilteredOrders(ordersData);
@@ -48,16 +49,9 @@ function AdminOrders() {
         } catch (error) {
             console.error('Error fetching orders:', error);
             
-            // Fallback to global orders storage for demo
-            const globalOrders = JSON.parse(localStorage.getItem('globalOrders') || '[]');
-            const formattedOrders = globalOrders.map(order => ({
-                ...order,
-                customerName: order.customerName || 'Guest User',
-                customerEmail: order.customerEmail || 'guest@example.com'
-            }));
-            
-            setOrders(formattedOrders);
-            setFilteredOrders(formattedOrders);
+            // Fallback to empty array if no data available
+            setOrders([]);
+            setFilteredOrders([]);
             setLoading(false);
         }
     };
@@ -67,29 +61,75 @@ function AdminOrders() {
         try {
             console.log('Updating order status:', orderId, newStatus);
             
-            // Update in global orders for admin visibility
-            const globalOrders = JSON.parse(localStorage.getItem('globalOrders') || '[]');
-            const updatedGlobalOrders = globalOrders.map(order => 
+            // Update local state first
+            const updatedOrders = orders.map(order => 
                 order._id === orderId ? { ...order, status: newStatus } : order
             );
-            localStorage.setItem('globalOrders', JSON.stringify(updatedGlobalOrders));
+            setOrders(updatedOrders);
             
             // Try to update via API
             try {
-                await axios.put(`http://localhost:5000/api/admin/orders/${orderId}`, 
-                    { status: newStatus }
+                await axios.put(`http://localhost:5000/admin/orders/${orderId}`, 
+                    { status: newStatus },
+                    { headers: getAuthHeaders() }
                 );
+                console.log('Order status updated successfully');
             } catch (apiError) {
-                console.log('API not available, using localStorage only');
+                console.log('API not available, using local state only', apiError.response?.data);
             }
             
-            console.log('Order status updated successfully');
-            fetchOrders(); // Refresh the orders list
             setUpdating(false);
         } catch (error) {
             console.error('Error updating order status:', error);
             alert('Failed to update order status: ' + (error.response?.data?.message || error.message));
             setUpdating(false);
+        }
+    };
+
+    const deleteOrder = async (orderId) => {
+        // Show confirmation dialog
+        const confirmed = window.confirm(
+            'Are you sure you want to permanently delete this order? This action cannot be undone.'
+        );
+        
+        if (!confirmed) return;
+
+        setDeleting(orderId);
+        try {
+            console.log('Deleting order:', orderId);
+            
+            // Remove from local state first
+            const updatedOrders = orders.filter(order => order._id !== orderId);
+            setOrders(updatedOrders);
+            setFilteredOrders(filteredOrders.filter(order => order._id !== orderId));
+            
+            // Try to delete via API
+            try {
+                await axios.delete(`http://localhost:5000/admin/orders/${orderId}`, {
+                    headers: getAuthHeaders()
+                });
+                console.log('Order deleted successfully from backend');
+            } catch (apiError) {
+                console.log('API not available, order deleted locally only', apiError.response?.data);
+                if (apiError.response?.status === 401 || apiError.response?.status === 403) {
+                    alert('Authentication failed. Please login again.');
+                    // Optionally redirect to login
+                    // window.location.href = '/admin/login';
+                }
+            }
+            
+            setDeleting(null);
+            
+            // Show success message
+            alert('Order deleted successfully');
+            
+        } catch (error) {
+            console.error('Error deleting order:', error);
+            alert('Failed to delete order: ' + (error.response?.data?.message || error.message));
+            
+            // Restore the order if deletion failed
+            fetchOrders();
+            setDeleting(null);
         }
     };
 
@@ -204,6 +244,20 @@ function AdminOrders() {
                                     </div>
                                 ))}
                             </div>
+                        </div>
+                        
+                        {/* Delete button in modal */}
+                        <div className="modal-actions">
+                            <button 
+                                onClick={() => {
+                                    deleteOrder(order._id);
+                                    onClose();
+                                }}
+                                className="delete-order-btn-modal"
+                                disabled={deleting === order._id}
+                            >
+                                {deleting === order._id ? '🗑️ Deleting...' : '🗑️ Delete Order'}
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -390,6 +444,16 @@ function AdminOrders() {
                                                     <option value="delivered">Delivered</option>
                                                     <option value="cancelled">Cancelled</option>
                                                 </select>
+                                                <button 
+                                                    onClick={() => deleteOrder(order._id)}
+                                                    className="action-button delete-button"
+                                                    title="Delete Order"
+                                                    disabled={deleting === order._id}
+                                                >
+                                                    <span className="action-icon">
+                                                        {deleting === order._id ? '⏳' : '🗑️'}
+                                                    </span>
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
