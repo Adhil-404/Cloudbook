@@ -1,4 +1,3 @@
-// components/Admin/AdminUsers.js - Enhanced with debugging
 import React, { useEffect, useState } from 'react';
 import AdminNav from './AdminNav';
 import axios from 'axios';
@@ -16,19 +15,11 @@ function AdminUsers() {
     const [updating, setUpdating] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [usersPerPage] = useState(10);
-    const [debugMode, setDebugMode] = useState(false);
-    const [debugInfo, setDebugInfo] = useState({});
 
+    // Fixed API base URL
     const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
     useEffect(() => {
-        // Add debug info about initial state
-        setDebugInfo({
-            apiUrl: API_BASE_URL,
-            hasToken: !!localStorage.getItem('adminToken'),
-            tokenPreview: localStorage.getItem('adminToken')?.substring(0, 30) + '...'
-        });
-        
         fetchUsers();
     }, []);
 
@@ -37,13 +28,7 @@ function AdminUsers() {
     }, [searchTerm, statusFilter, users]);
 
     const getAuthHeaders = () => {
-        const adminToken = localStorage.getItem('adminToken');
-        console.log('🔍 Admin token check:', {
-            exists: !!adminToken,
-            length: adminToken?.length,
-            preview: adminToken?.substring(0, 30) + '...'
-        });
-        
+        const adminToken = localStorage.getItem('adminToken') || localStorage.getItem('token');
         if (!adminToken) {
             throw new Error('No admin token found. Please login as admin.');
         }
@@ -55,72 +40,49 @@ function AdminUsers() {
     };
 
     const fetchUsers = async () => {
-        console.log('🚀 Starting fetchUsers...');
-        console.log('📍 API URL:', `${API_BASE_URL}/users`);
-        
+        console.log('Fetching users from:', `${API_BASE_URL}/users`);
         setLoading(true);
         setError(null);
         
-        const startTime = Date.now();
-        
         try {
             const headers = getAuthHeaders();
-            console.log('📡 Making request with headers:', headers);
+            console.log('Making request with headers:', headers);
             
             const response = await axios.get(`${API_BASE_URL}/users`, {
                 headers,
                 timeout: 15000
             });
             
-            const responseTime = Date.now() - startTime;
-            console.log('✅ Response received in', responseTime, 'ms');
-            console.log('📊 Response status:', response.status);
-            console.log('📊 Response headers:', response.headers);
-            console.log('📝 Response data:', response.data);
+            console.log('Users response:', response.data);
+            console.log('Users response status:', response.status);
             
-            setDebugInfo(prev => ({
-                ...prev,
-                lastRequest: {
-                    url: `${API_BASE_URL}/users`,
-                    status: response.status,
-                    dataType: Array.isArray(response.data) ? 'array' : typeof response.data,
-                    dataLength: Array.isArray(response.data) ? response.data.length : 'N/A',
-                    responseTime,
-                    timestamp: new Date().toLocaleTimeString()
-                }
+            let usersData = Array.isArray(response.data) ? response.data : [];
+            
+            // Transform users data to ensure consistency
+            const transformedUsers = usersData.map(user => ({
+                _id: user._id,
+                userName: user.userName || 'N/A',
+                userEmail: user.userEmail || 'N/A',
+                contact: user.contact || 'N/A',
+                dob: user.dob,
+                gender: user.gender,
+                status: user.status || 'active',
+                totalOrders: user.totalOrders || 0,
+                totalSpent: Number(user.totalSpent) || 0,
+                createdAt: user.createdAt,
+                updatedAt: user.updatedAt,
+                lastLogin: user.lastLogin,
+                orders: user.orders || []
             }));
             
-            if (Array.isArray(response.data)) {
-                setUsers(response.data);
-                setFilteredUsers(response.data);
-                console.log(`✅ Successfully loaded ${response.data.length} users`);
-            } else {
-                console.error('❌ Invalid response format:', response.data);
-                throw new Error('Invalid response format from server');
-            }
+            setUsers(transformedUsers);
+            setFilteredUsers(transformedUsers);
+            console.log(`Successfully loaded ${transformedUsers.length} users`);
             
         } catch (error) {
-            const responseTime = Date.now() - startTime;
-            console.error('❌ Error fetching users:', error);
-            console.error('❌ Error details:', {
-                message: error.message,
-                status: error.response?.status,
-                statusText: error.response?.statusText,
-                data: error.response?.data,
-                config: error.config
-            });
-            
-            setDebugInfo(prev => ({
-                ...prev,
-                lastError: {
-                    message: error.message,
-                    status: error.response?.status,
-                    statusText: error.response?.statusText,
-                    data: error.response?.data,
-                    responseTime,
-                    timestamp: new Date().toLocaleTimeString()
-                }
-            }));
+            console.error('Error fetching users:', error);
+            console.error('Error response:', error.response?.data);
+            console.error('Error status:', error.response?.status);
             
             handleApiError(error);
         } finally {
@@ -129,18 +91,18 @@ function AdminUsers() {
     };
 
     const handleApiError = (error) => {
-        let errorMessage = 'An error occurred';
+        let errorMessage = 'An error occurred while fetching users';
         
         if (error.response) {
-            console.log('📡 Error response details:', {
-                status: error.response.status,
-                statusText: error.response.statusText,
-                headers: error.response.headers,
-                data: error.response.data,
-                config: error.response.config
-            });
-            
             const status = error.response.status;
+            const data = error.response.data;
+            
+            console.log('API Error Details:', {
+                status,
+                statusText: error.response.statusText,
+                data,
+                url: error.config?.url
+            });
             
             if (status === 401) {
                 errorMessage = 'Admin authentication failed. Please login again.';
@@ -152,18 +114,14 @@ function AdminUsers() {
                 errorMessage = 'Access denied. Admin privileges required.';
             } else if (status === 404) {
                 errorMessage = 'Users endpoint not found. Please check API configuration.';
-            } else if (error.response.data?.message) {
-                errorMessage = error.response.data.message;
+            } else if (data?.message) {
+                errorMessage = data.message;
             } else {
                 errorMessage = `Server error (${status}). Please try again.`;
             }
         } else if (error.request) {
-            console.log('🌐 Network error details:', {
-                request: error.request,
-                code: error.code,
-                message: error.message
-            });
-            errorMessage = 'Cannot connect to server. Please check if the backend is running on port 5000.';
+            console.log('Network error:', error.message);
+            errorMessage = 'Cannot connect to server. Please check if the backend is running.';
         } else if (error.message.includes('timeout')) {
             errorMessage = 'Request timeout. Server may be slow or unavailable.';
         } else {
@@ -173,40 +131,6 @@ function AdminUsers() {
         setError(errorMessage);
     };
 
-    // Test function to check API connectivity
-    const testApiConnectivity = async () => {
-        console.log('🔧 Testing API connectivity...');
-        
-        try {
-            // Test basic connectivity first
-            const testResponse = await axios.get(`${API_BASE_URL.replace('/api', '')}/api/test`, {
-                timeout: 5000
-            });
-            console.log('✅ Basic API test successful:', testResponse.data);
-            
-            // Then test with auth
-            const headers = getAuthHeaders();
-            const authResponse = await axios.get(`${API_BASE_URL}/users`, {
-                headers,
-                timeout: 10000
-            });
-            console.log('✅ Auth API test successful:', authResponse.status);
-            
-        } catch (error) {
-            console.error('❌ API connectivity test failed:', error);
-            setDebugInfo(prev => ({
-                ...prev,
-                connectivityTest: {
-                    failed: true,
-                    error: error.message,
-                    status: error.response?.status,
-                    timestamp: new Date().toLocaleTimeString()
-                }
-            }));
-        }
-    };
-
-    // Rest of your existing functions remain the same...
     const updateUserStatus = async (userId, newStatus) => {
         if (!userId) {
             alert('Invalid user ID');
@@ -231,6 +155,7 @@ function AdminUsers() {
             
             console.log('User status updated:', response.data);
             
+            // Update local state
             setUsers(prevUsers => 
                 prevUsers.map(user => 
                     user._id === userId ? { ...user, status: newStatus, updatedAt: new Date() } : user
@@ -241,7 +166,6 @@ function AdminUsers() {
             
         } catch (error) {
             console.error('Error updating user status:', error);
-            handleApiError(error);
             const errorMsg = error.response?.data?.message || error.message;
             alert(`Failed to update user status: ${errorMsg}`);
         } finally {
@@ -271,12 +195,13 @@ function AdminUsers() {
             });
             
             console.log('User deleted successfully:', response.data);
+            
+            // Remove user from local state
             setUsers(prevUsers => prevUsers.filter(user => user._id !== userId));
             alert('User deleted successfully!');
             
         } catch (error) {
             console.error('Error deleting user:', error);
-            handleApiError(error);
             const errorMsg = error.response?.data?.message || error.message;
             alert(`Failed to delete user: ${errorMsg}`);
         } finally {
@@ -352,7 +277,6 @@ function AdminUsers() {
             return;
         }
 
-        setLoading(true);
         try {
             const headers = getAuthHeaders();
             console.log(`Fetching details for user: ${user._id}`);
@@ -368,13 +292,12 @@ function AdminUsers() {
             
         } catch (error) {
             console.error('Error fetching user details:', error);
+            // Fallback to existing user data
             setSelectedUser({
                 ...user,
-                orders: user.recentOrders || []
+                orders: user.orders || []
             });
             setShowUserModal(true);
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -489,14 +412,6 @@ function AdminUsers() {
                     <p style={{ fontSize: '12px', color: '#666', marginTop: '10px' }}>
                         API URL: {API_BASE_URL}/users
                     </p>
-                    {debugMode && (
-                        <div style={{ marginTop: '20px', textAlign: 'left' }}>
-                            <button onClick={testApiConnectivity}>Test API</button>
-                            <pre style={{ background: '#f5f5f5', padding: '10px', marginTop: '10px', fontSize: '11px' }}>
-                                {JSON.stringify(debugInfo, null, 2)}
-                            </pre>
-                        </div>
-                    )}
                 </div>
             </>
         );
@@ -515,25 +430,12 @@ function AdminUsers() {
                         <button onClick={fetchUsers} className="retry-button" disabled={loading}>
                             {loading ? 'Retrying...' : 'Retry'}
                         </button>
-                        <button 
-                            onClick={() => setDebugMode(!debugMode)}
-                            style={{ marginLeft: '10px', padding: '10px', background: '#007bff', color: 'white', border: 'none', borderRadius: '4px' }}
-                        >
-                            {debugMode ? 'Hide' : 'Show'} Debug Info
-                        </button>
                     </div>
-                    
-                    {debugMode && (
-                        <div style={{ marginTop: '20px', textAlign: 'left', background: '#f5f5f5', padding: '20px', borderRadius: '8px' }}>
-                            <h4>Debug Information:</h4>
-                            <button onClick={testApiConnectivity} style={{ marginBottom: '10px', padding: '5px 10px' }}>
-                                Test API Connectivity
-                            </button>
-                            <pre style={{ fontSize: '11px', overflow: 'auto' }}>
-                                {JSON.stringify(debugInfo, null, 2)}
-                            </pre>
-                        </div>
-                    )}
+                    <div style={{ marginTop: '20px', fontSize: '12px', color: '#666' }}>
+                        <p>Debug Info:</p>
+                        <p>API URL: {API_BASE_URL}/users</p>
+                        <p>Token: {localStorage.getItem('adminToken') ? 'Present' : 'Missing'}</p>
+                    </div>
                 </div>
             </>
         );
@@ -553,44 +455,8 @@ function AdminUsers() {
                         >
                             {loading ? '⏳ Loading...' : '🔄 Refresh'}
                         </button>
-                        <button
-                            onClick={() => setDebugMode(!debugMode)}
-                            style={{ 
-                                padding: '12px 16px', 
-                                background: debugMode ? '#dc3545' : '#6c757d',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '8px',
-                                cursor: 'pointer',
-                                marginLeft: '10px'
-                            }}
-                        >
-                            {debugMode ? 'Hide Debug' : 'Debug'}
-                        </button>
                     </div>
                 </div>
-
-                {/* Debug Panel */}
-                {debugMode && (
-                    <div style={{ 
-                        background: '#f8f9fa', 
-                        border: '1px solid #dee2e6',
-                        borderRadius: '8px',
-                        padding: '20px',
-                        marginBottom: '20px'
-                    }}>
-                        <h3>Debug Information</h3>
-                        <div style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: '10px', fontSize: '14px' }}>
-                            <strong>API URL:</strong><span>{debugInfo.apiUrl}</span>
-                            <strong>Has Token:</strong><span>{debugInfo.hasToken ? 'Yes' : 'No'}</span>
-                            <strong>Users Count:</strong><span>{users.length}</span>
-                            <strong>Last Request:</strong><span>{debugInfo.lastRequest ? JSON.stringify(debugInfo.lastRequest, null, 2) : 'None'}</span>
-                        </div>
-                        <button onClick={testApiConnectivity} style={{ marginTop: '10px', padding: '8px 16px' }}>
-                            Test API
-                        </button>
-                    </div>
-                )}
 
                 {/* Error banner for partial failures */}
                 {error && users.length > 0 && (
@@ -600,7 +466,6 @@ function AdminUsers() {
                     </div>
                 )}
 
-                {/* Rest of your existing component JSX remains the same... */}
                 {/* Statistics Cards */}
                 <div className="stats-grid">
                     <div className="stat-card">
@@ -677,6 +542,11 @@ function AdminUsers() {
                                 className="clear-filters-button"
                             >
                                 Clear Filters
+                            </button>
+                        )}
+                        {error && (
+                            <button onClick={fetchUsers} className="retry-button">
+                                Retry Loading Users
                             </button>
                         )}
                     </div>
