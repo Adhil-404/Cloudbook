@@ -35,6 +35,26 @@ const OrderManager = {
   }
 };
 
+// Function to get logged-in user info
+const getLoggedInUser = () => {
+  try {
+    // Try different possible keys where user data might be stored
+    const possibleKeys = ['user', 'userData', 'currentUser', 'loggedInUser'];
+    
+    for (const key of possibleKeys) {
+      const userData = localStorage.getItem(key);
+      if (userData) {
+        return JSON.parse(userData);
+      }
+    }
+    
+    return null;
+  } catch (error) {
+    console.error('Error parsing user data:', error);
+    return null;
+  }
+};
+
 function Orders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -60,6 +80,9 @@ function Orders() {
         // Generate a unique order number if not provided
         const orderNumber = orderId || `ORD-${Date.now()}`;
         
+        // Get logged-in user info
+        const loggedInUser = getLoggedInUser();
+        
         const newOrder = {
           _id: orderId || orderNumber,
           orderNumber: orderNumber,
@@ -72,8 +95,10 @@ function Orders() {
           totalAmount: orderData.totalAmount,
           itemCount: orderData.items.length,
           paymentMethod: paymentMethod || 'N/A',
-          customerName: 'Guest User',
-          customerEmail: 'guest@example.com'
+          // FIXED: Use actual user info instead of hardcoded guest user
+          customerName: loggedInUser?.userName || 'Guest User',
+          customerEmail: loggedInUser?.userEmail || 'guest@example.com',
+          userId: loggedInUser?._id || null
         };
 
         const updatedOrders = [newOrder, ...orders];
