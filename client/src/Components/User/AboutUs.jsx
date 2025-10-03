@@ -183,16 +183,20 @@ const AboutUs = () => {
             Join thousands of readers who have discovered their next favorite book with us.
             Explore our curated collection and find stories that will inspire, challenge, and delight you.
           </p>
-          <Link to='/user/subscribe'>
+        
             <div className="cta-buttons">
+              <Link to='/user/homepage/product'>
               <button className="btn btn-custom btn-primary-custom">
                 Browse Books
-              </button>
+              </button> 
+              </Link>
+               <Link to='/user/subscribe'>
               <button className="btn btn-custom btn-outline-custom">
                 Join Our Newsletter
               </button>
+               </Link>
             </div>
-          </Link>
+         
         </div>
       </section>
       <UserFooter />
