@@ -50,9 +50,9 @@ function Cart() {
     }
   };
 
-  // Updated handleOrder to navigate to payment page
+  
   const handleProceedToPayment = () => {
-    // Check if user is logged in
+
     const token = localStorage.getItem('token') || localStorage.getItem('userToken') || localStorage.getItem('authToken');
     
     if (!token) {
@@ -68,7 +68,6 @@ function Cart() {
 
     setIsProcessing(true);
 
-    // Prepare order data for payment page
     const orderData = {
       items: cartItems.map(item => ({
         id: item.id,
@@ -85,7 +84,7 @@ function Cart() {
       status: 'pending'
     };
 
-    // Navigate to payment page with order data
+   
     setTimeout(() => {
       navigate('/user/payment', {
         state: {

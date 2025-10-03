@@ -13,7 +13,14 @@ function AdminOrders() {
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [showOrderModal, setShowOrderModal] = useState(false);
     const [updating, setUpdating] = useState(false);
-    const [deleting, setDeleting] = useState(null); 
+
+  
+
+    const [deleting, setDeleting] = useState(null);
+
+    // Fixed API base URL - use the correct endpoint
+    const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+
 
     useEffect(() => {
         fetchOrders();
@@ -25,6 +32,9 @@ function AdminOrders() {
 
     const getAuthHeaders = () => {
         const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
+        if (!token) {
+            throw new Error('No admin token found');
+        }
         return {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
@@ -33,61 +43,117 @@ function AdminOrders() {
 
     const fetchOrders = async () => {
         setLoading(true);
+        setError(null);
         try {
-            console.log('Fetching orders from API...');
-            const response = await axios.get('http://localhost:5000/admin/orders', {
-                headers: getAuthHeaders()
+            console.log('Fetching orders from:', `${API_BASE_URL}/orders`);
+            const headers = getAuthHeaders();
+            
+            // Try the corrected endpoint first
+            const response = await axios.get(`${API_BASE_URL}/orders`, {
+                headers: headers
             });
-            console.log('Orders received:', response.data);
+
+            console.log('Orders response:', response.data);
             
-            // If response is empty, try to get from memory for demo
-            let ordersData = response.data || [];
+            let ordersData = Array.isArray(response.data) ? response.data : [];
             
-            setOrders(ordersData);
-            setFilteredOrders(ordersData);
-            setLoading(false);
+            // If no orders from /api/orders, try the admin specific endpoint
+            if (ordersData.length === 0) {
+                try {
+                    const adminResponse = await axios.get(`${API_BASE_URL}/admin/orders`, {
+                        headers: headers
+                    });
+                    ordersData = Array.isArray(adminResponse.data) ? adminResponse.data : [];
+                    console.log('Admin orders response:', adminResponse.data);
+                } catch (adminError) {
+                    console.log('Admin orders endpoint not available:', adminError.message);
+                }
+            }
+            
+            // Transform data to ensure consistency
+            const transformedOrders = ordersData.map(order => ({
+                _id: order._id,
+                orderNumber: order.orderNumber || `ORD-${order._id?.toString().slice(-6) || 'Unknown'}`,
+                customerName: order.customerName || order.userId?.userName || 'Guest User',
+                customerEmail: order.customerEmail || order.userId?.userEmail || 'N/A',
+                items: Array.isArray(order.items) ? order.items : [],
+                itemCount: order.itemCount || order.items?.length || 0,
+                totalAmount: Number(order.totalAmount) || 0,
+                status: order.status || 'pending',
+                orderDate: order.orderDate || order.createdAt || new Date(),
+                paymentMethod: order.paymentMethod || 'N/A'
+            }));
+            
+            setOrders(transformedOrders);
+            setFilteredOrders(transformedOrders);
+            console.log(`Successfully loaded ${transformedOrders.length} orders`);
         } catch (error) {
             console.error('Error fetching orders:', error);
+            const errorMsg = error.response?.data?.message || error.message || 'Failed to fetch orders';
+            setError(errorMsg);
             
-            // Fallback to empty array if no data available
-            setOrders([]);
-            setFilteredOrders([]);
+            // Don't show error if it's just that there are no orders
+            if (error.response?.status !== 404) {
+                setOrders([]);
+                setFilteredOrders([]);
+            }
+        } finally {
             setLoading(false);
         }
     };
 
     const updateOrderStatus = async (orderId, newStatus) => {
+        if (!orderId) {
+            alert('Invalid order ID');
+            return;
+        }
+
         setUpdating(true);
         try {
             console.log('Updating order status:', orderId, newStatus);
+            const headers = getAuthHeaders();
             
-            // Update local state first
+            // Update local state optimistically
             const updatedOrders = orders.map(order => 
                 order._id === orderId ? { ...order, status: newStatus } : order
             );
             setOrders(updatedOrders);
             
-            // Try to update via API
+            // Try to update via API - try both endpoints
             try {
-                await axios.put(`http://localhost:5000/admin/orders/${orderId}`, 
+                await axios.put(`${API_BASE_URL}/orders/${orderId}`, 
                     { status: newStatus },
-                    { headers: getAuthHeaders() }
+                    { headers }
                 );
-                console.log('Order status updated successfully');
+                console.log('Order status updated successfully via /api/orders');
             } catch (apiError) {
-                console.log('API not available, using local state only', apiError.response?.data);
+                try {
+                    await axios.put(`${API_BASE_URL}/admin/orders/${orderId}`, 
+                        { status: newStatus },
+                        { headers }
+                    );
+                    console.log('Order status updated successfully via /api/admin/orders');
+                } catch (adminError) {
+                    console.log('Both API endpoints failed, keeping local update');
+                }
             }
             
-            setUpdating(false);
         } catch (error) {
             console.error('Error updating order status:', error);
+            // Revert local changes on error
+            fetchOrders();
             alert('Failed to update order status: ' + (error.response?.data?.message || error.message));
+        } finally {
             setUpdating(false);
         }
     };
 
     const deleteOrder = async (orderId) => {
-        // Show confirmation dialog
+        if (!orderId) {
+            alert('Invalid order ID');
+            return;
+        }
+
         const confirmed = window.confirm(
             'Are you sure you want to permanently delete this order? This action cannot be undone.'
         );
@@ -97,51 +163,52 @@ function AdminOrders() {
         setDeleting(orderId);
         try {
             console.log('Deleting order:', orderId);
+            const headers = getAuthHeaders();
             
-            // Remove from local state first
+            // Remove from local state optimistically
             const updatedOrders = orders.filter(order => order._id !== orderId);
             setOrders(updatedOrders);
             setFilteredOrders(filteredOrders.filter(order => order._id !== orderId));
             
             // Try to delete via API
             try {
-                await axios.delete(`http://localhost:5000/admin/orders/${orderId}`, {
-                    headers: getAuthHeaders()
-                });
-                console.log('Order deleted successfully from backend');
+                await axios.delete(`${API_BASE_URL}/orders/${orderId}`, { headers });
+                console.log('Order deleted successfully via /api/orders');
             } catch (apiError) {
-                console.log('API not available, order deleted locally only', apiError.response?.data);
-                if (apiError.response?.status === 401 || apiError.response?.status === 403) {
-                    alert('Authentication failed. Please login again.');
-                    // Optionally redirect to login
-                    // window.location.href = '/admin/login';
+                try {
+                    await axios.delete(`${API_BASE_URL}/admin/orders/${orderId}`, { headers });
+                    console.log('Order deleted successfully via /api/admin/orders');
+                } catch (adminError) {
+                    console.log('Both delete endpoints failed, keeping local deletion');
                 }
             }
             
-            setDeleting(null);
-            
-            // Show success message
             alert('Order deleted successfully');
             
         } catch (error) {
             console.error('Error deleting order:', error);
             alert('Failed to delete order: ' + (error.response?.data?.message || error.message));
-            
             // Restore the order if deletion failed
             fetchOrders();
+        } finally {
             setDeleting(null);
         }
     };
 
     const applyFilters = () => {
-        let filtered = orders;
+        let filtered = [...orders];
 
         if (searchTerm.trim()) {
-            filtered = filtered.filter(order =>
-                order.orderNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                order.customerName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                order.customerEmail?.toLowerCase().includes(searchTerm.toLowerCase())
-            );
+            const searchLower = searchTerm.toLowerCase().trim();
+            filtered = filtered.filter(order => {
+                const orderNumber = (order.orderNumber || '').toLowerCase();
+                const customerName = (order.customerName || '').toLowerCase();
+                const customerEmail = (order.customerEmail || '').toLowerCase();
+                
+                return orderNumber.includes(searchLower) ||
+                       customerName.includes(searchLower) ||
+                       customerEmail.includes(searchLower);
+            });
         }
 
         if (statusFilter !== 'all') {
@@ -169,7 +236,7 @@ function AdminOrders() {
             confirmed: orders.filter(o => o.status === 'confirmed').length,
             shipped: orders.filter(o => o.status === 'shipped').length,
             delivered: orders.filter(o => o.status === 'delivered').length,
-            totalRevenue: orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0)
+            totalRevenue: orders.reduce((sum, order) => sum + (Number(order.totalAmount) || 0), 0)
         };
     };
 
@@ -223,30 +290,37 @@ function AdminOrders() {
                             </div>
                             <div className="modal-field">
                                 <span className="modal-label">Total Amount:</span>
-                                <span className="modal-value amount">₹{order.totalAmount?.toFixed(2)}</span>
+                                <span className="modal-value amount">₹{(Number(order.totalAmount) || 0).toFixed(2)}</span>
                             </div>
                         </div>
                         
                         <div className="modal-items">
                             <div className="modal-items-header">
-                                Items ({order.itemCount || order.items?.length || 0})
+                                Items ({order.itemCount || 0})
                             </div>
                             <div className="items-container">
-                                {order.items?.map((item, index) => (
-                                    <div key={index} className="modal-item">
-                                        <div className="modal-item-info">
-                                            <h4>{item.title}</h4>
-                                            <p className="modal-item-quantity">Quantity: {item.quantity}</p>
+                                {Array.isArray(order.items) && order.items.length > 0 ? (
+                                    order.items.map((item, index) => (
+                                        <div key={index} className="modal-item">
+                                            <div className="modal-item-info">
+                                                <h4>{item.title || 'Unknown Item'}</h4>
+                                                <p className="modal-item-quantity">Quantity: {item.quantity || 1}</p>
+                                            </div>
+                                            <div className="modal-item-price">
+                                                ₹{((Number(item.price) || 0) * (Number(item.quantity) || 1)).toFixed(2)}
+                                            </div>
                                         </div>
-                                        <div className="modal-item-price">
-                                            ₹{((item.price || 0) * (item.quantity || 1)).toFixed(2)}
+                                    ))
+                                ) : (
+                                    <div className="modal-item">
+                                        <div className="modal-item-info">
+                                            <h4>No items found</h4>
                                         </div>
                                     </div>
-                                ))}
+                                )}
                             </div>
                         </div>
                         
-                        {/* Delete button in modal */}
                         <div className="modal-actions">
                             <button 
                                 onClick={() => {
@@ -267,15 +341,20 @@ function AdminOrders() {
 
     const stats = getOrderStats();
 
-    if (loading) return (
-        <>
-            <AdminNav />
-            <div className="admin-loading">
-                <div className="loading-spinner"></div>
-                <p className="loading-text">Loading orders...</p>
-            </div>
-        </>
-    );
+    if (loading) {
+        return (
+            <>
+                <AdminNav />
+                <div className="admin-loading">
+                    <div className="loading-spinner"></div>
+                    <p className="loading-text">Loading orders...</p>
+                    <p style={{ fontSize: '12px', color: '#666', marginTop: '10px' }}>
+                        Trying: {API_BASE_URL}/orders
+                    </p>
+                </div>
+            </>
+        );
+    }
 
     return (
         <>
@@ -284,6 +363,13 @@ function AdminOrders() {
                 <div className="admin-orders-header">
                     <h2>Orders Management</h2>
                 </div>
+
+                {error && (
+                    <div className="error-banner">
+                        <span>⚠️ {error}</span>
+                        <button onClick={() => setError(null)}>×</button>
+                    </div>
+                )}
 
                 <div className="stats-grid">
                     <div className="stat-card">
@@ -366,6 +452,11 @@ function AdminOrders() {
                                 : 'Orders will appear here once customers start placing them.'
                             }
                         </p>
+                        {error && (
+                            <button onClick={fetchOrders} className="retry-button">
+                                Retry Loading Orders
+                            </button>
+                        )}
                     </div>
                 ) : (
                     <div className="orders-table-container">
@@ -394,24 +485,30 @@ function AdminOrders() {
                                         </td>
                                         <td>
                                             <div className="items-list">
-                                                {order.items?.slice(0, 2).map((item, index) => (
-                                                    <span key={index} className="item-summary">
-                                                        {item.title} (×{item.quantity})
-                                                    </span>
-                                                ))}
-                                                {order.items?.length > 2 && (
-                                                    <div className="more-items">
-                                                        +{order.items.length - 2} more...
-                                                    </div>
+                                                {Array.isArray(order.items) && order.items.length > 0 ? (
+                                                    <>
+                                                        {order.items.slice(0, 2).map((item, index) => (
+                                                            <span key={index} className="item-summary">
+                                                                {item.title || 'Unknown'} (×{item.quantity || 1})
+                                                            </span>
+                                                        ))}
+                                                        {order.items.length > 2 && (
+                                                            <div className="more-items">
+                                                                +{order.items.length - 2} more...
+                                                            </div>
+                                                        )}
+                                                    </>
+                                                ) : (
+                                                    <span className="item-summary">No items</span>
                                                 )}
                                             </div>
                                         </td>
                                         <td>
                                             <span className="item-count">
-                                                {order.itemCount || order.items?.length || 0}
+                                                {order.itemCount || 0}
                                             </span>
                                         </td>
-                                        <td className="amount">₹{order.totalAmount?.toFixed(2) || '0.00'}</td>
+                                        <td className="amount">₹{(Number(order.totalAmount) || 0).toFixed(2)}</td>
                                         <td>
                                             <span 
                                                 className="status-badge"

@@ -16,18 +16,14 @@ const db = require("./Dbconnection");
 
 app.use("/uploads", express.static(path.join(__dirname, "Uploads"))); 
 
-app.use('/api', require('./Routes/BookRoutes'));
+
 
 const bookroutes = require("./Routes/BookRoutes");
-app.use("/api", bookroutes);
+app.use("/api", bookroutes);   
 
-     
 const router=require('./router')
 app.use("/user",router)
 
-
-const orderRoutes = require('./Routes/OrderRoutes');
-app.use('/api/orders', orderRoutes);
 
 const otpRoutes=require("./Routes/MailLink")
 app.use("/api/auth",otpRoutes)

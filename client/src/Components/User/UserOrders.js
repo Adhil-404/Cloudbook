@@ -5,6 +5,58 @@ import UserNav from './Usernav';
 import UserFooter from './UserFooter';
 import "../../Assets/Styles/Userstyles/UserOrders.css";
 
+
+// OrderManager utility - removed localStorage usage as mentioned in constraints
+const OrderManager = {
+  saveOrderGlobally: (order, globalOrders, setGlobalOrders) => {
+    try {
+      const existingIndex = globalOrders.findIndex(o => o._id === order._id);
+      
+      if (existingIndex >= 0) {
+        const updated = [...globalOrders];
+        updated[existingIndex] = order;
+        setGlobalOrders(updated);
+      } else {
+        setGlobalOrders([order, ...globalOrders]);
+      }
+    } catch (error) {
+      console.error('Error saving order globally:', error);
+    }
+  },
+
+  updateOrderStatus: (orderId, newStatus, orders, setOrders) => {
+    try {
+      const updated = orders.map(order => 
+        order._id === orderId ? { ...order, status: newStatus } : order
+      );
+      setOrders(updated);
+    } catch (error) {
+      console.error('Error updating order status:', error);
+    }
+  }
+};
+
+// Function to get logged-in user info
+const getLoggedInUser = () => {
+  try {
+    // Try different possible keys where user data might be stored
+    const possibleKeys = ['user', 'userData', 'currentUser', 'loggedInUser'];
+    
+    for (const key of possibleKeys) {
+      const userData = localStorage.getItem(key);
+      if (userData) {
+        return JSON.parse(userData);
+      }
+    }
+    
+    return null;
+  } catch (error) {
+    console.error('Error parsing user data:', error);
+    return null;
+  }
+};
+
+
 function Orders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -38,9 +90,41 @@ function Orders() {
     }
 
     try {
+
       const response = await axios.get('http://localhost:5000/api/orders', {
         headers: { Authorization: `Bearer ${token}` }
       });
+
+      const { orderId, orderData, paymentMethod } = location.state;
+      
+      // Check if order already exists in current state
+      const orderExists = orders.find(order => order._id === orderId);
+      
+      if (!orderExists) {
+        // Generate a unique order number if not provided
+        const orderNumber = orderId || `ORD-${Date.now()}`;
+        
+        // Get logged-in user info
+        const loggedInUser = getLoggedInUser();
+        
+        const newOrder = {
+          _id: orderId || orderNumber,
+          orderNumber: orderNumber,
+          orderDate: new Date().toISOString(),
+          status: 'confirmed',
+          items: orderData.items.map(item => ({
+            ...item,
+            coverImage: item.coverImage || 'default-book.jpg'
+          })),
+          totalAmount: orderData.totalAmount,
+          itemCount: orderData.items.length,
+          paymentMethod: paymentMethod || 'N/A',
+          // FIXED: Use actual user info instead of hardcoded guest user
+          customerName: loggedInUser?.userName || 'Guest User',
+          customerEmail: loggedInUser?.userEmail || 'guest@example.com',
+          userId: loggedInUser?._id || null
+        };
+
 
       setOrders(Array.isArray(response.data) ? response.data : []);
     } catch (err) {
