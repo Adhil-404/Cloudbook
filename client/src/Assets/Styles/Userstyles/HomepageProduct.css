@@ -190,9 +190,7 @@
   box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
 }
 
-/* Add these styles to your existing HomepageProduct.css */
 
-/* Search Results Info Section */
 .search-results-info {
   background: linear-gradient(135deg, #e8f5f3, #f0f9ff);
   border-left: 4px solid #007bff;
@@ -239,7 +237,7 @@
   font-weight: 500;
 }
 
-/* No Results Section */
+
 .no-results {
   grid-column: 1 / -1;
   display: flex;
@@ -268,7 +266,7 @@
   margin-bottom: 20px;
 }
 
-/* Loading Container */
+
 .loading-container {
   display: flex;
   justify-content: center;
@@ -301,7 +299,7 @@
   100% { transform: rotate(360deg); }
 }
 
-/* Enhanced Search Bar in UserNav (if you want to update the existing styles) */
+
 .search-bar {
   display: flex;
   flex: 1;
@@ -413,7 +411,7 @@
   border-radius: 2px;
 }
 
-/* Updated Product Grid Styles - Replace your existing styles */
+
 
 .product-grid {
   display: grid;

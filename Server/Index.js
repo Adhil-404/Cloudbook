@@ -8,7 +8,7 @@ const bodyparser = require("body-parser");
 dotenv.config();
 
 const app = express();
-app.use(express.json());
+app.use(express.json());  
 app.use(bodyparser.json());
 app.use(cors());
 

@@ -15,54 +15,50 @@ function UserNav() {
   const location = useLocation();
   const sidebarRef = useRef(null);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const token = localStorage.getItem('userToken');
-        if (!token) return;
+ useEffect(() => {
+  const fetchUserData = async () => {
+    try {
+      const token = localStorage.getItem('userToken');
+      if (!token) return;
 
-        const response = await fetch('http://localhost:5000/api/user/profile', {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setUserData({
-            firstName: data.firstName || '',
-            lastName: data.lastName || '',
-            email: data.email || ''
-          });
+      const response = await fetch('http://localhost:5000/user/profile', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
-      } catch (error) {
-        console.error('Error fetching user data:', error);
+      });
+console.log("Token:", token);
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('User profile data:', data); 
+
+       
+        setUserData({
+          firstName: data.userName || '',  // use userName from backend
+          email: data.userEmail || ''      // use userEmail from backend
+        });
+      } else {
+        console.error("Failed to fetch profile:", response.statusText);
       }
-    };
-
-    fetchUserData();
-  }, []);
-
-  const getDisplayName = () => {
-    const firstName = userData.firstName?.trim();
-    const lastName = userData.lastName?.trim();
-    
-    if (firstName && lastName) {
-      return `${firstName} ${lastName}`;
-    } else if (firstName) {
-      return firstName;
-    } else if (lastName) {
-      return lastName;
-    } else {
-      return 'User';
+    } catch (error) {
+      console.error('Error fetching user data:', error);
     }
   };
 
-  const getDisplayEmail = () => {
-    return userData.email?.trim() || 'user@email.com';
-  };
+  fetchUserData();
+}, []);
+
+
+  const getDisplayName = () => {
+  const firstName = userData.firstName?.trim();
+  return firstName || 'User';
+};
+
+const getDisplayEmail = () => {
+  return userData.email?.trim() || 'user@email.com';
+};
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
@@ -178,7 +174,7 @@ function UserNav() {
             placeholder="Search products..."
             aria-label="Search products"
             value={searchQuery}
-            onChange={handleSearchChange}
+            onChange={handleSearchChange} 
             onKeyDown={handleKeyDown}
           />
           <select

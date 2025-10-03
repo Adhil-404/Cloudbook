@@ -4,15 +4,16 @@ const orderController = {
   async createOrder(req, res) {
     try {
       const { items, totalAmount, itemCount, orderNumber, paymentMethod } = req.body;
-      const userId = req.user._id;
+    if (!req.user) {
+  return res.status(401).json({ message: 'Unauthorized: no user info' });
+}
 
-      if (!items || items.length === 0) {
+
+      if (!items || items.length === 0) { 
         return res.status(400).json({ 
           message: 'Order must contain at least one item' 
         });
       }
-
-      // Generate order number if not provided
       const generatedOrderNumber = orderNumber || `ORD-${Date.now()}-${userId}`;
 
       const newOrder = new Order({
@@ -35,7 +36,7 @@ const orderController = {
     } catch (error) {
       console.error('Order creation error:', error);
       
-      // Handle duplicate order number error
+    
       if (error.code === 11000) {
         return res.status(400).json({
           message: 'Order already exists',
@@ -54,7 +55,7 @@ const orderController = {
     try {
       const orders = await Order.find({ userId: req.user._id })
         .sort({ orderDate: -1 })
-        .lean(); // Use lean() for better performance
+        .lean();
       
       res.status(200).json(orders);
     } catch (error) {
@@ -87,13 +88,13 @@ const orderController = {
     }
   },
 
-  // NEW: Update order status method
+
   async updateOrder(req, res) {
     try {
       const { id } = req.params;
       const { status } = req.body;
       
-      // Validate status
+
       const validStatuses = ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'];
       if (!validStatuses.includes(status)) {
         return res.status(400).json({
@@ -125,7 +126,7 @@ const orderController = {
     }
   },
 
-  // NEW: Delete order method
+
   async deleteOrder(req, res) {
     try {
       const { id } = req.params;
@@ -133,7 +134,7 @@ const orderController = {
       const deletedOrder = await Order.findOneAndDelete({
         _id: id,
         userId: req.user._id,
-        status: { $in: ['cancelled', 'delivered'] } // Only allow deletion of cancelled or delivered orders
+        status: { $in: ['cancelled', 'delivered'] } 
       });
 
       if (!deletedOrder) {

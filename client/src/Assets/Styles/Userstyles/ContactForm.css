@@ -88,7 +88,7 @@
   50% { transform: translateY(-10px); }
 }
 
-/* Quick Contact Section */
+
 .quick-contact {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -162,7 +162,6 @@
   line-height: 1.4;
 }
 
-/* Main Content */
 .contact-main {
   display: grid;
   grid-template-columns: 1fr 400px;
@@ -170,7 +169,7 @@
   margin-bottom: 50px;
 }
 
-/* Contact Form Section */
+
 .contact-form-section {
   background: white;
   padding: 40px;
@@ -302,7 +301,7 @@
   line-height: 1.6;
 }
 
-/* Store Information Section */
+
 .store-info-section {
   display: flex;
   flex-direction: column;
@@ -454,7 +453,7 @@
   color: white;
 }
 
-/* FAQ Preview Section */
+
 .faq-preview {
   background: white;
   padding: 40px;
@@ -620,7 +619,6 @@
   box-shadow: 0 8px 20px rgba(255, 255, 255, 0.3);
 }
 
-/* Responsive Design */
 @media (max-width: 1024px) {
   .contact-main {
     grid-template-columns: 1fr;
@@ -824,7 +822,7 @@
   }
 }
 
-/* Animation for form submission */
+
 @keyframes submitSuccess {
   0% {
     opacity: 0;
@@ -840,7 +838,6 @@
   animation: submitSuccess 0.6s ease-out;
 }
 
-/* Hover effects for interactive elements */
 .quick-contact-item,
 .department-card,
 .faq-item,
@@ -849,7 +846,7 @@
   overflow: hidden;
 }
 
-/* Loading state for form submission */
+
 .submit-btn:disabled {
   opacity: 0.7;
   cursor: not-allowed;
@@ -860,7 +857,7 @@
   box-shadow: none !important;
 }
 
-/* Focus styles for better accessibility */
+
 .submit-btn:focus,
 .view-all-faq:focus,
 .newsletter-form button:focus {
@@ -875,7 +872,6 @@
   border-radius: 4px;
 }
 
-/* Custom scrollbar for long content */
 .contact-container::-webkit-scrollbar {
   width: 8px;
 }
@@ -894,7 +890,7 @@
   background: #179584;
 }
 
-/* Print styles */
+
 @media print {
   .contact-hero,
   .newsletter-section {
