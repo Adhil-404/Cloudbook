@@ -13,7 +13,7 @@ function AdminOrders() {
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [showOrderModal, setShowOrderModal] = useState(false);
     const [updating, setUpdating] = useState(false);
-    const [deleting, setDeleting] = useState(null); // Track which order is being deleted
+    const [deleting, setDeleting] = useState(null); 
 
     useEffect(() => {
         fetchOrders();

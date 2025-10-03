@@ -1,6 +1,4 @@
-/* Aboutus.css - Bookstore About Us Page Styles */
-
-/* Base styles and resets */
+/
 .about-us-page {
   font-family: 'Georgia', serif;
   line-height: 1.6;
@@ -12,7 +10,7 @@
   box-sizing: border-box;
 }
 
-/* Hero Section */
+
 .hero-section {
   background: white;
   color: #2c3e50;
@@ -61,7 +59,7 @@
   color: #6c757d;
 }
 
-/* Section Title */
+
 .section-title {
   font-size: 2.5rem;
   margin-bottom: 3rem;
@@ -88,7 +86,7 @@
   background: rgba(255, 255, 255, 0.8);
 }
 
-/* Story Section */
+
 .story-section {
   padding: 80px 0;
   background: #5f7285;
@@ -121,7 +119,7 @@
   margin-bottom: 0;
 }
 
-/* Values Section */
+
 .values-section {
   padding: 80px 0;
   background: white;
@@ -185,7 +183,7 @@
   font-size: 0.95rem;
 }
 
-/* Stats Section */
+
 .stats-section {
   background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
   color: white;
@@ -245,7 +243,7 @@
   }
 }
 
-/* Team Section */
+
 .team-section {
   padding: 80px 0;
   background: #f8f9fa;
@@ -383,7 +381,7 @@
   flex-wrap: wrap;
 }
 
-/* Custom Button Styles */
+
 .btn-custom {
   padding: 15px 40px;
   border-radius: 30px;
@@ -425,7 +423,7 @@
   box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
 }
 
-/* Animations */
+/
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -440,8 +438,7 @@
 .fadeInUp {
   animation: fadeInUp 0.6s ease-out;
 }
-
-/* Responsive Design */
+ 
 @media (max-width: 1200px) {
   .hero-title {
     font-size: 3.5rem;
@@ -585,7 +582,7 @@
   }
 }
 
-/* Accessibility */
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -596,7 +593,7 @@
   }
 }
 
-/* Print styles */
+
 @media print {
   .hero-section,
   .stats-section,

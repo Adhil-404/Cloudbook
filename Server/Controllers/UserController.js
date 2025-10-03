@@ -94,5 +94,17 @@ const login = async (req, res) => {
 
   
 };
+const getUserProfile = async (req, res) => {
+  try {
+    const userId = req.user.id; // from auth middleware
+    const user = await User.findById(userId).select('userName userEmail contact dob gender');
+    if (!user) return res.status(404).json({ msg: 'User not found' });
 
-module.exports = { UserRegistration, login }
+    res.json(user);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+};
+
+module.exports = { UserRegistration, login ,getUserProfile}

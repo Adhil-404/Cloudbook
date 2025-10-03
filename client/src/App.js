@@ -9,9 +9,8 @@ import UserLogin from './Components/User/UserLogin';
 import UserRegistration from './Components/User/UserRegistration';
 import UserResetpassword from './Components/User/UserResetpassword';
 import UserForgetpassword from './Components/User/UserForgetpassword';
-import UserBooks from './Components/User/UserBooks';
+
 import UserOrders from './Components/User/UserOrders';
-import UserSettings from './Components/User/UserSettings';
 import Homepage from './Components/User/Homepage';
 import HomepageProduct from './Components/User/HomepageProduct';
 import ProductDetail from './Components/User/ProductDetail';
@@ -60,9 +59,9 @@ function App() {
 
 
           <Route path='/user/forgetpassword' element={<UserForgetpassword />} />
-          <Route path='/user/books' element={<UserBooks />} />
+         
           <Route path='/user/orders' element={<UserOrders />} />
-          <Route path='/user/settings' element={<UserSettings />} />
+        
           <Route path='/user/homepage' element={<Homepage />} />
           <Route path='/user/homepage/product' element={<HomepageProduct />} />
           <Route path="/product/:id" element={<ProductDetail />} />

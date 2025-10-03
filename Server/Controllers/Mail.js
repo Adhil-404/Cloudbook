@@ -1,9 +1,9 @@
 const crypto = require('crypto');
 const bcrypt = require('bcrypt');
-const User = require('../Schema/UserSchema'); // Keep your existing schema
+const User = require('../Schema/UserSchema'); 
 const { sendResetEmail } = require('./Sendmail');
 
-// Forgot Password
+
 const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -15,9 +15,9 @@ const forgotPassword = async (req, res) => {
     const resetToken = crypto.randomBytes(32).toString('hex');
     const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
 
-    // Use exact schema field names
+   
     user.resetPasswordToken = hashedToken;
-    user.resetPasswordExpire = Date.now() + 10 * 60 * 1000; // 10 minutes
+    user.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
     await user.save();
 
     const emailResult = await sendResetEmail(user.userEmail, resetToken);
@@ -35,7 +35,7 @@ const forgotPassword = async (req, res) => {
   }
 };
 
-// Reset Password
+
 const resetPassword = async (req, res) => {
   try {
     const { token } = req.params;
@@ -48,7 +48,7 @@ const resetPassword = async (req, res) => {
 
     const user = await User.findOne({
       resetPasswordToken: hashedToken,
-      resetPasswordExpire: { $gt: Date.now() } // Use correct field
+      resetPasswordExpire: { $gt: Date.now() }
     });
 
     if (!user) return res.status(400).json({ success: false, message: 'Invalid or expired reset token' });
@@ -57,7 +57,7 @@ const resetPassword = async (req, res) => {
     user.password = await bcrypt.hash(password, salt);
 
     user.resetPasswordToken = undefined;
-    user.resetPasswordExpire = undefined; // Correct field
+    user.resetPasswordExpire = undefined; 
     await user.save();
 
     res.status(200).json({ success: true, message: 'Password reset successful' });
