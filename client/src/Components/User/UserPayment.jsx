@@ -4,6 +4,7 @@ import axios from 'axios';
 import UserNav from './Usernav';
 import UserFooter from './UserFooter';
 import { ToastContainer, toast } from 'react-toastify';
+import { clearCart } from './Utils/cartUtils';
 import '../../Assets/Styles/Userstyles/UserPayment.css';
 import visaImg from "../../Assets/Images/visa-png.png";
 import mastercardImg from "../../Assets/Images/mastercard.jpg"
@@ -28,8 +29,6 @@ function UserPayment() {
       toast.error("No order data found. Redirecting...");
       navigate('/user/homepage');
       return;
-
-      
     }
     setOrderData(location.state.orderData);
   }, [location, navigate]);
@@ -101,7 +100,7 @@ function UserPayment() {
   const processPayment = async () => {
     if (!validatePayment()) return;
 
-    const token = localStorage.getItem('token') || localStorage.getItem('userToken') || localStorage.getItem('authToken');
+    const token = localStorage.getItem('userToken') || localStorage.getItem('token') || localStorage.getItem('authToken');
 
     if (!token) {
       toast.error("Please login to complete payment");
@@ -112,54 +111,70 @@ function UserPayment() {
     setProcessing(true);
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      // Simulate payment processing
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      console.log('Creating order in database...');
+
+      // Create order in database
+      const orderPayload = {
+        items: orderData.items.map(item => ({
+          _id: item.id,
+          title: item.title,
+          author: item.author,
+          category: item.category,
+          price: item.price,
+          quantity: item.quantity,
+          coverImage: item.coverImage
+        })),
+        totalAmount: orderData.totalAmount,
+        itemCount: orderData.items.reduce((sum, item) => sum + item.quantity, 0),
+        paymentMethod: paymentMethod === 'card' ? 'Credit/Debit Card' : 
+                       paymentMethod === 'upi' ? 'UPI Payment' : 'Cash on Delivery'
+      };
+
+      console.log('Order payload:', orderPayload);
+
+      const response = await axios.post(
+        'http://localhost:5000/api/user/orders',
+        orderPayload,
+        {
+          headers: { 
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      console.log('Order created successfully:', response.data);
+
+      // Clear cart after successful order
+      clearCart();
 
       toast.success("Payment successful! Order placed successfully.", {
         position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
+        autoClose: 2000,
       });
 
+      // Navigate to orders page
       setTimeout(() => {
-        navigate('/user/orders', {
-          state: {
-            orderSuccess: true,
-            orderId: 'order_' + Date.now(),
-            orderData: orderData,
-            paymentMethod: paymentMethod,
-            message: "Your order has been placed successfully!"
-          }
-        });
+        navigate('/user/orders', { replace: true });
       }, 2000);
 
     } catch (error) {
-      console.error('Payment error:', error);
+      console.error('Payment/Order error:', error);
+      console.error('Error response:', error.response?.data);
       
-      toast.success("Payment successful! Order placed successfully.", {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
-
-      setTimeout(() => {
-        navigate('/user/orders', {
-          state: {
-            orderSuccess: true,
-            orderId: 'order_' + Date.now(),
-            orderData: orderData,
-            paymentMethod: paymentMethod,
-            message: "Your order has been placed successfully!"
-          }
-        });
-      }, 2000);
-    } finally {
       setProcessing(false);
+      
+      toast.error(
+        error.response?.data?.message || 
+        'Failed to place order. Please try again.',
+        {
+          position: "top-center",
+          autoClose: 3000,
+        }
+      );
     }
   };
 
