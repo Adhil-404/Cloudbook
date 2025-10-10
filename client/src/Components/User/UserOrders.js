@@ -1,284 +1,149 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import UserNav from './Usernav';
 import UserFooter from './UserFooter';
 import "../../Assets/Styles/Userstyles/UserOrders.css";
 
-
-// OrderManager utility - removed localStorage usage as mentioned in constraints
-const OrderManager = {
-  saveOrderGlobally: (order, globalOrders, setGlobalOrders) => {
-    try {
-      const existingIndex = globalOrders.findIndex(o => o._id === order._id);
-      
-      if (existingIndex >= 0) {
-        const updated = [...globalOrders];
-        updated[existingIndex] = order;
-        setGlobalOrders(updated);
-      } else {
-        setGlobalOrders([order, ...globalOrders]);
-      }
-    } catch (error) {
-      console.error('Error saving order globally:', error);
-    }
-  },
-
-  updateOrderStatus: (orderId, newStatus, orders, setOrders) => {
-    try {
-      const updated = orders.map(order => 
-        order._id === orderId ? { ...order, status: newStatus } : order
-      );
-      setOrders(updated);
-    } catch (error) {
-      console.error('Error updating order status:', error);
-    }
-  }
-};
-
-// Function to get logged-in user info
-const getLoggedInUser = () => {
-  try {
-    // Try different possible keys where user data might be stored
-    const possibleKeys = ['user', 'userData', 'currentUser', 'loggedInUser'];
-    
-    for (const key of possibleKeys) {
-      const userData = localStorage.getItem(key);
-      if (userData) {
-        return JSON.parse(userData);
-      }
-    }
-    
-    return null;
-  } catch (error) {
-    console.error('Error parsing user data:', error);
-    return null;
-  }
-};
-
-
-function Orders() {
+function UserOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const location = useLocation();
-
-  const getAuthToken = () => {
-    return (
-      localStorage.getItem('token') ||
-      localStorage.getItem('authToken') ||
-      localStorage.getItem('userToken') ||
-      sessionStorage.getItem('token')
-    );
-  };
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (location.state?.orderSuccess) {
-      handlePaymentSuccess();
-    } else {
-      fetchOrders();
-    }
-  }, [location]);
+    fetchUserOrders();
+  }, []);
 
-  // --- Fetch orders safely ---
-  const fetchOrders = async () => {
-    const token = getAuthToken();
-    if (!token) {
-      setError('You are not logged in. Please login to view orders.');
-      setLoading(false);
-      return;
-    }
-
+  const fetchUserOrders = async () => {
     try {
+      setLoading(true);
+      setError(null);
 
-      const response = await axios.get('http://localhost:5000/api/orders', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      const { orderId, orderData, paymentMethod } = location.state;
+      const token = localStorage.getItem('userToken');
+      console.log('Token found:', token ? 'Yes' : 'No');
+      console.log('Token value:', token?.substring(0, 20) + '...');
       
-      // Check if order already exists in current state
-      const orderExists = orders.find(order => order._id === orderId);
-      
-      if (!orderExists) {
-        // Generate a unique order number if not provided
-        const orderNumber = orderId || `ORD-${Date.now()}`;
-        
-        // Get logged-in user info
-        const loggedInUser = getLoggedInUser();
-        
-        const newOrder = {
-          _id: orderId || orderNumber,
-          orderNumber: orderNumber,
-          orderDate: new Date().toISOString(),
-          status: 'confirmed',
-          items: orderData.items.map(item => ({
-            ...item,
-            coverImage: item.coverImage || 'default-book.jpg'
-          })),
-          totalAmount: orderData.totalAmount,
-          itemCount: orderData.items.length,
-          paymentMethod: paymentMethod || 'N/A',
-          // FIXED: Use actual user info instead of hardcoded guest user
-          customerName: loggedInUser?.userName || 'Guest User',
-          customerEmail: loggedInUser?.userEmail || 'guest@example.com',
-          userId: loggedInUser?._id || null
-        };
-
-
-      setOrders(Array.isArray(response.data) ? response.data : []);
-    } catch (err) {
-      console.error('Failed to fetch orders:', err.response?.data || err.message);
-      if (err.response?.status === 401) {
-        setError('Session expired or invalid token. Please login again.');
-      } else {
-        setError('Unable to load orders. Please try again later.');
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-
-  const handlePaymentSuccess = async () => {
-    const token = getAuthToken();
-    if (!token) {
-      setError('Cannot save order: not logged in.');
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const { orderId, orderData, paymentMethod } = location.state || {};
-      if (!orderId || !orderData) {
-        fetchOrders();
+      if (!token) {
+        setError('Please login to view your orders');
+        setLoading(false);
         return;
       }
 
-      const newOrder = {
-        _id: orderId,
-        orderNumber: orderId,
-        orderDate: new Date().toISOString(),
-        status: 'confirmed',
-        items: orderData.items.map(item => ({
-          ...item,
-          coverImage: item.coverImage || 'default-book.jpg'
-        })),
-        totalAmount: orderData.totalAmount,
-        itemCount: orderData.items.length,
-        paymentMethod: paymentMethod || 'N/A',
-        customerName: 'Guest User',
-        customerEmail: 'guest@example.com'
-      };
-
-      
-      setOrders(prev => [newOrder, ...prev]);
-
-      await axios.post('http://localhost:5000/api/orders', newOrder, {
+      console.log('Making request to: http://localhost:5000/api/user/orders');
+      const response = await axios.get('http://localhost:5000/api/user/orders', {
         headers: { Authorization: `Bearer ${token}` }
       });
+
+      console.log('Response received:', response.data);
+      setOrders(response.data);
+      setLoading(false);
     } catch (err) {
-      console.error('Failed to save order:', err.response?.data || err.message);
-      setError('Failed to save order. It may be saved locally.');
-    } finally {
+      console.error('Error fetching orders:', err);
+      console.error('Error response:', err.response);
+      console.error('Error message:', err.message);
+      
+      if (err.response?.status === 401) {
+        setError('Session expired. Please login again.');
+      } else {
+        setError(err.response?.data?.message || err.message || 'Failed to load orders');
+      }
       setLoading(false);
     }
   };
 
-  
   const cancelOrder = async (orderId) => {
-    const token = getAuthToken();
-    if (!token) {
-      setError('You are not logged in. Cannot cancel order.');
-      return;
-    }
-
     try {
-      
-      setOrders(prev =>
-        prev.map(order =>
-          order._id === orderId ? { ...order, status: 'cancelled' } : order
-        )
-      );
+      const token = localStorage.getItem('userToken');
+      if (!token) {
+        setError('Please login to cancel order');
+        return;
+      }
 
       await axios.put(
-        `http://localhost:5000/api/orders/${orderId}`,
+        `http://localhost:5000/api/user/orders/${orderId}`,
         { status: 'cancelled' },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+
+      // Update local state
+      setOrders(orders.map(order => 
+        order._id === orderId ? { ...order, status: 'cancelled' } : order
+      ));
     } catch (err) {
-      console.error('Cancel order failed:', err.response?.data || err.message);
-      setError('Failed to cancel order. Please try again.');
+      console.error('Error cancelling order:', err);
+      setError('Failed to cancel order');
     }
   };
 
-  
   const removeOrder = (orderId) => {
-    try {
-      setOrders(prev => prev.filter(order => order._id !== orderId));
-    } catch (err) {
-      console.error('Remove order failed:', err.message);
-      setError('Failed to remove order. Please try again.');
-    }
+    setOrders(orders.filter(order => order._id !== orderId));
   };
 
-  
   const getStatusColor = (status) => {
-    switch (status?.toLowerCase()) {
-      case 'pending': return '#ffc107';
-      case 'confirmed': return '#17a2b8';
-      case 'shipped': return '#007bff';
-      case 'delivered': return '#28a745';
-      case 'cancelled': return '#dc3545';
-      default: return '#6c757d';
-    }
+    const colors = {
+      pending: '#ffc107',
+      confirmed: '#17a2b8',
+      shipped: '#007bff',
+      delivered: '#28a745',
+      cancelled: '#dc3545'
+    };
+    return colors[status?.toLowerCase()] || '#6c757d';
   };
 
   const getImageUrl = (coverImage) => {
     if (!coverImage) return '/default-book-cover.jpg';
     if (Array.isArray(coverImage)) {
-      return coverImage.length > 0 ? `http://localhost:5000/uploads/${coverImage[0]}` : '/default-book-cover.jpg';
+      return coverImage.length > 0 
+        ? `http://localhost:5000/uploads/${coverImage[0]}` 
+        : '/default-book-cover.jpg';
     }
     return `http://localhost:5000/uploads/${coverImage}`;
   };
 
-  
-  if (loading) return (
-    <>
-      <UserNav />
-      <div className="orders-loading">
-        <div className="loading-spinner"></div>
-        <p>Loading your orders...</p>
-      </div>
-      <UserFooter />
-    </>
-  );
-
-  if (error) return (
-    <>
-      <UserNav />
-      <div className="orders-error">
-        <h3>Error</h3>
-        <p>{error}</p>
-        <button onClick={() => { setError(null); setLoading(true); fetchOrders(); }}>Try Again</button>
-      </div>
-      <UserFooter />
-    </>
-  );
-
-  if (!orders.length) return (
-    <>
-      <UserNav />
-      <div className="orders-empty">
-        <div className="empty-orders-content">
-          <div className="empty-icon">📦</div>
-          <h3>No orders yet</h3>
-          <p>You haven't placed any orders yet!</p>
+  if (loading) {
+    return (
+      <>
+        <UserNav />
+        <div className="orders-loading">
+          <div className="loading-spinner"></div>
+          <p>Loading your orders...</p>
         </div>
-      </div>
-      <UserFooter />
-    </>
-  );
+        <UserFooter />
+      </>
+    );
+  }
+
+  if (error) {
+    return (
+      <>
+        <UserNav />
+        <div className="orders-error">
+          <h3>Error</h3>
+          <p>{error}</p>
+          <button onClick={fetchUserOrders}>Try Again</button>
+        </div>
+        <UserFooter />
+      </>
+    );
+  }
+
+  if (orders.length === 0) {
+    return (
+      <>
+        <UserNav />
+        <div className="orders-empty">
+          <div className="empty-orders-content">
+            <div className="empty-icon">📦</div>
+            <h3>No orders yet</h3>
+            <p>You haven't placed any orders yet!</p>
+          </div>
+        </div>
+        <UserFooter />
+      </>
+    );
+  }
 
   return (
     <>
@@ -294,16 +159,25 @@ function Orders() {
             <div key={order._id} className="order-card">
               <div className="order-header">
                 <div className="order-info">
-                  <h4>Order #{order.orderNumber || order._id}</h4>
-                  <p className="order-date">{order.orderDate ? new Date(order.orderDate).toLocaleDateString() : 'Date not available'}</p>
+                  <h4>Order #{order.orderNumber || order._id.slice(-8)}</h4>
+                  <p className="order-date">
+                    {new Date(order.orderDate).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                  </p>
                 </div>
-                <div className="order-status" style={{ backgroundColor: getStatusColor(order.status) }}>
-                  {order.status ? order.status.charAt(0).toUpperCase() + order.status.slice(1) : 'Unknown'}
+                <div 
+                  className="order-status" 
+                  style={{ backgroundColor: getStatusColor(order.status) }}
+                >
+                  {order.status?.charAt(0).toUpperCase() + order.status?.slice(1)}
                 </div>
               </div>
 
               <div className="order-items">
-                {order.items?.length > 0 ? order.items.map((item, idx) => (
+                {order.items?.map((item, idx) => (
                   <div key={idx} className="order-item">
                     <div className="item-image">
                       <img
@@ -317,17 +191,17 @@ function Orders() {
                       {item.author && <p>by {item.author}</p>}
                       {item.category && <p className="item-category">{item.category}</p>}
                       <div className="item-price-qty">
-                        <span>₹{item.price || 0} × {item.quantity || 1}</span>
+                        <span>₹{item.price} × {item.quantity}</span>
                       </div>
                     </div>
                   </div>
-                )) : <p>No items found in this order</p>}
+                ))}
               </div>
 
               <div className="order-summary">
                 <div className="summary-row">
-                  <span>Items ({order.itemCount || order.items?.length || 0}):</span>
-                  <span>₹{order.totalAmount || 0}</span>
+                  <span>Items ({order.itemCount || order.items?.length}):</span>
+                  <span>₹{order.totalAmount}</span>
                 </div>
                 <div className="summary-row">
                   <span>Shipping:</span>
@@ -335,15 +209,25 @@ function Orders() {
                 </div>
                 <div className="summary-row total">
                   <span>Total:</span>
-                  <span>₹{order.totalAmount || 0}</span>
+                  <span>₹{order.totalAmount}</span>
                 </div>
 
                 <div className="order-actions">
                   {order.status?.toLowerCase() === 'confirmed' && (
-                    <button className="cancel-order-btn" onClick={() => cancelOrder(order._id)}>Cancel Order</button>
+                    <button 
+                      className="cancel-order-btn" 
+                      onClick={() => cancelOrder(order._id)}
+                    >
+                      Cancel Order
+                    </button>
                   )}
                   {order.status?.toLowerCase() === 'cancelled' && (
-                    <button className="remove-order-btn" onClick={() => removeOrder(order._id)}>✕ Remove Order</button>
+                    <button 
+                      className="remove-order-btn" 
+                      onClick={() => removeOrder(order._id)}
+                    >
+                      ✕ Remove Order
+                    </button>
                   )}
                 </div>
               </div>
@@ -356,4 +240,4 @@ function Orders() {
   );
 }
 
-export default Orders;
+export default UserOrders;
